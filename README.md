@@ -34,29 +34,44 @@ Everything runs client-side in your browser. Nothing you paste in is ever sent t
 
 ## Deploying to GitHub Pages
 
-The app is a static SPA using `HashRouter` and a relative base path, so it runs from any subpath with no server-side routing config.
+Deployment is automated — **GitHub builds and publishes the site itself on every push to `main`.** You never run a build or deploy command locally.
 
 **One-time setup**
 
-1. Create an empty repo on GitHub (no README/licence — this project already has one).
-2. Point your local repo at it and push:
+1. Create an empty repo on GitHub (no README/licence — this project has them).
+2. Push your code:
 
    ```bash
+   git init
+   git add .
+   git commit -m "Toolbelt — local-first backend dev utilities"
    git remote add origin https://github.com/<your-username>/toolbelt.git
    git branch -M main
    git push -u origin main
    ```
 
-**Deploy**
+3. In the repo: **Settings → Pages → Build and deployment → Source: `GitHub Actions`**.
+   (Select *GitHub Actions*, **not** "Deploy from a branch".)
 
-```bash
-npm install      # first time only, installs gh-pages
-npm run deploy   # builds, then pushes dist/ to the gh-pages branch
+That's it. The workflow in `.github/workflows/deploy.yml` runs automatically, and your site is live at:
+
+```
+https://<your-username>.github.io/toolbelt/
 ```
 
-3. On GitHub: **Settings → Pages → Build and deployment → Source: Deploy from a branch**, then pick branch `gh-pages` / folder `/ (root)` and save.
+**From then on**
 
-Your app goes live at `https://<your-username>.github.io/toolbelt/` (allow a minute on the first deploy). Re-run `npm run deploy` any time to publish changes.
+```bash
+git push        # builds and deploys automatically
+```
+
+Watch progress in the repo's **Actions** tab. You can also re-run a deploy by hand there via *Deploy to GitHub Pages → Run workflow*.
+
+> Commit your `package-lock.json` — the workflow uses `npm ci` for reproducible builds (it falls back to `npm install` if the lockfile is missing).
+
+**Optional: manual deploy**
+
+An `npm run deploy` script (via `gh-pages`) is also included if you ever want to publish from your machine instead. It pushes to a `gh-pages` branch, which requires switching the Pages source to that branch — so pick one approach or the other, not both.
 
 ## Getting started
 
