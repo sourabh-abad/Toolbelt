@@ -1,0 +1,116 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+}
+
+/* ---- Semantic theme tokens -------------------------------------------
+   Light is the default; .dark on <html> flips every value. Components use
+   the semantic classes below instead of hard-coded slate-* colors, so a
+   theme switch is one variable swap rather than hundreds of dark: pairs. */
+:root {
+  --bg: #f1f5f9;
+  --bg-elev: #ffffff;
+  --bg-input: #ffffff;
+  --bg-sunken: #f8fafc;
+  --bg-hover: #f1f5f9;
+  --sidebar: #ffffff;
+  --border: #e2e8f0;
+  --border-strong: #cbd5e1;
+  --text: #0f172a;
+  --text-muted: #64748b;
+  --text-faint: #94a3b8;
+  --shadow: 0 1px 3px rgb(15 23 42 / 0.08), 0 1px 2px rgb(15 23 42 / 0.04);
+  --tok-key: #0369a1;
+  --tok-str: #047857;
+  --tok-num: #b45309;
+  --tok-bool: #7c3aed;
+  --tok-null: #be123c;
+  --tok-comment: #94a3b8;
+  --tok-attr: #7c3aed;
+}
+
+.dark {
+  --bg: #020617;
+  --bg-elev: #0f172a;
+  --bg-input: #020617;
+  --bg-sunken: #0b1220;
+  --bg-hover: #1e293b;
+  --sidebar: #0f172a;
+  --border: #1e293b;
+  --border-strong: #334155;
+  --text: #f1f5f9;
+  --text-muted: #94a3b8;
+  --text-faint: #64748b;
+  --shadow: 0 4px 12px rgb(0 0 0 / 0.3);
+  --tok-key: #38bdf8;
+  --tok-str: #6ee7b7;
+  --tok-num: #fcd34d;
+  --tok-bool: #c4b5fd;
+  --tok-null: #fda4af;
+  --tok-comment: #64748b;
+  --tok-attr: #d8b4fe;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-feature-settings: "cv11", "ss01";
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+@layer components {
+  .app-bg { background-color: var(--bg); color: var(--text); }
+  .panel { background-color: var(--bg-elev); border-color: var(--border); box-shadow: var(--shadow); }
+  .sidebar-bg { background-color: var(--sidebar); }
+  .sunken { background-color: var(--bg-sunken); }
+  .field {
+    background-color: var(--bg-input);
+    border-color: var(--border);
+    color: var(--text);
+  }
+  .field::placeholder { color: var(--text-faint); }
+  .bd { border-color: var(--border); }
+  .bd-strong { border-color: var(--border-strong); }
+  .t-main { color: var(--text); }
+  .t-muted { color: var(--text-muted); }
+  .t-faint { color: var(--text-faint); }
+  .hover-surface:hover { background-color: var(--bg-hover); }
+
+  .tok-key { color: var(--tok-key); }
+  .tok-str { color: var(--tok-str); }
+  .tok-num { color: var(--tok-num); }
+  .tok-bool { color: var(--tok-bool); }
+  .tok-null { color: var(--tok-null); }
+  .tok-comment { color: var(--tok-comment); font-style: italic; }
+  .tok-attr { color: var(--tok-attr); }
+}
+
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 8px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text-faint); }
+
+.mono {
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+}
+
+@keyframes toast-in {
+  from { opacity: 0; transform: translateY(8px) scale(0.97); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+.animate-toast-in { animation: toast-in 0.18s ease-out; }
