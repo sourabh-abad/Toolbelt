@@ -12,7 +12,8 @@ import {
 import { useToast } from '../lib/toast'
 import { useDebounced } from '../lib/useDebounced'
 import SplitPane from '../components/SplitPane'
-import { Panel, Button, CopyButton, TextArea, Input, ErrorBanner, OutputBlock, PageHeader, Checkbox, Tabs } from '../components/ui'
+import CodeViewer from '../components/CodeViewer'
+import { Panel, Button, CopyButton, TextArea, Input, ErrorBanner, PageHeader, Checkbox, Tabs } from '../components/ui'
 
 const SAMPLE_JSON = `{
   "id": 42,
@@ -34,8 +35,9 @@ export default function JsonXmlTool() {
   const [mode, setMode] = useState('json')
   const [input, setInput] = useState(SAMPLE_JSON)
   const [error, setError] = useState('')
-  const [output, setOutput] = useState('')
-  const [outputRaw, setOutputRaw] = useState('')
+  // 'pretty' | 'minified' — the output pane derives from the input, so pasting
+  // formats immediately without touching a button.
+  const [view, setView] = useState('pretty')
   const [search, setSearch] = useState('')
   const [matchCase, setMatchCase] = useState(false)
   const [inKeys, setInKeys] = useState(true)
@@ -44,6 +46,32 @@ export default function JsonXmlTool() {
   // Searching re-walks the whole parsed document; debounce so a fast typist
   // does not trigger a walk per keystroke on a large payload.
   const debouncedSearch = useDebounced(search, 180)
+
+  // Formats as you paste or type. Invalid input leaves the last good output
+  // on screen rather than blanking the pane mid-keystroke.
+  const { outputRaw, formatError } = useMemo(() => {
+    if (!input.trim()) return { outputRaw: '', formatError: '' }
+    try {
+      if (mode === 'json') {
+        const parsed = JSON.parse(input)
+        return {
+          outputRaw: view === 'minified' ? JSON.stringify(parsed) : JSON.stringify(parsed, null, 2),
+          formatError: '',
+        }
+      }
+      parseXmlOrThrow(input)
+      return {
+        outputRaw: view === 'minified' ? input.replace(/>\s+</g, '><').trim() : formatXml(input.trim()),
+        formatError: '',
+      }
+    } catch (e) {
+      if (mode === 'json') {
+        const loc = jsonParseErrorLocation(input, e.message)
+        return { outputRaw: '', formatError: loc ? `${e.message} — line ${loc.line}, column ${loc.col}` : e.message }
+      }
+      return { outputRaw: '', formatError: e.message }
+    }
+  }, [input, mode, view])
 
   const parsedForSearch = useMemo(() => {
     setError('')
@@ -72,88 +100,32 @@ export default function JsonXmlTool() {
   }, [debouncedSearch, parsedForSearch, mode, matchCase, inKeys, inValues])
 
   function handleFormat() {
-    try {
-      if (mode === 'json') {
-        const pretty = JSON.stringify(JSON.parse(input), null, 2)
-        setOutputRaw(pretty)
-        setOutput(syntaxHighlightJson(pretty))
-      } else {
-        parseXmlOrThrow(input)
-        const pretty = formatXml(input.trim())
-        setOutputRaw(pretty)
-        setOutput(syntaxHighlightXml(pretty))
-      }
-      setError('')
-      toast(`${mode.toUpperCase()} formatted`)
-    } catch (e) {
-      setOutput('')
-      setOutputRaw('')
-      if (mode === 'json') {
-        const loc = jsonParseErrorLocation(input, e.message)
-        setError(loc ? `${e.message} — line ${loc.line}, column ${loc.col}` : e.message)
-      } else {
-        setError(e.message)
-      }
-      toast('Invalid input', 'error')
-    }
+    setView('pretty')
+    toast(formatError ? 'Invalid input' : `${mode.toUpperCase()} formatted`, formatError ? 'error' : 'success')
   }
 
   function handleMinify() {
-    try {
-      if (mode === 'json') {
-        const min = JSON.stringify(JSON.parse(input))
-        setOutputRaw(min)
-        setOutput(syntaxHighlightJson(min))
-      } else {
-        parseXmlOrThrow(input)
-        const min = input.replace(/>\s+</g, '><').trim()
-        setOutputRaw(min)
-        setOutput(syntaxHighlightXml(min))
-      }
-      setError('')
-      toast(`${mode.toUpperCase()} minified`)
-    } catch (e) {
-      setOutput('')
-      setOutputRaw('')
-      setError(e.message)
-      toast('Invalid input', 'error')
-    }
+    setView('minified')
+    toast(formatError ? 'Invalid input' : `${mode.toUpperCase()} minified`, formatError ? 'error' : 'success')
   }
 
   function handleValidate() {
-    try {
-      if (mode === 'json') {
-        JSON.parse(input)
-      } else {
-        parseXmlOrThrow(input)
-      }
-      setError('')
-      setOutputRaw('')
-      setOutput(`<span class="tok-str">✓ Valid ${mode.toUpperCase()}</span>`)
-      toast(`Valid ${mode.toUpperCase()}`)
-    } catch (e) {
-      setOutput('')
-      if (mode === 'json') {
-        const loc = jsonParseErrorLocation(input, e.message)
-        setError(loc ? `${e.message} — line ${loc.line}, column ${loc.col}` : e.message)
-      } else {
-        setError(e.message)
-      }
+    if (formatError) {
+      setError(formatError)
       toast(`Invalid ${mode.toUpperCase()}`, 'error')
+    } else {
+      setError('')
+      toast(`Valid ${mode.toUpperCase()}`)
     }
   }
 
   function loadSample() {
     setInput(mode === 'json' ? SAMPLE_JSON : SAMPLE_XML)
-    setOutput('')
-    setOutputRaw('')
     setError('')
   }
 
   function clearAll() {
     setInput('')
-    setOutput('')
-    setOutputRaw('')
     setError('')
   }
 
@@ -165,8 +137,6 @@ export default function JsonXmlTool() {
           value={mode}
           onChange={(m) => {
             setMode(m)
-            setOutput('')
-            setOutputRaw('')
             setError('')
           }}
           options={[{ value: 'json', label: 'JSON' }, { value: 'xml', label: 'XML' }]}
@@ -191,14 +161,18 @@ export default function JsonXmlTool() {
               <Button variant="subtle" onClick={handleValidate} type="button"><CheckCircle2 className="h-3.5 w-3.5" />Validate</Button>
             </div>
               <div className="mt-3">
-                <ErrorBanner>{error}</ErrorBanner>
+                <ErrorBanner>{error || formatError}</ErrorBanner>
               </div>
             </Panel>
           }
 
           right={
-            <Panel title="Output" actions={<CopyButton text={outputRaw} onCopied={() => toast('Copied to clipboard')} />}>
-              <OutputBlock html={output} />
+            <Panel
+              title="Output"
+              description={outputRaw ? `${outputRaw.split('\n').length} lines · formats as you paste` : undefined}
+              actions={<CopyButton text={outputRaw} onCopied={() => toast('Copied to clipboard')} />}
+            >
+              <CodeViewer code={outputRaw} language={mode} placeholder={`Paste ${mode.toUpperCase()} on the left — it formats here automatically.`} />
             </Panel>
           }
         />

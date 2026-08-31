@@ -3,7 +3,8 @@ import { FileCode2, Wand2 } from 'lucide-react'
 import { generate, LANGUAGES } from '../lib/codegen'
 import { useToast } from '../lib/toast'
 import SplitPane from '../components/SplitPane'
-import { Panel, Button, CopyButton, TextArea, Input, ErrorBanner, OutputBlock, PageHeader, Select } from '../components/ui'
+import { Panel, Button, CopyButton, TextArea, Input, ErrorBanner, PageHeader, Select } from '../components/ui'
+import CodeViewer from '../components/CodeViewer'
 
 const SAMPLE = `{
   "id": 1042,
@@ -95,7 +96,7 @@ export default function CodeGenTool() {
               title={LANGUAGES.find((l) => l.value === lang)?.label}
               actions={<CopyButton text={output} onCopied={() => toast('Copied to clipboard')} />}
             >
-              <OutputBlock text={output} placeholder="Generated models will appear here…" />
+              <CodeViewer code={output} placeholder="Generated models will appear here…" />
             </Panel>
           }
         />

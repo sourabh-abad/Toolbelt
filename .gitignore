@@ -36,3 +36,7 @@ Thumbs.db
 .env
 .env.*
 !.env.example
+
+# Drafts, not part of the app
+medium-post.md
+linkedin-post.md

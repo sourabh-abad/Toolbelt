@@ -2,10 +2,10 @@ import { useState } from 'react'
 import yaml from 'js-yaml'
 import { Shuffle, ArrowRight, Trash2 } from 'lucide-react'
 import { csvToObjects, objectsToCsv } from '../lib/csv'
-import { syntaxHighlightJson } from '../lib/utils'
 import { useToast } from '../lib/toast'
 import SplitPane from '../components/SplitPane'
-import { Panel, Button, CopyButton, TextArea, ErrorBanner, OutputBlock, PageHeader, Select } from '../components/ui'
+import { Panel, Button, CopyButton, TextArea, ErrorBanner, PageHeader, Select } from '../components/ui'
+import CodeViewer from '../components/CodeViewer'
 
 const SAMPLE = `{
   "service": "payments-api",
@@ -120,7 +120,7 @@ export default function ConvertTool() {
           }
           right={
             <Panel title={`Output · ${to.toUpperCase()}`} actions={<CopyButton text={output} onCopied={() => toast('Copied to clipboard')} />}>
-              <OutputBlock html={to === 'json' && output ? syntaxHighlightJson(output) : null} text={to !== 'json' ? output : null} />
+              <CodeViewer code={output} language={to === 'json' ? 'json' : 'none'} />
             </Panel>
           }
         />

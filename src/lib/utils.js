@@ -9,23 +9,37 @@ export function escapeHtml(str) {
     .replace(/'/g, '&#39;')
 }
 
-// Colorized JSON string -> HTML string (already-escaped, safe to inject).
+// Colorized JSON string -> HTML string (safe to inject).
+//
+// Tokenises the RAW text and escapes each piece as it is emitted. Escaping
+// first would turn every " into &quot;, so the string/key patterns below
+// would never match and only numbers would get coloured.
 export function syntaxHighlightJson(jsonString) {
-  const escaped = escapeHtml(jsonString)
-  return escaped.replace(
-    /("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false)\b|\bnull\b|-?\d+(?:\.\d+)?(?:[eE][+-]?\d+)?)/g,
-    (match) => {
-      let cls = 'tok-num'
-      if (/^&quot;/.test(match)) {
-        cls = /:$/.test(match) ? 'tok-key' : 'tok-str'
-      } else if (/true|false/.test(match)) {
-        cls = 'tok-bool'
-      } else if (/null/.test(match)) {
-        cls = 'tok-null'
-      }
-      return `<span class="${cls}">${match}</span>`
+  const TOKEN =
+    /("(?:\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"\s*:?|\b(?:true|false|null)\b|-?\d+(?:\.\d+)?(?:[eE][+-]?\d+)?)/g
+
+  let out = ''
+  let last = 0
+  let m
+
+  while ((m = TOKEN.exec(jsonString)) !== null) {
+    out += escapeHtml(jsonString.slice(last, m.index))
+
+    const token = m[0]
+    let cls = 'tok-num'
+    if (token.startsWith('"')) {
+      cls = token.trimEnd().endsWith(':') ? 'tok-key' : 'tok-str'
+    } else if (token === 'true' || token === 'false') {
+      cls = 'tok-bool'
+    } else if (token === 'null') {
+      cls = 'tok-null'
     }
-  )
+
+    out += `<span class="${cls}">${escapeHtml(token)}</span>`
+    last = m.index + token.length
+  }
+
+  return out + escapeHtml(jsonString.slice(last))
 }
 
 // Very small XML syntax highlighter (tags/attrs/comments).

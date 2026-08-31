@@ -221,3 +221,22 @@ main {
 textarea, pre {
   scrollbar-width: thin;
 }
+
+
+/* ---- Code viewer -------------------------------------------------------
+   Line-number gutter sticks while scrolling sideways; indent guides are a
+   single hairline per nesting level, matching the editor convention. */
+.code-row {
+  min-height: 1.5rem;
+}
+.code-row:hover {
+  background-color: color-mix(in srgb, var(--text) 4%, transparent);
+}
+.code-row .sticky {
+  background-color: var(--bg-sunken);
+}
+.indent-guide {
+  display: inline-block;
+  flex: none;
+  border-left: 1px solid color-mix(in srgb, var(--text) 14%, transparent);
+}

@@ -2,9 +2,9 @@ import { useState } from 'react'
 import { Boxes, RefreshCw } from 'lucide-react'
 import { FIELDS, generateRows, toSqlInserts } from '../lib/mock'
 import { objectsToCsv } from '../lib/csv'
-import { syntaxHighlightJson } from '../lib/utils'
 import { useToast } from '../lib/toast'
-import { Panel, Button, CopyButton, Input, OutputBlock, PageHeader, Tabs } from '../components/ui'
+import { Panel, Button, CopyButton, Input, PageHeader, Tabs } from '../components/ui'
+import CodeViewer from '../components/CodeViewer'
 
 const DEFAULT_KEYS = ['id', 'fullName', 'email', 'city', 'isActive', 'createdAt']
 
@@ -93,9 +93,9 @@ export default function MockDataTool() {
           title={`Output · ${format.toUpperCase()}`}
           actions={<CopyButton text={output} onCopied={() => toast('Copied to clipboard')} />}
         >
-          <OutputBlock
-            html={format === 'json' && output ? syntaxHighlightJson(output) : null}
-            text={format !== 'json' ? output : null}
+          <CodeViewer
+            code={output}
+            language={format === 'json' ? 'json' : 'none'}
             placeholder="Pick your fields and hit Generate…"
           />
         </Panel>

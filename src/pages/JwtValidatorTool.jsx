@@ -1,8 +1,9 @@
 import { useMemo, useState } from 'react'
 import { KeyRound, CheckCircle2, XCircle, AlertTriangle, Clock } from 'lucide-react'
-import { base64UrlDecode, syntaxHighlightJson } from '../lib/utils'
+import { base64UrlDecode } from '../lib/utils'
 import { useToast } from '../lib/toast'
 import { Panel, CopyButton, TextArea, ErrorBanner, OutputBlock, PageHeader, StatRow, Button } from '../components/ui'
+import CodeViewer from '../components/CodeViewer'
 
 const SAMPLE_JWT =
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkFkYSBMb3ZlbGFjZSIsImlhdCI6MTcwMDAwMDAwMCwiZXhwIjoxNzk5OTk5OTk5fQ.dQw4w9WgXcQ-dummySignature'
@@ -138,14 +139,14 @@ export default function JwtValidatorTool() {
               title="Header"
               actions={<CopyButton text={JSON.stringify(result.header, null, 2)} onCopied={() => toast('Header copied')} />}
             >
-              <OutputBlock html={syntaxHighlightJson(JSON.stringify(result.header, null, 2))} />
+              <CodeViewer code={JSON.stringify(result.header, null, 2)} language="json" maxHeight="260px" />
             </Panel>
 
             <Panel
               title="Payload"
               actions={<CopyButton text={JSON.stringify(result.payload, null, 2)} onCopied={() => toast('Payload copied')} />}
             >
-              <OutputBlock html={syntaxHighlightJson(JSON.stringify(result.payload, null, 2))} />
+              <CodeViewer code={JSON.stringify(result.payload, null, 2)} language="json" maxHeight="260px" />
               {Object.keys(DATE_CLAIMS).some((f) => result.payload?.[f]) && (
                 <div className="mt-3 space-y-1.5">
                   {Object.entries(DATE_CLAIMS)

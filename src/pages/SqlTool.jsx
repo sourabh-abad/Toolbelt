@@ -3,7 +3,8 @@ import { format } from 'sql-formatter'
 import { Database, Wand2, Minimize2, Trash2 } from 'lucide-react'
 import { useToast } from '../lib/toast'
 import SplitPane from '../components/SplitPane'
-import { Panel, Button, CopyButton, TextArea, ErrorBanner, OutputBlock, PageHeader, Select } from '../components/ui'
+import { Panel, Button, CopyButton, TextArea, ErrorBanner, PageHeader, Select } from '../components/ui'
+import CodeViewer from '../components/CodeViewer'
 
 const SAMPLE = `select u.id, u.email, count(o.id) as order_count, sum(o.total) as lifetime_value from users u left join orders o on o.user_id = u.id where u.created_at >= '2026-01-01' and u.status = 'active' group by u.id, u.email having count(o.id) > 3 order by lifetime_value desc limit 50;`
 
@@ -101,7 +102,7 @@ export default function SqlTool() {
           }
           right={
             <Panel title="Formatted" actions={<CopyButton text={output} onCopied={() => toast('Copied to clipboard')} />}>
-              <OutputBlock text={output} placeholder="Formatted SQL will appear here…" />
+              <CodeViewer code={output} placeholder="Formatted SQL will appear here…" />
             </Panel>
           }
         />
