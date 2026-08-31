@@ -10,6 +10,7 @@ import {
   searchXmlDoc,
 } from '../lib/utils'
 import { useToast } from '../lib/toast'
+import { useDebounced } from '../lib/useDebounced'
 import SplitPane from '../components/SplitPane'
 import { Panel, Button, CopyButton, TextArea, Input, ErrorBanner, OutputBlock, PageHeader, Checkbox, Tabs } from '../components/ui'
 
@@ -40,6 +41,9 @@ export default function JsonXmlTool() {
   const [inKeys, setInKeys] = useState(true)
   const [inValues, setInValues] = useState(true)
   const toast = useToast()
+  // Searching re-walks the whole parsed document; debounce so a fast typist
+  // does not trigger a walk per keystroke on a large payload.
+  const debouncedSearch = useDebounced(search, 180)
 
   const parsedForSearch = useMemo(() => {
     setError('')
@@ -55,17 +59,17 @@ export default function JsonXmlTool() {
   }, [input, mode])
 
   const searchResults = useMemo(() => {
-    if (!search || !parsedForSearch.ok) return []
+    if (!debouncedSearch || !parsedForSearch.ok) return []
     if (mode === 'json') {
-      return searchJsonValue(parsedForSearch.data, search, { matchCase, inKeys, inValues })
+      return searchJsonValue(parsedForSearch.data, debouncedSearch, { matchCase, inKeys, inValues })
     }
-    return searchXmlDoc(parsedForSearch.data, search, {
+    return searchXmlDoc(parsedForSearch.data, debouncedSearch, {
       matchCase,
       inTags: inKeys,
       inAttrs: inKeys,
       inText: inValues,
     })
-  }, [search, parsedForSearch, mode, matchCase, inKeys, inValues])
+  }, [debouncedSearch, parsedForSearch, mode, matchCase, inKeys, inValues])
 
   function handleFormat() {
     try {

@@ -42,7 +42,7 @@ export default function Home() {
                     <Link
                       key={to}
                       to={to}
-                      className={`panel group relative flex flex-col justify-between overflow-hidden rounded-2xl border p-5 transition-all hover:-translate-y-0.5 hover:shadow-xl ${a.glow}`}
+                      className={`panel will-lift group relative flex flex-col justify-between overflow-hidden rounded-2xl border p-5 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-xl ${a.glow}`}
                     >
                       <div
                         className={`pointer-events-none absolute -top-8 -right-8 h-28 w-28 rounded-full bg-gradient-to-br ${a.grad} opacity-0 blur-2xl transition-opacity duration-300 group-hover:opacity-25`}

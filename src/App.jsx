@@ -15,18 +15,43 @@ import Home from './pages/Home'
 
 // Route-level code splitting: heavy tools (sql-formatter, js-yaml, cronstrue)
 // load on demand instead of inflating the initial bundle.
-const JsonXmlTool = lazy(() => import('./pages/JsonXmlTool'))
-const EncodeDecodeTool = lazy(() => import('./pages/EncodeDecodeTool'))
-const DiffTool = lazy(() => import('./pages/DiffTool'))
-const TimestampTool = lazy(() => import('./pages/TimestampTool'))
-const JwtColorTool = lazy(() => import('./pages/JwtColorTool'))
-const ConvertTool = lazy(() => import('./pages/ConvertTool'))
-const CodeGenTool = lazy(() => import('./pages/CodeGenTool'))
-const SqlTool = lazy(() => import('./pages/SqlTool'))
-const CronTool = lazy(() => import('./pages/CronTool'))
-const HttpRefTool = lazy(() => import('./pages/HttpRefTool'))
-const MockDataTool = lazy(() => import('./pages/MockDataTool'))
-const About = lazy(() => import('./pages/About'))
+// One loader per route: `lazy` uses it for rendering, and hovering a nav link
+// calls the same function to warm the chunk before the click lands.
+const LOADERS = {
+  '/json-xml': () => import('./pages/JsonXmlTool'),
+  '/convert': () => import('./pages/ConvertTool'),
+  '/codegen': () => import('./pages/CodeGenTool'),
+  '/sql': () => import('./pages/SqlTool'),
+  '/diff': () => import('./pages/DiffTool'),
+  '/encode-decode': () => import('./pages/EncodeDecodeTool'),
+  '/jwt-color': () => import('./pages/JwtColorTool'),
+  '/timestamp': () => import('./pages/TimestampTool'),
+  '/cron': () => import('./pages/CronTool'),
+  '/http': () => import('./pages/HttpRefTool'),
+  '/mock': () => import('./pages/MockDataTool'),
+  '/about': () => import('./pages/About'),
+}
+
+const prefetched = new Set()
+const prefetch = (path) => {
+  if (prefetched.has(path) || !LOADERS[path]) return
+  prefetched.add(path)
+  LOADERS[path]()
+}
+
+const JsonXmlTool = lazy(LOADERS['/json-xml'])
+const EncodeDecodeTool = lazy(LOADERS['/encode-decode'])
+const DiffTool = lazy(LOADERS['/diff'])
+const TimestampTool = lazy(LOADERS['/timestamp'])
+const JwtColorTool = lazy(LOADERS['/jwt-color'])
+const ConvertTool = lazy(LOADERS['/convert'])
+const CodeGenTool = lazy(LOADERS['/codegen'])
+const SqlTool = lazy(LOADERS['/sql'])
+const CronTool = lazy(LOADERS['/cron'])
+const HttpRefTool = lazy(LOADERS['/http'])
+const MockDataTool = lazy(LOADERS['/mock'])
+const About = lazy(LOADERS['/about'])
+const NotFound = lazy(() => import('./pages/NotFound'))
 
 function RouteFallback() {
   return (
@@ -45,6 +70,8 @@ function NavRow({ item, collapsed, onNavigate }) {
       to={to}
       end={end}
       onClick={onNavigate}
+      onMouseEnter={() => prefetch(to)}
+      onFocus={() => prefetch(to)}
       title={collapsed ? label : undefined}
       className={({ isActive }) =>
         `group flex items-center gap-3 rounded-xl border px-2.5 py-2 text-sm font-medium transition-all duration-150 ${
@@ -82,6 +109,12 @@ export default function App() {
   const { theme, toggle } = useTheme()
   const location = useLocation()
   useSeo()
+
+  // Without this the new page inherits the previous page's scroll offset,
+  // which reads as a broken jump rather than a navigation.
+  useEffect(() => {
+    document.getElementById('main')?.scrollTo({ top: 0, behavior: 'instant' })
+  }, [location.pathname])
 
   useEffect(() => {
     pushRecent(location.pathname)
@@ -306,6 +339,7 @@ export default function App() {
                 <Route path="/http" element={<HttpRefTool />} />
                 <Route path="/mock" element={<MockDataTool />} />
                 <Route path="/about" element={<About />} />
+                <Route path="*" element={<NotFound />} />
               </Routes>
               <SeoFooter />
             </div>

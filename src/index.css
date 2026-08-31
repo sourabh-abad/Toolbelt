@@ -1,10 +1,11 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 @import "tailwindcss";
 
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
-  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  /* System stack first so text paints before Inter arrives. */
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+    ui-sans-serif, system-ui, sans-serif;
 }
 
 /* ---- Semantic theme tokens -------------------------------------------
@@ -194,4 +195,29 @@ body {
 /* Comfortable tap targets on touch devices. */
 @media (hover: none) and (pointer: coarse) {
   button, a, select, [role="button"] { min-height: 40px; }
+}
+
+
+/* ---- Rendering performance -------------------------------------------
+   Long reference lists (HTTP status codes, generated rows) only paint the
+   cards near the viewport. Cuts style/layout cost on the heaviest pages. */
+.defer-paint {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 120px;
+}
+
+/* Promote panels that animate so transforms run on the compositor. */
+.will-lift {
+  will-change: transform;
+}
+
+/* Momentum scrolling without the jank of scroll-behavior on route changes. */
+main {
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+}
+
+/* Inputs and textareas keep their own smooth scroll. */
+textarea, pre {
+  scrollbar-width: thin;
 }

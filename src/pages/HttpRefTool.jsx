@@ -37,7 +37,7 @@ export default function HttpRefTool() {
         {tab === 'status' && (
           <div className="grid grid-cols-1 gap-2 md:grid-cols-2 xl:grid-cols-3">
             {statuses.map((s) => (
-              <div key={s.code} className="panel rounded-xl border p-3.5">
+              <div key={s.code} className="panel defer-paint rounded-xl border p-3.5">
                 <div className="flex items-center gap-2">
                   <span className={`mono rounded-md border px-2 py-0.5 text-sm font-bold ${CATEGORY_STYLES[s.category]}`}>{s.code}</span>
                   <span className="t-main text-sm font-semibold">{s.name}</span>
@@ -52,7 +52,7 @@ export default function HttpRefTool() {
         {tab === 'methods' && (
           <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
             {methods.map((m) => (
-              <div key={m.name} className="panel rounded-xl border p-3.5">
+              <div key={m.name} className="panel defer-paint rounded-xl border p-3.5">
                 <div className="flex flex-wrap items-center gap-2">
                   <span className="mono rounded-md border border-blue-500/30 bg-blue-500/10 px-2 py-0.5 text-sm font-bold text-blue-500">{m.name}</span>
                   {m.safe && <Badge tone="emerald">safe</Badge>}

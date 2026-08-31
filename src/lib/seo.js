@@ -8,7 +8,7 @@ export const SEO = {
   '/': {
     title: 'DevPocket — Free Developer Tools That Run In Your Browser',
     description:
-      'Free online developer tools: JSON & XML formatter, SQL beautifier, JWT decoder, cron builder, diff checker, UUID and mock data generators. No uploads, no sign-up.',
+      'Free developer tools: JSON & XML formatter, SQL beautifier, JWT decoder, cron builder, diff checker and mock data generator. No uploads, no sign-up.',
     heading: 'Free developer utilities',
     blurb:
       'DevPocket is a collection of 11 everyday developer tools that run entirely in your browser. Nothing you paste is uploaded to a server, so you can safely work with production payloads, tokens and customer data.',
@@ -32,7 +32,7 @@ export const SEO = {
   '/codegen': {
     title: 'JSON to TypeScript, Go, Java, Python & C# Model Generator — DevPocket',
     description:
-      'Paste a JSON response and generate typed models: TypeScript interfaces, Go structs, Java POJOs, Python dataclasses or C# classes. Handles nested objects and arrays.',
+      'Paste a JSON response and generate typed models: TypeScript interfaces, Go structs, Java POJOs, Python dataclasses or C# classes. Nested types included.',
     heading: 'Generate typed models from JSON',
     blurb:
       'Turn an API response into the model classes for your service layer. Nested objects become their own types, arrays are typed by their first element, and ISO date strings are recognised as date types. Field names are converted to each language’s conventions with the original JSON key preserved in serialisation tags.',
@@ -72,7 +72,7 @@ export const SEO = {
   '/timestamp': {
     title: 'Unix Timestamp Converter (IST, SAST, UTC), UUID & Regex Tester — DevPocket',
     description:
-      'Convert Unix timestamps to dates across India (IST), South Africa (SAST), UTC and local time. Plus a UUID v4 generator and a live regex tester with match groups.',
+      'Convert Unix timestamps to dates across India (IST), South Africa (SAST), UTC and local time. Plus a UUID v4 generator and live regex tester.',
     heading: 'Timestamps, UUIDs and regular expressions',
     blurb:
       'Convert a Unix timestamp in seconds or milliseconds into a readable date in every timezone at once — local, India (IST), South Africa (SAST) and UTC — or go the other way from a date to an epoch. Live clocks show the same instant across all four zones. Also generates UUID v4 identifiers in bulk and tests regular expressions with live match indexes and capture groups.',
@@ -104,7 +104,7 @@ export const SEO = {
   '/about': {
     title: 'About DevPocket — Built by Sourabh Kumar',
     description:
-      'DevPocket is a local-first developer toolbox built by Sourabh Kumar, a backend developer. No trackers, no ads, no sign-up, and nothing you paste ever leaves your browser.',
+      'DevPocket is a local-first developer toolbox built by Sourabh Kumar, a backend developer. No trackers, no ads, and nothing you paste leaves your browser.',
     heading: 'About DevPocket',
     blurb:
       'DevPocket was built to replace a pile of browser tabs pointed at ad-heavy formatter sites. Every tool runs as JavaScript in your own browser, so there is no server to send your data to in the first place.',
