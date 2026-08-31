@@ -12,7 +12,9 @@ them slow, ad-heavy, or quietly uploading whatever you paste. So this one runs e
 your browser. No backend, no analytics, no network calls. Your data never leaves the tab.`,
   location: 'India',
   // Served from public/ — WebP with a JPEG fallback for older browsers.
-  avatar: { webp: './sourabh.webp', jpg: './sourabh.jpg' },
+  // Root-absolute: a relative path would resolve against the current route
+  // (/cron/sourabh.webp) and 404 on every page except the homepage.
+  avatar: { webp: '/sourabh.webp', jpg: '/sourabh.jpg' },
   links: [
     { id: 'linkedin', label: 'LinkedIn', handle: 'Sourabh Kumar', url: 'https://www.linkedin.com/in/sourabh-kumar-12859374/' },
     { id: 'medium', label: 'Medium', handle: '@sourabhh', url: 'https://medium.com/@sourabhh' },

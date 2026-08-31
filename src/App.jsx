@@ -11,6 +11,7 @@ import { useSeo } from './lib/useSeo'
 import SeoFooter from './components/SeoFooter'
 import CommandPalette from './components/CommandPalette'
 import Logo from './components/Logo'
+import Avatar from './components/Avatar'
 import Home from './pages/Home'
 
 // Route-level code splitting: heavy tools (sql-formatter, js-yaml, cronstrue)
@@ -243,17 +244,7 @@ export default function App() {
             to="/about"
             className="t-faint hover:t-main ml-auto flex items-center gap-1.5 text-[10px] transition-colors"
           >
-            <picture>
-              <source srcSet={PROFILE.avatar.webp} type="image/webp" />
-              <img
-                src={PROFILE.avatar.jpg}
-                alt=""
-                width="18"
-                height="18"
-                loading="lazy"
-                className="h-[18px] w-[18px] rounded-full object-cover"
-              />
-            </picture>
+            <Avatar size={18} rounded="rounded-full" decorative />
             by {PROFILE.name.split(' ')[0]}
           </Link>
         )}
