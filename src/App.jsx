@@ -7,6 +7,8 @@ import {
 import { navItems, NAV_GROUPS, ACCENTS, pushRecent, getRecent } from './lib/nav'
 import { PROFILE } from './lib/profile'
 import { useTheme } from './lib/theme'
+import { useSeo } from './lib/useSeo'
+import SeoFooter from './components/SeoFooter'
 import CommandPalette from './components/CommandPalette'
 import Home from './pages/Home'
 
@@ -78,6 +80,7 @@ export default function App() {
   const [recent, setRecent] = useState([])
   const { theme, toggle } = useTheme()
   const location = useLocation()
+  useSeo()
 
   useEffect(() => {
     pushRecent(location.pathname)
@@ -310,6 +313,7 @@ export default function App() {
                 <Route path="/mock" element={<MockDataTool />} />
                 <Route path="/about" element={<About />} />
               </Routes>
+              <SeoFooter />
             </div>
           </Suspense>
         </main>

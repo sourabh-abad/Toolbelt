@@ -2,9 +2,9 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 
-// Relative base so the built app can be hosted from any path
-// (GitHub Pages project sites, a static bucket subpath, etc.)
+// Absolute base: routes like /cron are real paths, so assets must resolve
+// from the site root rather than relative to the current directory.
 export default defineConfig({
   plugins: [react(), tailwindcss()],
-  base: './',
+  base: '/',
 })
