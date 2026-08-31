@@ -12,6 +12,18 @@ import {
   Globe,
   Shuffle,
   Palette,
+  ArrowUpDown,
+  Layers,
+  Boxes as BoxesIcon,
+  Code,
+  Eraser,
+  GitMerge,
+  ListTree,
+  BarChart3,
+  Waypoints,
+  FileJson,
+  Fingerprint,
+  Type,
 } from 'lucide-react'
 
 export const navItems = [
@@ -22,6 +34,19 @@ export const navItems = [
   { to: '/convert', label: 'JSON ⇄ YAML ⇄ CSV', icon: Shuffle, group: 'Data', accent: 'teal', description: 'Convert between config & data formats' },
   { to: '/codegen', label: 'JSON → Code', icon: FileCode2, group: 'Data', accent: 'indigo', description: 'Generate typed models from a JSON payload' },
   { to: '/sql', label: 'SQL Formatter', icon: Database, group: 'Data', accent: 'orange', description: 'Pretty-print & minify SQL across dialects' },
+
+  // --- JSON toolkit: one route per task so each ranks for its own query
+  { to: '/json-sort-keys', label: 'JSON Sort Keys', icon: ArrowUpDown, group: 'JSON Toolkit', accent: 'sky', description: 'Alphabetise keys at every level' },
+  { to: '/json-flatten', label: 'JSON Flattener', icon: Layers, group: 'JSON Toolkit', accent: 'teal', description: 'Collapse nesting into dot-notation keys' },
+  { to: '/json-unflatten', label: 'JSON Unflattener', icon: BoxesIcon, group: 'JSON Toolkit', accent: 'teal', description: 'Rebuild nesting from dot-notation keys' },
+  { to: '/json-escape', label: 'JSON Escape', icon: Code, group: 'JSON Toolkit', accent: 'violet', description: 'Escape or unescape a JSON string literal' },
+  { to: '/json-remove-nulls', label: 'Remove Nulls', icon: Eraser, group: 'JSON Toolkit', accent: 'amber', description: 'Strip every null value' },
+  { to: '/json-remove-empty', label: 'Remove Empty Values', icon: Eraser, group: 'JSON Toolkit', accent: 'rose', description: 'Strip nulls, "", [] and {}' },
+  { to: '/json-merge', label: 'JSON Merge', icon: GitMerge, group: 'JSON Toolkit', accent: 'lime', description: 'Deep-merge two documents' },
+  { to: '/json-tree', label: 'JSON Tree Viewer', icon: ListTree, group: 'JSON Toolkit', accent: 'cyan', description: 'Explore a payload as a collapsible tree' },
+  { to: '/json-stats', label: 'JSON Statistics', icon: BarChart3, group: 'JSON Toolkit', accent: 'fuchsia', description: 'Node counts, depth and type breakdown' },
+  { to: '/jsonpath', label: 'JSONPath Evaluator', icon: Waypoints, group: 'JSON Toolkit', accent: 'indigo', description: 'Query with $.path expressions' },
+  { to: '/json-schema', label: 'JSON Schema Generator', icon: FileJson, group: 'JSON Toolkit', accent: 'orange', description: 'Infer a schema from a sample payload' },
 
   // --- Text & compare
   { to: '/diff', label: 'Diff Checker', icon: GitCompare, group: 'Text', accent: 'amber', description: 'Compare two blocks of text' },
@@ -36,9 +61,18 @@ export const navItems = [
   // --- Reference
   { to: '/http', label: 'HTTP Reference', icon: Globe, group: 'Reference', accent: 'blue', description: 'Status codes, methods & headers' },
   { to: '/mock', label: 'Mock Data', icon: Boxes, group: 'Reference', accent: 'fuchsia', description: 'Generate fake records as JSON, CSV or SQL' },
+
+  // --- Generators
+  { to: '/uuid', label: 'UUID & Nano ID', icon: Fingerprint, group: 'Generators', accent: 'violet', description: 'Bulk UUID v4 and Nano ID generation' },
+  { to: '/password', label: 'Password Generator', icon: KeyRound, group: 'Generators', accent: 'rose', description: 'Cryptographically random passwords' },
+  { to: '/lorem', label: 'Lorem Ipsum', icon: Type, group: 'Generators', accent: 'amber', description: 'Placeholder copy by word, sentence or paragraph' },
 ]
 
-export const NAV_GROUPS = ['Data', 'Text', 'Time', 'Reference']
+export const NAV_GROUPS = ['Data', 'JSON Toolkit', 'Text', 'Time', 'Generators', 'Reference']
+
+// Groups that start collapsed — the JSON toolkit is long and most visits are
+// to one specific tool rather than a browse.
+export const COLLAPSED_BY_DEFAULT = ['JSON Toolkit', 'Generators']
 
 // Full literal class strings, one block per accent, so Tailwind's static
 // scanner can see every class name (dynamic interpolation is not scanned).

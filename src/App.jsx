@@ -2,9 +2,9 @@ import { useEffect, useState, lazy, Suspense } from 'react'
 import { Routes, Route, NavLink, useLocation, Link, Navigate } from 'react-router-dom'
 import {
   Search, Command, Sun, Moon, PanelLeftClose, PanelLeftOpen,
-  History, Loader2, Menu, X, Heart,
+  History, Loader2, Menu, X, Heart, ChevronDown,
 } from 'lucide-react'
-import { navItems, NAV_GROUPS, ACCENTS, pushRecent, getRecent } from './lib/nav'
+import { navItems, NAV_GROUPS, COLLAPSED_BY_DEFAULT, ACCENTS, pushRecent, getRecent } from './lib/nav'
 import { PROFILE } from './lib/profile'
 import { useTheme } from './lib/theme'
 import { useSeo } from './lib/useSeo'
@@ -32,6 +32,20 @@ const LOADERS = {
   '/http': () => import('./pages/HttpRefTool'),
   '/mock': () => import('./pages/MockDataTool'),
   '/about': () => import('./pages/About'),
+  '/json-sort-keys': () => import('./pages/JsonSortKeys'),
+  '/json-flatten': () => import('./pages/JsonFlatten'),
+  '/json-unflatten': () => import('./pages/JsonUnflatten'),
+  '/json-escape': () => import('./pages/JsonEscape'),
+  '/json-remove-nulls': () => import('./pages/JsonClean'),
+  '/json-remove-empty': () => import('./pages/JsonClean'),
+  '/json-merge': () => import('./pages/JsonMerge'),
+  '/json-tree': () => import('./pages/JsonTreeTool'),
+  '/json-stats': () => import('./pages/JsonStats'),
+  '/jsonpath': () => import('./pages/JsonPathTool'),
+  '/json-schema': () => import('./pages/JsonSchemaTool'),
+  '/uuid': () => import('./pages/IdGeneratorTool'),
+  '/password': () => import('./pages/PasswordTool'),
+  '/lorem': () => import('./pages/LoremTool'),
 }
 
 const prefetched = new Set()
@@ -54,6 +68,19 @@ const CronTool = lazy(LOADERS['/cron'])
 const HttpRefTool = lazy(LOADERS['/http'])
 const MockDataTool = lazy(LOADERS['/mock'])
 const About = lazy(LOADERS['/about'])
+const JsonSortKeys = lazy(LOADERS['/json-sort-keys'])
+const JsonFlatten = lazy(LOADERS['/json-flatten'])
+const JsonUnflatten = lazy(LOADERS['/json-unflatten'])
+const JsonEscape = lazy(LOADERS['/json-escape'])
+const JsonClean = lazy(LOADERS['/json-remove-nulls'])
+const JsonMerge = lazy(LOADERS['/json-merge'])
+const JsonTreeTool = lazy(LOADERS['/json-tree'])
+const JsonStats = lazy(LOADERS['/json-stats'])
+const JsonPathTool = lazy(LOADERS['/jsonpath'])
+const JsonSchemaTool = lazy(LOADERS['/json-schema'])
+const IdGeneratorTool = lazy(LOADERS['/uuid'])
+const PasswordTool = lazy(LOADERS['/password'])
+const LoremTool = lazy(LOADERS['/lorem'])
 const NotFound = lazy(() => import('./pages/NotFound'))
 
 function RouteFallback() {
@@ -109,6 +136,27 @@ export default function App() {
     }
   })
   const [recent, setRecent] = useState([])
+  // Long groups start collapsed so the sidebar stays scannable with 27 tools.
+  const [openGroups, setOpenGroups] = useState(() => {
+    try {
+      const saved = JSON.parse(localStorage.getItem('devpocket-groups') || 'null')
+      if (saved) return saved
+    } catch {
+      // ignore
+    }
+    return Object.fromEntries(NAV_GROUPS.map((g) => [g, !COLLAPSED_BY_DEFAULT.includes(g)]))
+  })
+
+  const toggleGroup = (group) =>
+    setOpenGroups((prev) => {
+      const next = { ...prev, [group]: !prev[group] }
+      try {
+        localStorage.setItem('devpocket-groups', JSON.stringify(next))
+      } catch {
+        // ignore
+      }
+      return next
+    })
   const { theme, toggle } = useTheme()
   const location = useLocation()
   useSeo()
@@ -206,17 +254,36 @@ export default function App() {
           </div>
         )}
 
-        {NAV_GROUPS.map((group) => (
-          <div key={group} className="pt-3">
-            {!collapsed && <div className="t-faint mb-1 px-2.5 text-[10px] font-semibold tracking-wider uppercase">{group}</div>}
-            {collapsed && <div className="bd my-2 border-t" aria-hidden="true" />}
-            <div className="space-y-1">
-              {navItems.filter((n) => n.group === group).map((item) => (
-                <NavRow key={item.to} item={item} collapsed={collapsed} />
-              ))}
+        {NAV_GROUPS.map((group) => {
+          const items = navItems.filter((n) => n.group === group)
+          const isOpen = collapsed || openGroups[group]
+          const hasActive = items.some((i) => i.to === location.pathname)
+          return (
+            <div key={group} className="pt-3">
+              {!collapsed && (
+                <button
+                  type="button"
+                  onClick={() => toggleGroup(group)}
+                  aria-expanded={isOpen}
+                  className="t-faint hover:t-muted mb-1 flex w-full items-center gap-1 px-2.5 text-[10px] font-semibold tracking-wider uppercase transition-colors"
+                >
+                  <ChevronDown className={`h-3 w-3 transition-transform ${isOpen ? '' : '-rotate-90'}`} aria-hidden="true" />
+                  {group}
+                  <span className="ml-auto normal-case opacity-70">{items.length}</span>
+                  {!isOpen && hasActive && <span className="ml-1 h-1.5 w-1.5 rounded-full bg-emerald-500" aria-hidden="true" />}
+                </button>
+              )}
+              {collapsed && <div className="bd my-2 border-t" aria-hidden="true" />}
+              {isOpen && (
+                <div className="space-y-1">
+                  {items.map((item) => (
+                    <NavRow key={item.to} item={item} collapsed={collapsed} />
+                  ))}
+                </div>
+              )}
             </div>
-          </div>
-        ))}
+          )
+        })}
 
         <div className="pt-3">
           {!collapsed && <div className="t-faint mb-1 px-2.5 text-[10px] font-semibold tracking-wider uppercase">Project</div>}
@@ -335,6 +402,21 @@ export default function App() {
                 <Route path="/http" element={<HttpRefTool />} />
                 <Route path="/mock" element={<MockDataTool />} />
                 <Route path="/about" element={<About />} />
+
+                <Route path="/json-sort-keys" element={<JsonSortKeys />} />
+                <Route path="/json-flatten" element={<JsonFlatten />} />
+                <Route path="/json-unflatten" element={<JsonUnflatten />} />
+                <Route path="/json-escape" element={<JsonEscape />} />
+                <Route path="/json-remove-nulls" element={<JsonClean />} />
+                <Route path="/json-remove-empty" element={<JsonClean />} />
+                <Route path="/json-merge" element={<JsonMerge />} />
+                <Route path="/json-tree" element={<JsonTreeTool />} />
+                <Route path="/json-stats" element={<JsonStats />} />
+                <Route path="/jsonpath" element={<JsonPathTool />} />
+                <Route path="/json-schema" element={<JsonSchemaTool />} />
+                <Route path="/uuid" element={<IdGeneratorTool />} />
+                <Route path="/password" element={<PasswordTool />} />
+                <Route path="/lorem" element={<LoremTool />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
               <SeoFooter />

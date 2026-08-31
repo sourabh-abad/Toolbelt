@@ -109,6 +109,118 @@ export const SEO = {
     blurb:
       'Build up to 500 realistic records from 21 field types including names, emails, phone numbers, addresses, prices, timestamps and IP addresses. Export as JSON to stub an API response, CSV to import into a spreadsheet, or ready-to-run SQL INSERT statements to seed a development database.',
   },
+  '/json-sort-keys': {
+    title: 'JSON Sort Keys Online — Alphabetise Object Keys — DevPocket',
+    description:
+      'Sort JSON object keys alphabetically at every nesting level, ascending or descending. Array order is preserved. Free, runs entirely in your browser.',
+    heading: 'Sort JSON keys alphabetically',
+    blurb:
+      'Reorders every object key alphabetically, recursively, so two payloads with the same data but different key order become directly comparable in a diff. Array order is left alone, because in an array the order is the data.',
+  },
+  '/json-flatten': {
+    title: 'JSON Flattener — Convert Nested JSON to Dot Notation — DevPocket',
+    description:
+      'Flatten nested JSON into single-level dot-notation keys like a.b[0].c. Useful for config files, feature flags and spreadsheet exports. Free and offline.',
+    heading: 'Flatten nested JSON',
+    blurb:
+      'Collapses a nested document into one level of dot-notation keys, with array positions kept as [index]. Handy for turning a config tree into environment-variable style keys, or for diffing two deeply nested structures line by line.',
+  },
+  '/json-unflatten': {
+    title: 'JSON Unflattener — Dot Notation Back to Nested JSON — DevPocket',
+    description:
+      'Rebuild nested JSON objects and arrays from flat dot-notation keys such as user.address.city. The exact inverse of flattening. Free, browser-based.',
+    heading: 'Rebuild nested JSON from flat keys',
+    blurb:
+      'Takes flat keys like user.address.city or tags[0] and reconstructs the object and array structure they describe. It is the exact inverse of the flattener, so a flatten followed by an unflatten returns the original document.',
+  },
+  '/json-escape': {
+    title: 'JSON Escape & Unescape Online — String Literal Tool — DevPocket',
+    description:
+      'Escape text into a JSON string literal, or unescape one back to readable text. Handles quotes, backslashes, newlines and unicode. Free and private.',
+    heading: 'Escape and unescape JSON strings',
+    blurb:
+      'Turns raw text into the escaped form you can paste inside a JSON string — quotes, backslashes, newlines and control characters all handled — and reverses it when you need to read an escaped blob out of a log line.',
+  },
+  '/json-remove-nulls': {
+    title: 'Remove Nulls from JSON Online — Free Cleaner — DevPocket',
+    description:
+      'Strip every null value and null array entry from a JSON document, at any nesting depth. Free, instant, and nothing you paste is ever uploaded.',
+    heading: 'Remove null values from JSON',
+    blurb:
+      'Deletes keys whose value is null and drops null entries from arrays, recursively. Useful before sending a payload to an API that rejects explicit nulls, or when trimming a response down to the fields that actually carry data.',
+  },
+  '/json-remove-empty': {
+    title: 'Remove Empty Values from JSON — Nulls, Blanks, [] and {} — DevPocket',
+    description:
+      'Strip nulls, empty strings, empty arrays and empty objects from JSON at every level. More aggressive than a null-only clean. Free and browser-based.',
+    heading: 'Remove empty values from JSON',
+    blurb:
+      'Goes further than removing nulls: empty strings, empty arrays and empty objects are dropped too, and the cleanup runs bottom-up so a branch that becomes empty after its children are removed also disappears.',
+  },
+  '/json-merge': {
+    title: 'JSON Merge Online — Deep Merge Two Documents — DevPocket',
+    description:
+      'Merge two JSON documents with a deep or shallow strategy. Nested objects combine recursively; the second document wins on conflicts. Free and private.',
+    heading: 'Merge two JSON documents',
+    blurb:
+      'Combines a base document with an overriding one. Deep merge walks nested objects and merges them key by key; shallow merge only touches the top level. Arrays are replaced rather than concatenated, which matches how config overrides usually behave.',
+  },
+  '/json-tree': {
+    title: 'JSON Tree Viewer Online — Explore Nested JSON — DevPocket',
+    description:
+      'View any JSON payload as a collapsible tree with typed, colour-coded values. Far easier than scrolling a large raw response. Free, no upload.',
+    heading: 'Browse JSON as a tree',
+    blurb:
+      'Renders a payload as an expandable tree, with each branch showing how many children it holds and every leaf colour-coded by type. Collapse the parts you do not care about to find the one field you do.',
+  },
+  '/json-stats': {
+    title: 'JSON Statistics — Node Count, Depth & Type Analysis — DevPocket',
+    description:
+      'Analyse a JSON payload: total nodes, maximum nesting depth, unique key count, size in bytes and a breakdown by type. Free and runs in your browser.',
+    heading: 'Analyse a JSON payload',
+    blurb:
+      'Counts objects, arrays, strings, numbers, booleans and nulls, reports the deepest nesting level and the total number of distinct key names, and lists them. A quick way to size up an unfamiliar API response before writing code against it.',
+  },
+  '/jsonpath': {
+    title: 'JSONPath Evaluator Online — Test $.path Expressions — DevPocket',
+    description:
+      'Run JSONPath expressions against a document and see the matches instantly. Supports dot paths, array indexes, wildcards and recursive descent. Free.',
+    heading: 'Evaluate JSONPath expressions',
+    blurb:
+      'Test a JSONPath expression against a real document and see every match as you type. Supports dot notation, array indexes, [*] wildcards and .. recursive descent — enough for the lookups that come up when writing an extraction rule or a config selector.',
+  },
+  '/json-schema': {
+    title: 'JSON Schema Generator — Infer a Schema from JSON — DevPocket',
+    description:
+      'Generate a draft 2020-12 JSON Schema from a sample payload, with types, required fields and detected date-time and email formats. Free and offline.',
+    heading: 'Generate a JSON Schema from a sample',
+    blurb:
+      'Infers a draft 2020-12 schema from an example document: object properties with their types, required field lists, array item types, and format hints where a string looks like an ISO date-time or an email address. A starting point to refine rather than a finished contract.',
+  },
+  '/uuid': {
+    title: 'UUID Generator & Nano ID Generator Online — Bulk — DevPocket',
+    description:
+      'Generate UUID v4 or Nano IDs in bulk, up to 100 at a time, with uppercase and hyphen options. Uses the browser crypto source. Free, no sign-up.',
+    heading: 'Generate UUIDs and Nano IDs',
+    blurb:
+      'Produces UUID v4 identifiers via the browser’s crypto.randomUUID, or shorter URL-friendly Nano IDs at whatever length you need. Generate up to a hundred at once and copy them individually or as a block.',
+  },
+  '/password': {
+    title: 'Password Generator — Strong Random Passwords Online — DevPocket',
+    description:
+      'Generate strong random passwords with configurable length and character sets, plus an entropy estimate. Uses browser crypto and never transmits them.',
+    heading: 'Generate strong passwords',
+    blurb:
+      'Builds passwords from the character sets you choose using the browser’s cryptographic random source rather than Math.random, and reports the resulting entropy in bits so you can judge the strength rather than guess it. Look-alike characters can be excluded for passwords that get typed by hand. Nothing generated here is ever transmitted.',
+  },
+  '/lorem': {
+    title: 'Lorem Ipsum Generator — Words, Sentences, Paragraphs — DevPocket',
+    description:
+      'Generate placeholder Lorem Ipsum text by word, sentence or paragraph count, with the classic opening line optional. Free and instant.',
+    heading: 'Generate placeholder text',
+    blurb:
+      'Produces filler copy in whatever quantity a layout needs — a handful of words for a label, a few sentences for a card, or several paragraphs for an article mock-up — with the traditional "Lorem ipsum dolor sit amet" opening available as a toggle.',
+  },
   '/about': {
     title: 'About DevPocket — Built by Sourabh Kumar',
     description:
