@@ -120,7 +120,7 @@ export default function ConvertTool() {
           }
           right={
             <Panel title={`Output · ${to.toUpperCase()}`} actions={<CopyButton text={output} onCopied={() => toast('Copied to clipboard')} />}>
-              <CodeViewer code={output} language={to === 'json' ? 'json' : 'none'} />
+              <CodeViewer code={output} language={to === 'json' ? 'json' : to === 'yaml' ? 'yaml' : 'none'} />
             </Panel>
           }
         />

@@ -1,16 +1,23 @@
-import { useMemo } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { escapeHtml, syntaxHighlightJson, syntaxHighlightXml } from '../lib/utils'
+import { highlightCode, CODE_LANGUAGES } from '../lib/highlight'
 
-const HIGHLIGHTERS = {
-  json: syntaxHighlightJson,
-  xml: syntaxHighlightXml,
-  none: escapeHtml,
+// Lines beyond this still render instantly — a long payload should not take
+// several seconds to finish animating in.
+const MAX_STAGGERED_LINES = 30
+const STAGGER_MS = 14
+
+function highlighterFor(language) {
+  if (language === 'json') return syntaxHighlightJson
+  if (language === 'xml') return syntaxHighlightXml
+  if (CODE_LANGUAGES.includes(language)) return (line) => highlightCode(line, language)
+  return escapeHtml
 }
 
 /**
- * Read-only code pane with a line-number gutter and indent guides, styled
- * like an editor rather than a plain <pre>. Highlighting runs per line —
- * safe for JSON and XML, where no token spans a newline.
+ * Read-only code pane: line-number gutter, indent guides, syntax highlighting
+ * for JSON, XML and the common source languages, and a staggered reveal when
+ * the content changes.
  */
 export default function CodeViewer({
   code,
@@ -20,16 +27,25 @@ export default function CodeViewer({
   indentGuides = true,
   maxHeight = '440px',
   placeholder = 'Output will appear here…',
+  animate = true,
   className = '',
 }) {
+  const [revealKey, setRevealKey] = useState(0)
+  const previous = useRef(code)
+
+  useEffect(() => {
+    if (code && code !== previous.current) setRevealKey((k) => k + 1)
+    previous.current = code
+  }, [code])
+
   const lines = useMemo(() => {
     if (!code) return []
-    const highlight = HIGHLIGHTERS[language] || HIGHLIGHTERS.none
+    const highlight = highlighterFor(language)
     return code.split('\n').map((line) => {
-      const leading = line.match(/^ */)[0].length
+      const leading = line.match(/^[ \t]*/)[0].replace(/\t/g, ' '.repeat(indentSize)).length
       return {
         depth: indentGuides ? Math.floor(leading / indentSize) : 0,
-        html: highlight(line.slice(leading)) || '&nbsp;',
+        html: highlight(line.slice(line.length - line.trimStart().length)) || '&nbsp;',
       }
     })
   }, [code, language, indentSize, indentGuides])
@@ -44,12 +60,17 @@ export default function CodeViewer({
 
   return (
     <div
-      className={`bd sunken mono overflow-auto rounded-xl border text-sm leading-6 ${className}`}
+      key={revealKey}
+      className={`bd sunken mono overflow-auto rounded-xl border text-sm leading-6 ${animate ? 'result-flash' : ''} ${className}`}
       style={{ maxHeight }}
     >
       <div className="min-w-max py-2">
         {lines.map((line, i) => (
-          <div key={i} className="code-row flex items-stretch px-0">
+          <div
+            key={i}
+            className={`code-row flex items-stretch ${animate && i < MAX_STAGGERED_LINES ? 'code-row-animated' : ''}`}
+            style={animate && i < MAX_STAGGERED_LINES ? { '--line-delay': `${i * STAGGER_MS}ms` } : undefined}
+          >
             {lineNumbers && (
               <span
                 aria-hidden="true"

@@ -6,6 +6,16 @@ import SplitPane from '../components/SplitPane'
 import { Panel, Button, CopyButton, TextArea, Input, ErrorBanner, PageHeader, Select } from '../components/ui'
 import CodeViewer from '../components/CodeViewer'
 
+// Both Java flavours highlight with the same rules.
+const CODEVIEW_LANG = {
+  javaLombok: 'java',
+  java: 'java',
+  typescript: 'typescript',
+  go: 'go',
+  python: 'python',
+  csharp: 'csharp',
+}
+
 const SAMPLE = `{
   "id": 1042,
   "orderRef": "ORD-2291",
@@ -96,7 +106,7 @@ export default function CodeGenTool() {
               title={LANGUAGES.find((l) => l.value === lang)?.label}
               actions={<CopyButton text={output} onCopied={() => toast('Copied to clipboard')} />}
             >
-              <CodeViewer code={output} placeholder="Generated models will appear here…" />
+              <CodeViewer code={output} language={CODEVIEW_LANG[lang] || 'none'} placeholder="Generated models will appear here…" />
             </Panel>
           }
         />

@@ -32,6 +32,10 @@
   --tok-null: #be123c;
   --tok-comment: #94a3b8;
   --tok-attr: #7c3aed;
+  --tok-kw: #7c3aed;
+  --tok-type: #0e7490;
+  --tok-anno: #b45309;
+  --tok-punc: #64748b;
 }
 
 .dark {
@@ -54,6 +58,10 @@
   --tok-null: #fda4af;
   --tok-comment: #64748b;
   --tok-attr: #d8b4fe;
+  --tok-kw: #c084fc;
+  --tok-type: #5eead4;
+  --tok-anno: #fbbf24;
+  --tok-punc: #94a3b8;
 }
 
 * {
@@ -99,6 +107,10 @@ body {
   .tok-null { color: var(--tok-null); }
   .tok-comment { color: var(--tok-comment); font-style: italic; }
   .tok-attr { color: var(--tok-attr); }
+  .tok-kw { color: var(--tok-kw); font-weight: 500; }
+  .tok-type { color: var(--tok-type); }
+  .tok-anno { color: var(--tok-anno); font-weight: 500; }
+  .tok-punc { color: var(--tok-punc); }
 }
 
 ::-webkit-scrollbar { width: 10px; height: 10px; }
@@ -239,4 +251,26 @@ textarea, pre {
   display: inline-block;
   flex: none;
   border-left: 1px solid color-mix(in srgb, var(--text) 14%, transparent);
+}
+
+
+/* ---- Code reveal -------------------------------------------------------
+   New output rolls in line by line. The stagger is capped in the component
+   so a 500-line payload doesn't take ten seconds to appear. */
+@keyframes code-line-in {
+  from { opacity: 0; transform: translateX(-6px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+.code-row-animated {
+  animation: code-line-in 0.24s ease-out both;
+  animation-delay: var(--line-delay, 0ms);
+}
+
+/* A brief sweep across the pane when fresh output lands. */
+@keyframes result-flash {
+  0% { box-shadow: 0 0 0 0 rgb(16 185 129 / 0.35); }
+  100% { box-shadow: 0 0 0 6px rgb(16 185 129 / 0); }
+}
+.result-flash {
+  animation: result-flash 0.6s ease-out;
 }

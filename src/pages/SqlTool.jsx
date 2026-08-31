@@ -102,7 +102,7 @@ export default function SqlTool() {
           }
           right={
             <Panel title="Formatted" actions={<CopyButton text={output} onCopied={() => toast('Copied to clipboard')} />}>
-              <CodeViewer code={output} placeholder="Formatted SQL will appear here…" />
+              <CodeViewer code={output} language="sql" placeholder="Formatted SQL will appear here…" />
             </Panel>
           }
         />
