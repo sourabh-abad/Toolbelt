@@ -2,11 +2,15 @@ import { useState } from 'react'
 import { PROFILE } from '../lib/profile'
 
 /**
- * Profile photo with a WebP source and a JPEG fallback. If both fail to load
+ * Profile photo with a WebP source and a JPEG fallback.
+ *
+ * Loads eagerly by default: both placements are visible chrome, and
+ * `loading="lazy"` on a small always-on-screen image can leave the browser
+ * never starting the fetch at all — which reads as a broken image. If both fail to load
  * (offline, asset missing, blocked), it falls back to the initials block
  * rather than leaving a broken-image icon in the layout.
  */
-export default function Avatar({ size = 96, className = '', rounded = 'rounded-2xl', decorative = false }) {
+export default function Avatar({ size = 96, className = '', rounded = 'rounded-2xl', decorative = false, loading = 'eager' }) {
   const [failed, setFailed] = useState(false)
   const initials = PROFILE.name
     .split(' ')
@@ -36,8 +40,9 @@ export default function Avatar({ size = 96, className = '', rounded = 'rounded-2
         alt={decorative ? '' : `${PROFILE.name}, ${PROFILE.role}`}
         width={size}
         height={size}
-        loading="lazy"
+        loading={loading}
         decoding="async"
+        fetchPriority={size <= 32 ? 'low' : 'auto'}
         onError={() => setFailed(true)}
         style={{ width: size, height: size }}
         className={`shrink-0 object-cover ${rounded} ${className}`}
