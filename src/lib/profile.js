@@ -11,6 +11,8 @@ formatter sites, cron decoders and "what does HTTP 409 mean again?" references â
 them slow, ad-heavy, or quietly uploading whatever you paste. So this one runs entirely in
 your browser. No backend, no analytics, no network calls. Your data never leaves the tab.`,
   location: 'India',
+  // Served from public/ â€” WebP with a JPEG fallback for older browsers.
+  avatar: { webp: './sourabh.webp', jpg: './sourabh.jpg' },
   links: [
     { id: 'github', label: 'GitHub', handle: '@sourabh-abad', url: 'https://github.com/sourabh-abad' },
     { id: 'email', label: 'Email', handle: 'sourabhabad@gmail.com', url: 'mailto:sourabhabad@gmail.com' },

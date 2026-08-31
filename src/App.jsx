@@ -220,7 +220,21 @@ export default function App() {
           {collapsed ? <PanelLeftOpen className="h-3.5 w-3.5" aria-hidden="true" /> : <PanelLeftClose className="h-3.5 w-3.5" aria-hidden="true" />}
         </button>
         {!collapsed && (
-          <Link to="/about" className="t-faint hover:t-main ml-auto text-[10px] transition-colors">
+          <Link
+            to="/about"
+            className="t-faint hover:t-main ml-auto flex items-center gap-1.5 text-[10px] transition-colors"
+          >
+            <picture>
+              <source srcSet={PROFILE.avatar.webp} type="image/webp" />
+              <img
+                src={PROFILE.avatar.jpg}
+                alt=""
+                width="18"
+                height="18"
+                loading="lazy"
+                className="h-[18px] w-[18px] rounded-full object-cover"
+              />
+            </picture>
             by {PROFILE.name.split(' ')[0]}
           </Link>
         )}

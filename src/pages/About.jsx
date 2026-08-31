@@ -36,11 +36,20 @@ export default function About() {
         {/* Developer card */}
         <Panel className="animate-fade-up overflow-hidden">
           <div className="flex flex-col gap-5 sm:flex-row sm:items-start">
-            <div
-              aria-hidden="true"
-              className="flex h-20 w-20 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 text-3xl font-bold text-white shadow-lg shadow-emerald-500/25"
-            >
-              {PROFILE.name.charAt(0)}
+            <div className="relative shrink-0 self-start">
+              <div className="absolute -inset-1 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 opacity-70 blur-sm" aria-hidden="true" />
+              <picture>
+                <source srcSet={PROFILE.avatar.webp} type="image/webp" />
+                <img
+                  src={PROFILE.avatar.jpg}
+                  alt={`${PROFILE.name}, ${PROFILE.role}`}
+                  width="96"
+                  height="96"
+                  loading="lazy"
+                  decoding="async"
+                  className="relative h-24 w-24 rounded-2xl object-cover shadow-lg shadow-emerald-500/25"
+                />
+              </picture>
             </div>
 
             <div className="min-w-0 flex-1">
