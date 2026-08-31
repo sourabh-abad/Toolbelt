@@ -29,6 +29,9 @@ import {
 export const navItems = [
   { to: '/', label: 'Home', icon: HomeIcon, end: true, group: null, accent: 'emerald', description: 'Overview of all tools' },
 
+  // --- JWT
+  { to: '/jwtvalidator', label: 'JWT Validator', icon: KeyRound, group: 'JWT', accent: 'cyan', description: 'Decode and check JSON Web Tokens' },
+
   // --- Data & formats
   { to: '/json-xml', label: 'JSON / XML', icon: Braces, group: 'Data', accent: 'sky', description: 'Format, validate & search JSON or XML' },
   { to: '/convert', label: 'JSON ⇄ YAML ⇄ CSV', icon: Shuffle, group: 'Data', accent: 'teal', description: 'Convert between config & data formats' },
@@ -51,7 +54,6 @@ export const navItems = [
   // --- Text & compare
   { to: '/diff', label: 'Diff Checker', icon: GitCompare, group: 'Text', accent: 'amber', description: 'Compare two blocks of text' },
   { to: '/encode-decode', label: 'Encode / Decode', icon: Binary, group: 'Text', accent: 'violet', description: 'Base64, URL & hashing' },
-  { to: '/jwtvalidator', label: 'JWT Validator', icon: KeyRound, group: 'Text', accent: 'cyan', description: 'Decode and check JSON Web Tokens' },
   { to: '/color', label: 'Colour & CSS Units', icon: Palette, group: 'Text', accent: 'pink', description: 'HEX, RGB, HSL and px / rem / em / pt' },
 
   // --- Time
@@ -68,7 +70,7 @@ export const navItems = [
   { to: '/lorem', label: 'Lorem Ipsum', icon: Type, group: 'Generators', accent: 'amber', description: 'Placeholder copy by word, sentence or paragraph' },
 ]
 
-export const NAV_GROUPS = ['Data', 'JSON Toolkit', 'Text', 'Time', 'Generators', 'Reference']
+export const NAV_GROUPS = ['JWT', 'Data', 'JSON Toolkit', 'Text', 'Time', 'Generators', 'Reference']
 
 // Groups that start collapsed — the JSON toolkit is long and most visits are
 // to one specific tool rather than a browse.
