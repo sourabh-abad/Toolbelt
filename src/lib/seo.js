@@ -30,12 +30,12 @@ export const SEO = {
       'Switch between the three formats backend and DevOps work runs on. Turn a JSON payload into a YAML config for Kubernetes or GitHub Actions, flatten an array of records into CSV for a spreadsheet, or parse a CSV export back into structured JSON.',
   },
   '/codegen': {
-    title: 'JSON to TypeScript, Go, Java, Python & C# Model Generator — DevPocket',
+    title: 'JSON to Java (Lombok), TypeScript, Go, Python & C# Generator — DevPocket',
     description:
-      'Paste a JSON response and generate typed models: TypeScript interfaces, Go structs, Java POJOs, Python dataclasses or C# classes. Nested types included.',
+      'Paste a JSON response and generate typed models: Java POJOs with or without Lombok, TypeScript interfaces, Go structs, Python dataclasses or C# classes.',
     heading: 'Generate typed models from JSON',
     blurb:
-      'Turn an API response into the model classes for your service layer. Nested objects become their own types, arrays are typed by their first element, and ISO date strings are recognised as date types. Field names are converted to each language’s conventions with the original JSON key preserved in serialisation tags.',
+      'Turn an API response into the model classes for your service layer. Java is generated two ways — with Lombok’s @Getter/@Setter and constructor annotations, or as a plain POJO with explicit getters and setters. Nested objects become their own types, arrays are typed by their first element, and ISO date strings become Instant. Where a JSON key does not match Java naming (snake_case, kebab-case), a @JsonProperty annotation is added so Jackson still binds it correctly.',
   },
   '/sql': {
     title: 'SQL Formatter & Beautifier — 11 Dialects — DevPocket',

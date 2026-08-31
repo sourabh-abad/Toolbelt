@@ -59,6 +59,7 @@ const TYPE_MAPS = {
   typescript: { string: 'string', int: 'number', float: 'number', bool: 'boolean', datetime: 'string', null: 'null', unknown: 'unknown' },
   go: { string: 'string', int: 'int', float: 'float64', bool: 'bool', datetime: 'time.Time', null: 'interface{}', unknown: 'interface{}' },
   java: { string: 'String', int: 'Integer', float: 'Double', bool: 'Boolean', datetime: 'Instant', null: 'Object', unknown: 'Object' },
+  javaLombok: { string: 'String', int: 'Integer', float: 'Double', bool: 'Boolean', datetime: 'Instant', null: 'Object', unknown: 'Object' },
   python: { string: 'str', int: 'int', float: 'float', bool: 'bool', datetime: 'datetime', null: 'None', unknown: 'Any' },
   csharp: { string: 'string', int: 'int', float: 'double', bool: 'bool', datetime: 'DateTime', null: 'object', unknown: 'object' },
 }
@@ -73,7 +74,8 @@ function renderType(ref, lang) {
     switch (lang) {
       case 'typescript': return `${inner}[]`
       case 'go': return `[]${inner}`
-      case 'java': return `List<${inner}>`
+      case 'java':
+      case 'javaLombok': return `List<${inner}>`
       case 'python': return `List[${inner}]`
       case 'csharp': return `List<${inner}>`
       default: return inner
@@ -104,10 +106,31 @@ export function generate(json, rootName, lang) {
           '}',
         ].join('\n')
 
+      case 'javaLombok':
+        return [
+          '@Getter',
+          '@Setter',
+          '@NoArgsConstructor',
+          '@AllArgsConstructor',
+          `public class ${name} {`,
+          ...fields.flatMap((f) => {
+            const field = camel(f.key)
+            const line = `    private ${renderType(f.child, lang)} ${field};`
+            // Jackson maps by field name, so only annotate when they differ
+            // (snake_case or kebab-case keys) — otherwise it is just noise.
+            return field === f.key ? [line] : [`    @JsonProperty("${f.key}")`, line]
+          }),
+          '}',
+        ].join('\n')
+
       case 'java':
         return [
           `public class ${name} {`,
-          ...fields.map((f) => `    private ${renderType(f.child, lang)} ${camel(f.key)};`),
+          ...fields.flatMap((f) => {
+            const field = camel(f.key)
+            const line = `    private ${renderType(f.child, lang)} ${field};`
+            return field === f.key ? [line] : [`    @JsonProperty("${f.key}")`, line]
+          }),
           '',
           ...fields.flatMap((f) => {
             const t = renderType(f.child, lang)
@@ -142,7 +165,12 @@ export function generate(json, rootName, lang) {
 
   const headers = {
     go: 'package models\n\nimport "time"\n',
-    java: 'import java.time.Instant;\nimport java.util.List;\n',
+    java: 'import java.time.Instant;\nimport java.util.List;\nimport com.fasterxml.jackson.annotation.JsonProperty;\n',
+    javaLombok:
+      'import java.time.Instant;\nimport java.util.List;\n' +
+      'import com.fasterxml.jackson.annotation.JsonProperty;\n' +
+      'import lombok.AllArgsConstructor;\nimport lombok.Getter;\n' +
+      'import lombok.NoArgsConstructor;\nimport lombok.Setter;\n',
     python: 'from dataclasses import dataclass\nfrom datetime import datetime\nfrom typing import Any, List, Optional\n',
     csharp: 'using System;\nusing System.Collections.Generic;\nusing System.Text.Json.Serialization;\n',
     typescript: '',
@@ -152,9 +180,12 @@ export function generate(json, rootName, lang) {
 }
 
 export const LANGUAGES = [
+  { value: 'javaLombok', label: 'Java (Lombok)' },
+  { value: 'java', label: 'Java (plain)' },
   { value: 'typescript', label: 'TypeScript' },
   { value: 'go', label: 'Go' },
-  { value: 'java', label: 'Java' },
   { value: 'python', label: 'Python' },
   { value: 'csharp', label: 'C#' },
 ]
+
+export const DEFAULT_LANGUAGE = 'javaLombok'

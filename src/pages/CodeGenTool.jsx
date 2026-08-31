@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { FileCode2, Wand2 } from 'lucide-react'
-import { generate, LANGUAGES } from '../lib/codegen'
+import { generate, LANGUAGES, DEFAULT_LANGUAGE } from '../lib/codegen'
 import { useToast } from '../lib/toast'
 import SplitPane from '../components/SplitPane'
 import { Panel, Button, CopyButton, TextArea, Input, ErrorBanner, PageHeader, Select } from '../components/ui'
@@ -23,7 +23,7 @@ const SAMPLE = `{
 
 export default function CodeGenTool() {
   const [input, setInput] = useState(SAMPLE)
-  const [lang, setLang] = useState('typescript')
+  const [lang, setLang] = useState(DEFAULT_LANGUAGE)
   const [rootName, setRootName] = useState('Order')
   const [output, setOutput] = useState('')
   const [error, setError] = useState('')
