@@ -55,7 +55,7 @@ export const ACCENTS = {
   fuchsia: { groupHoverText: 'group-hover:text-fuchsia-500', bg: 'bg-fuchsia-500/10', text: 'text-fuchsia-500', border: 'border-fuchsia-500/30', grad: 'from-fuchsia-500 to-pink-600', glow: 'shadow-fuchsia-500/20' },
 }
 
-const RECENT_KEY = 'toolbelt-recent'
+const RECENT_KEY = 'devpocket-recent'
 
 export function pushRecent(path) {
   if (path === '/') return

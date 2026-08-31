@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
  * Horizontal split with a draggable divider. Falls back to a stacked layout
  * below `lg` where dragging a divider makes little sense on narrow screens.
  */
-export default function SplitPane({ left, right, storageKey = 'toolbelt-split', initial = 50 }) {
+export default function SplitPane({ left, right, storageKey = 'devpocket-split', initial = 50 }) {
   const containerRef = useRef(null)
   const draggingRef = useRef(false)
   const [pct, setPct] = useState(() => {

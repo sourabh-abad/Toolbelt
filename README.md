@@ -1,4 +1,4 @@
-# 🧰 Toolbelt
+# 🧰 DevPocket
 
 **Everything a backend dev reaches for.** A local-first toolbox of everyday utilities — formatting payloads, decoding tokens, reading cron expressions, seeding test data.
 
@@ -59,7 +59,7 @@ Copy for each route lives in one place: `src/lib/seo.js`. Edit a title or descri
 ### After deploying
 
 1. Add the site at [Google Search Console](https://search.google.com/search-console) (verify via the DNS TXT record).
-2. Submit `https://sourabh.site/sitemap.xml` under **Sitemaps**.
+2. Submit `https://devpocket.in/sitemap.xml` under **Sitemaps**.
 3. Use **URL Inspection → Request indexing** for the homepage to speed up first discovery.
 
 Indexing typically takes a few days to a few weeks; ranking for competitive terms takes longer and depends on links from other sites.
@@ -76,8 +76,8 @@ Deployment is automated — **GitHub builds and publishes the site itself on eve
    ```bash
    git init
    git add .
-   git commit -m "Toolbelt — local-first backend dev utilities"
-   git remote add origin https://github.com/<your-username>/toolbelt.git
+   git commit -m "DevPocket — local-first backend dev utilities"
+   git remote add origin https://github.com/<your-username>/devpocket.git
    git branch -M main
    git push -u origin main
    ```
@@ -88,7 +88,7 @@ Deployment is automated — **GitHub builds and publishes the site itself on eve
 That's it. The workflow in `.github/workflows/deploy.yml` runs automatically, and your site is live at:
 
 ```
-https://<your-username>.github.io/toolbelt/
+https://<your-username>.github.io/devpocket/
 ```
 
 **From then on**

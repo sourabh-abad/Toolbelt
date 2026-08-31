@@ -109,7 +109,7 @@ export default function ConvertTool() {
         </Panel>
 
         <SplitPane
-          storageKey="toolbelt-split-convert"
+          storageKey="devpocket-split-convert"
           left={
             <Panel title={`Input · ${from.toUpperCase()}`}>
               <TextArea rows={18} value={input} onChange={(e) => setInput(e.target.value)} placeholder={`Paste ${from.toUpperCase()} here…`} />

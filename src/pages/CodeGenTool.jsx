@@ -81,7 +81,7 @@ export default function CodeGenTool() {
         </Panel>
 
         <SplitPane
-          storageKey="toolbelt-split-codegen"
+          storageKey="devpocket-split-codegen"
           left={
             <Panel title="JSON payload">
               <TextArea rows={20} value={input} onChange={(e) => setInput(e.target.value)} placeholder="Paste a JSON response…" />

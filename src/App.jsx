@@ -1,7 +1,7 @@
 import { useEffect, useState, lazy, Suspense } from 'react'
 import { Routes, Route, NavLink, useLocation, Link } from 'react-router-dom'
 import {
-  Wrench, Search, Command, Sun, Moon, PanelLeftClose, PanelLeftOpen,
+  Search, Command, Sun, Moon, PanelLeftClose, PanelLeftOpen,
   History, Loader2, Menu, X, Heart,
 } from 'lucide-react'
 import { navItems, NAV_GROUPS, ACCENTS, pushRecent, getRecent } from './lib/nav'
@@ -10,6 +10,7 @@ import { useTheme } from './lib/theme'
 import { useSeo } from './lib/useSeo'
 import SeoFooter from './components/SeoFooter'
 import CommandPalette from './components/CommandPalette'
+import Logo from './components/Logo'
 import Home from './pages/Home'
 
 // Route-level code splitting: heavy tools (sql-formatter, js-yaml, cronstrue)
@@ -72,7 +73,7 @@ export default function App() {
   const [mobileOpen, setMobileOpen] = useState(false)
   const [collapsed, setCollapsed] = useState(() => {
     try {
-      return localStorage.getItem('toolbelt-collapsed') === '1'
+      return localStorage.getItem('devpocket-collapsed') === '1'
     } catch {
       return false
     }
@@ -90,7 +91,7 @@ export default function App() {
 
   useEffect(() => {
     try {
-      localStorage.setItem('toolbelt-collapsed', collapsed ? '1' : '0')
+      localStorage.setItem('devpocket-collapsed', collapsed ? '1' : '0')
     } catch {
       // ignore
     }
@@ -123,13 +124,8 @@ export default function App() {
   const sidebar = (
     <>
       <div className={`bd flex items-center gap-2.5 border-b px-4 py-4 ${collapsed ? 'lg:justify-center' : ''}`}>
-        <div
-          aria-hidden="true"
-          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-emerald-500 to-teal-600 text-white shadow-lg shadow-emerald-500/20"
-        >
-          <Wrench className="h-4 w-4" />
-        </div>
-        {!collapsed && <span className="t-main text-lg font-bold tracking-tight">Toolbelt</span>}
+        <Logo className="h-8 w-8 shrink-0 shadow-lg shadow-emerald-500/20" />
+        {!collapsed && <span className="t-main text-lg font-bold tracking-tight">DevPocket</span>}
         <button
           onClick={() => setMobileOpen(false)}
           type="button"
@@ -280,10 +276,8 @@ export default function App() {
             <Menu className="h-4 w-4" aria-hidden="true" />
           </button>
           <div className="flex items-center gap-2">
-            <div aria-hidden="true" className="flex h-7 w-7 items-center justify-center rounded-lg bg-gradient-to-br from-emerald-500 to-teal-600 text-white">
-              <Wrench className="h-3.5 w-3.5" />
-            </div>
-            <span className="t-main font-bold tracking-tight">Toolbelt</span>
+            <Logo className="h-7 w-7 shrink-0" />
+            <span className="t-main font-bold tracking-tight">DevPocket</span>
           </div>
           <button
             onClick={() => setPaletteOpen(true)}

@@ -2,7 +2,7 @@
 
 const FIRST = ['Aarav', 'Diya', 'Kabir', 'Ananya', 'Vihaan', 'Isha', 'Rohan', 'Meera', 'Thabo', 'Naledi', 'Sipho', 'Zanele', 'Ada', 'Grace', 'Linus', 'Nina', 'Omar', 'Lena', 'Marco', 'Sofia']
 const LAST = ['Sharma', 'Patel', 'Iyer', 'Nair', 'Reddy', 'Dlamini', 'Nkosi', 'Botha', 'Mokoena', 'Silva', 'Kim', 'Novak', 'Rossi', 'Haddad', 'Okafor', 'Muller']
-const DOMAINS = ['example.com', 'test.dev', 'mail.co', 'acme.io', 'toolbelt.dev']
+const DOMAINS = ['example.com', 'test.dev', 'mail.co', 'acme.io', 'devpocket.in']
 const COMPANIES = ['Acme Corp', 'Globex', 'Initech', 'Umbrella Ltd', 'Soylent', 'Hooli', 'Vehement', 'Stark Industries']
 const CITIES = [
   { city: 'Mumbai', country: 'India' },

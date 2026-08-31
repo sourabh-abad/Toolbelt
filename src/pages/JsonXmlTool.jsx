@@ -169,7 +169,7 @@ export default function JsonXmlTool() {
         />
 
         <SplitPane
-          storageKey="toolbelt-split-jsonxml"
+          storageKey="devpocket-split-jsonxml"
           left={
             <Panel
               title="Input"

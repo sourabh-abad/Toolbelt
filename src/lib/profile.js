@@ -6,7 +6,7 @@ export const PROFILE = {
   name: 'Sourabh Kumar',
   role: 'Backend Developer',
   tagline: 'I build tools to remove the small daily frictions of backend work.',
-  bio: `Toolbelt started as a scratch-your-own-itch project: too many browser tabs open on
+  bio: `DevPocket started as a scratch-your-own-itch project: too many browser tabs open on
 formatter sites, cron decoders and "what does HTTP 409 mean again?" references — most of
 them slow, ad-heavy, or quietly uploading whatever you paste. So this one runs entirely in
 your browser. No backend, no analytics, no network calls. Your data never leaves the tab.`,
@@ -21,6 +21,6 @@ your browser. No backend, no analytics, no network calls. Your data never leaves
   ],
 }
 
-export const SITE_URL = 'https://sourabh.site'
+export const SITE_URL = 'https://devpocket.in'
 
 export const activeLinks = () => PROFILE.links.filter((l) => l.url && l.handle)

@@ -4,7 +4,7 @@ const ThemeContext = createContext({ theme: 'dark', toggle: () => {} })
 
 function readInitial() {
   try {
-    const saved = localStorage.getItem('toolbelt-theme')
+    const saved = localStorage.getItem('devpocket-theme')
     if (saved === 'light' || saved === 'dark') return saved
   } catch {
     // localStorage can throw in private mode — fall through to the default
@@ -22,7 +22,7 @@ export function ThemeProvider({ children }) {
     const root = document.documentElement
     root.classList.toggle('dark', theme === 'dark')
     try {
-      localStorage.setItem('toolbelt-theme', theme)
+      localStorage.setItem('devpocket-theme', theme)
     } catch {
       // ignore persistence failures
     }

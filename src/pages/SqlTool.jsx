@@ -90,7 +90,7 @@ export default function SqlTool() {
         </Panel>
 
         <SplitPane
-          storageKey="toolbelt-split-sql"
+          storageKey="devpocket-split-sql"
           left={
             <Panel title="Query">
               <TextArea rows={18} value={input} onChange={(e) => setInput(e.target.value)} placeholder="Paste SQL here…" />
