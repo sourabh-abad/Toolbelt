@@ -15,8 +15,9 @@ export default function Home() {
           <span className="bg-gradient-to-r from-emerald-500 to-sky-500 bg-clip-text text-transparent">backend toolbox</span>
         </h1>
         <p className="t-muted mt-3 max-w-xl text-sm leading-relaxed">
-          Eleven tools for the small things you do a dozen times a day — formatting payloads, decoding tokens,
-          reading cron expressions, seeding test data and checking what a 409 actually means.
+          {navItems.length - 1} tools for the small things you do a dozen times a day — formatting payloads,
+          reshaping JSON, decoding tokens, reading cron expressions, seeding test data and checking what a
+          409 actually means.
         </p>
         <div className="t-faint mt-4 hidden flex-wrap items-center gap-4 text-xs sm:flex">
           <span className="flex items-center gap-1.5">
@@ -24,7 +25,7 @@ export default function Home() {
             <kbd className="bd rounded border px-1.5 py-0.5">⌘K</kbd> jump to a tool
           </span>
           <span className="flex items-center gap-1.5">
-            <kbd className="bd rounded border px-1.5 py-0.5">⌘\</kbd> collapse the sidebar
+            everything runs in your browser — nothing is uploaded
           </span>
         </div>
       </div>

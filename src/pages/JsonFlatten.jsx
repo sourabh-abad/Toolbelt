@@ -18,6 +18,7 @@ export default function JsonFlatten() {
           <span className="t-faint text-xs">Array items keep [index] notation.</span>
         </>
       )}
+      workerOp="flatten"
       transform={(v, o) => JSON.stringify(flatten(v, o.delimiter), null, 2)}
     />
   )

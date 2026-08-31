@@ -26,6 +26,7 @@ export default function JsonUnflatten() {
           <Input className="w-24" value={o.delimiter} onChange={(e) => set({ ...o, delimiter: e.target.value || '.' })} />
         </>
       )}
+      workerOp="unflatten"
       transform={(v, o) => JSON.stringify(unflatten(v, o.delimiter), null, 2)}
     />
   )

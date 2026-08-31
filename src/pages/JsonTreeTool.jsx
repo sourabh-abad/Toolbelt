@@ -14,8 +14,7 @@ const SAMPLE = `{
   }
 }`
 
-const typeOf = (v) =>
-  v === null ? 'null' : Array.isArray(v) ? 'array' : typeof v
+const typeOf = (v) => (v === null ? 'null' : Array.isArray(v) ? 'array' : typeof v)
 
 const TYPE_TONE = {
   string: 'tok-str',
@@ -24,49 +23,93 @@ const TYPE_TONE = {
   null: 'tok-null',
 }
 
-function Node({ name, value, depth, defaultOpen }) {
-  const [open, setOpen] = useState(defaultOpen)
-  const type = typeOf(value)
-  const branch = type === 'object' || type === 'array'
+const ROW_HEIGHT = 24
+const OVERSCAN = 12
 
-  if (!branch) {
+/**
+ * Flattens the visible part of the tree into a linear row list, honouring
+ * which branches are collapsed. Rendering from a flat list is what makes
+ * virtualisation possible — only the rows in view are ever mounted, so a
+ * 50,000-node document scrolls as smoothly as a small one.
+ */
+function buildRows(value, collapsed) {
+  const rows = []
+  const walk = (name, val, depth, path) => {
+    const type = typeOf(val)
+    const branch = type === 'object' || type === 'array'
+    const entries = branch ? (type === 'array' ? val.map((v, i) => [i, v]) : Object.entries(val)) : null
+
+    rows.push({ path, name, type, value: val, depth, branch, childCount: entries?.length ?? 0 })
+
+    if (branch && !collapsed.has(path)) {
+      for (const [k, v] of entries) walk(String(k), v, depth + 1, `${path}.${k}`)
+    }
+  }
+  walk('$', value, 0, '$')
+  return rows
+}
+
+function Row({ row, collapsed, onToggle }) {
+  const isOpen = !collapsed.has(row.path)
+  const indent = row.depth * 16 + 6
+
+  if (!row.branch) {
     return (
-      <div className="code-row flex items-center gap-2 py-0.5" style={{ paddingLeft: `${depth * 18 + 22}px` }}>
-        <span className="tok-key mono text-sm">{name}</span>
+      <div className="code-row flex items-center gap-2" style={{ height: ROW_HEIGHT, paddingLeft: indent + 18 }}>
+        <span className="tok-key mono text-sm">{row.name}</span>
         <span className="t-faint">:</span>
-        <span className={`mono text-sm ${TYPE_TONE[type] || ''}`}>
-          {type === 'string' ? `"${value}"` : String(value)}
+        <span className={`mono truncate text-sm ${TYPE_TONE[row.type] || ''}`}>
+          {row.type === 'string' ? `"${row.value}"` : String(row.value)}
         </span>
       </div>
     )
   }
 
-  const entries = type === 'array' ? value.map((v, i) => [i, v]) : Object.entries(value)
+  return (
+    <button
+      type="button"
+      onClick={() => onToggle(row.path)}
+      aria-expanded={isOpen}
+      className="code-row flex w-full items-center gap-1.5 text-left"
+      style={{ height: ROW_HEIGHT, paddingLeft: indent }}
+    >
+      <ChevronRight className={`t-faint h-3.5 w-3.5 shrink-0 transition-transform ${isOpen ? 'rotate-90' : ''}`} aria-hidden="true" />
+      <span className="tok-key mono text-sm">{row.name}</span>
+      <span className="t-faint mono text-xs">
+        {row.type === 'array' ? `[${row.childCount}]` : `{${row.childCount}}`}
+      </span>
+    </button>
+  )
+}
+
+/** Windowed list: mounts only the rows intersecting the viewport. */
+function VirtualTree({ rows, collapsed, onToggle, height = 440 }) {
+  const [scrollTop, setScrollTop] = useState(0)
+  const first = Math.max(0, Math.floor(scrollTop / ROW_HEIGHT) - OVERSCAN)
+  const visibleCount = Math.ceil(height / ROW_HEIGHT) + OVERSCAN * 2
+  const slice = rows.slice(first, first + visibleCount)
 
   return (
-    <div>
-      <button
-        type="button"
-        onClick={() => setOpen((o) => !o)}
-        className="code-row flex w-full items-center gap-1.5 py-0.5 text-left"
-        style={{ paddingLeft: `${depth * 18 + 4}px` }}
-        aria-expanded={open}
-      >
-        <ChevronRight className={`t-faint h-3.5 w-3.5 shrink-0 transition-transform ${open ? 'rotate-90' : ''}`} />
-        <span className="tok-key mono text-sm">{name}</span>
-        <span className="t-faint mono text-xs">
-          {type === 'array' ? `[${entries.length}]` : `{${entries.length}}`}
-        </span>
-      </button>
-      {open && entries.map(([k, v]) => (
-        <Node key={k} name={String(k)} value={v} depth={depth + 1} defaultOpen={depth < 1} />
-      ))}
+    <div
+      className="bd sunken overflow-auto rounded-xl border"
+      style={{ height }}
+      onScroll={(e) => setScrollTop(e.currentTarget.scrollTop)}
+    >
+      {/* Spacer gives the scrollbar the full height of the un-rendered list. */}
+      <div style={{ height: rows.length * ROW_HEIGHT, position: 'relative' }}>
+        <div style={{ position: 'absolute', top: first * ROW_HEIGHT, left: 0, right: 0 }}>
+          {slice.map((row) => (
+            <Row key={row.path} row={row} collapsed={collapsed} onToggle={onToggle} />
+          ))}
+        </div>
+      </div>
     </div>
   )
 }
 
 export default function JsonTreeTool() {
   const [input, setInput] = useState(SAMPLE)
+  const [collapsed, setCollapsed] = useState(() => new Set())
 
   const { parsed, error } = useMemo(() => {
     if (!input.trim()) return { parsed: null, error: '' }
@@ -76,6 +119,21 @@ export default function JsonTreeTool() {
       return { parsed: null, error: `Invalid JSON — ${e.message}` }
     }
   }, [input])
+
+  const rows = useMemo(() => (parsed === null ? [] : buildRows(parsed, collapsed)), [parsed, collapsed])
+
+  const toggle = (path) =>
+    setCollapsed((prev) => {
+      const next = new Set(prev)
+      if (next.has(path)) next.delete(path)
+      else next.add(path)
+      return next
+    })
+
+  const collapseAll = () => {
+    if (parsed === null) return
+    setCollapsed(new Set(buildRows(parsed, new Set()).filter((r) => r.branch && r.depth > 0).map((r) => r.path)))
+  }
 
   return (
     <div>
@@ -95,11 +153,20 @@ export default function JsonTreeTool() {
             <div className="mt-3"><ErrorBanner>{error}</ErrorBanner></div>
           </Panel>
 
-          <Panel title="Tree" description="Click a branch to collapse or expand it.">
-            {parsed ? (
-              <div className="bd sunken max-h-[440px] overflow-auto rounded-xl border py-2">
-                <Node name="$" value={parsed} depth={0} defaultOpen />
-              </div>
+          <Panel
+            title="Tree"
+            description={rows.length ? `${rows.length} visible rows · only what fits on screen is rendered` : undefined}
+            actions={
+              rows.length ? (
+                <>
+                  <Button variant="ghost" type="button" onClick={() => setCollapsed(new Set())}>Expand all</Button>
+                  <Button variant="ghost" type="button" onClick={collapseAll}>Collapse all</Button>
+                </>
+              ) : null
+            }
+          >
+            {parsed !== null ? (
+              <VirtualTree rows={rows} collapsed={collapsed} onToggle={toggle} />
             ) : (
               <div className="bd sunken t-faint mono rounded-xl border border-dashed px-3 py-2.5 text-sm">
                 Paste JSON on the left to explore it here.

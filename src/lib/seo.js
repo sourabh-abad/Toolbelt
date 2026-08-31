@@ -11,7 +11,7 @@ export const SEO = {
       'Free developer tools: JSON & XML formatter, SQL beautifier, JWT decoder, cron builder, diff checker and mock data generator. No uploads, no sign-up.',
     heading: 'Free developer utilities',
     blurb:
-      'DevPocket is a collection of 11 everyday developer tools that run entirely in your browser. Nothing you paste is uploaded to a server, so you can safely work with production payloads, tokens and customer data.',
+      'DevPocket is a collection of 26 everyday developer tools that run entirely in your browser. Nothing you paste is uploaded to a server, so you can safely work with production payloads, tokens and customer data.',
   },
   '/json-xml': {
     title: 'JSON & XML Formatter, Validator and Search — DevPocket',

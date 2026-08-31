@@ -22,6 +22,7 @@ export default function JsonClean() {
           : 'Strip every null value and null array entry, at every level.'
       }
       accent={strict ? 'rose' : 'amber'}
+      workerOp={strict ? 'removeEmpty' : 'removeNulls'}
       transform={(v) => JSON.stringify(strict ? removeEmpty(v) : removeNulls(v), null, 2)}
     />
   )

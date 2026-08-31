@@ -20,6 +20,7 @@ export default function JsonSortKeys() {
           </Select>
         </>
       )}
+      workerOp="sortKeys"
       transform={(v, o) => JSON.stringify(sortKeys(v, o.direction), null, 2)}
     />
   )

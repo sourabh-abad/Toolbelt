@@ -11,6 +11,7 @@ export default function JsonSchemaTool() {
       accent="orange"
       outputLabel="Generated schema"
       outputPlaceholder="Paste a sample payload — its schema appears here."
+      workerOp="schema"
       transform={(v) => JSON.stringify(inferSchema(v), null, 2)}
     />
   )

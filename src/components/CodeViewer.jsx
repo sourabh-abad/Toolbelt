@@ -6,6 +6,11 @@ import { highlightCode, CODE_LANGUAGES } from '../lib/highlight'
 // several seconds to finish animating in.
 const MAX_STAGGERED_LINES = 30
 const STAGGER_MS = 14
+// Beyond this the pane windows its rows: mounting 10,000 lines of DOM makes
+// scrolling stutter and delays the paint by seconds.
+const VIRTUALISE_ABOVE = 400
+const LINE_HEIGHT = 24
+const OVERSCAN = 20
 
 function highlighterFor(language) {
   if (language === 'json') return syntaxHighlightJson
@@ -31,6 +36,7 @@ export default function CodeViewer({
   className = '',
 }) {
   const [revealKey, setRevealKey] = useState(0)
+  const [scrollTop, setScrollTop] = useState(0)
   const previous = useRef(code)
 
   useEffect(() => {
@@ -58,18 +64,34 @@ export default function CodeViewer({
     )
   }
 
+  const virtual = lines.length > VIRTUALISE_ABOVE
+  const paneHeight = parseInt(maxHeight, 10) || 440
+  const firstVisible = virtual ? Math.max(0, Math.floor(scrollTop / LINE_HEIGHT) - OVERSCAN) : 0
+  const windowCount = virtual ? Math.ceil(paneHeight / LINE_HEIGHT) + OVERSCAN * 2 : lines.length
+  const visible = virtual ? lines.slice(firstVisible, firstVisible + windowCount) : lines
+  // Long output is shown at once — a staggered reveal of thousands of rows
+  // would be slower than the work that produced them.
+  const shouldAnimate = animate && !virtual
+
   return (
     <div
       key={revealKey}
-      className={`bd sunken mono overflow-auto rounded-xl border text-sm leading-6 ${animate ? 'result-flash' : ''} ${className}`}
-      style={{ maxHeight }}
+      className={`bd sunken mono overflow-auto rounded-xl border text-sm leading-6 ${shouldAnimate ? 'result-flash' : ''} ${className}`}
+      style={{ maxHeight, height: virtual ? maxHeight : undefined }}
+      onScroll={virtual ? (e) => setScrollTop(e.currentTarget.scrollTop) : undefined}
     >
-      <div className="min-w-max py-2">
-        {lines.map((line, i) => (
+      <div className="min-w-max py-2" style={virtual ? { height: lines.length * LINE_HEIGHT, position: 'relative' } : undefined}>
+      <div style={virtual ? { position: 'absolute', top: firstVisible * LINE_HEIGHT, left: 0, right: 0 } : undefined}>
+        {visible.map((line, idx) => {
+          const i = firstVisible + idx
+          return (
           <div
             key={i}
-            className={`code-row flex items-stretch ${animate && i < MAX_STAGGERED_LINES ? 'code-row-animated' : ''}`}
-            style={animate && i < MAX_STAGGERED_LINES ? { '--line-delay': `${i * STAGGER_MS}ms` } : undefined}
+            className={`code-row flex items-stretch ${shouldAnimate && i < MAX_STAGGERED_LINES ? 'code-row-animated' : ''}`}
+            style={{
+              ...(shouldAnimate && i < MAX_STAGGERED_LINES ? { '--line-delay': `${i * STAGGER_MS}ms` } : {}),
+              ...(virtual ? { height: LINE_HEIGHT } : {}),
+            }}
           >
             {lineNumbers && (
               <span
@@ -87,7 +109,9 @@ export default function CodeViewer({
             </span>
             <code className="t-main whitespace-pre pr-4" dangerouslySetInnerHTML={{ __html: line.html }} />
           </div>
-        ))}
+          )
+        })}
+      </div>
       </div>
     </div>
   )

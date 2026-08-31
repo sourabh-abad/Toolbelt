@@ -1,6 +1,7 @@
-import { useMemo, useState } from 'react'
+import { useCallback, useState } from 'react'
 import { Trash2 } from 'lucide-react'
 import { useToast } from '../lib/toast'
+import { useJsonWorker } from '../lib/useJsonWorker'
 import SplitPane from '../components/SplitPane'
 import CodeViewer from '../components/CodeViewer'
 import { Panel, Button, CopyButton, TextArea, ErrorBanner, PageHeader } from '../components/ui'
@@ -28,6 +29,8 @@ export default function JsonToolPage({
   accent = 'sky',
   /** (parsedValue, options) => string  — the output text */
   transform,
+  /** Matching operation name in jsonWorker.js, used for large payloads */
+  workerOp = 'format',
   /** Optional controls rendered above the panes; receives (options, setOptions) */
   controls,
   defaultOptions = {},
@@ -41,20 +44,11 @@ export default function JsonToolPage({
   const [options, setOptions] = useState(defaultOptions)
   const toast = useToast()
 
-  const { output, error } = useMemo(() => {
-    if (!input.trim()) return { output: '', error: '' }
-    let parsed
-    try {
-      parsed = JSON.parse(input)
-    } catch (e) {
-      return { output: '', error: `Invalid JSON — ${e.message}` }
-    }
-    try {
-      return { output: transform(parsed, options) ?? '', error: '' }
-    } catch (e) {
-      return { output: '', error: e.message }
-    }
-  }, [input, options, transform])
+  // Large payloads are parsed in a worker so the tab never freezes; small
+  // ones stay inline because the round trip would cost more than it saves.
+  const inline = useCallback((parsed, opts) => transform(parsed, opts) ?? '', [transform])
+  const { result: output, error: workerError, busy } = useJsonWorker(input, workerOp, options, inline)
+  const error = workerError ? (workerError.includes('JSON') ? workerError : `Invalid JSON — ${workerError}`) : ''
 
   return (
     <div>
@@ -93,7 +87,13 @@ export default function JsonToolPage({
           right={
             <Panel
               title={outputLabel}
-              description={output ? `${output.split('\n').length} lines · updates as you type` : undefined}
+              description={
+                busy
+                  ? 'Processing a large payload…'
+                  : output
+                  ? `${output.split('\n').length} lines · updates as you type`
+                  : undefined
+              }
               actions={<CopyButton text={output} onCopied={() => toast('Copied to clipboard')} />}
             >
               <CodeViewer code={output} language={outputLanguage} placeholder={outputPlaceholder} />
