@@ -24,6 +24,67 @@ const { SEO, SITE_ORIGIN, canonicalUrl } = await import(
 const template = readFileSync(join(dist, 'index.html'), 'utf8')
 const esc = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;')
 
+function buildLdJson(pathname, seo) {
+  const url = canonicalUrl(pathname)
+  if (pathname === '/') {
+    return JSON.stringify({
+      '@context': 'https://schema.org',
+      '@graph': [
+        {
+          '@type': 'WebSite',
+          '@id': `${SITE_ORIGIN}/#website`,
+          url: `${SITE_ORIGIN}/`,
+          name: 'DevPocket',
+          description: seo.description,
+        },
+        {
+          '@type': 'WebApplication',
+          '@id': `${SITE_ORIGIN}/#app`,
+          name: 'DevPocket',
+          url: `${SITE_ORIGIN}/`,
+          applicationCategory: 'DeveloperApplication',
+          operatingSystem: 'Any',
+          offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+          author: { '@type': 'Person', name: 'Sourabh Kumar', url: `${SITE_ORIGIN}/about/` },
+        },
+      ],
+    })
+  }
+
+  return JSON.stringify({
+    '@context': 'https://schema.org',
+    '@graph': [
+      {
+        '@type': 'WebApplication',
+        name: seo.heading || seo.title,
+        url,
+        description: seo.description,
+        applicationCategory: 'DeveloperApplication',
+        operatingSystem: 'Any',
+        offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+        author: { '@type': 'Person', name: 'Sourabh Kumar', url: `${SITE_ORIGIN}/about/` },
+      },
+      {
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          {
+            '@type': 'ListItem',
+            position: 1,
+            name: 'Home',
+            item: `${SITE_ORIGIN}/`,
+          },
+          {
+            '@type': 'ListItem',
+            position: 2,
+            name: seo.heading || seo.title,
+            item: url,
+          },
+        ],
+      },
+    ],
+  })
+}
+
 function render(pathname, seo) {
   const url = canonicalUrl(pathname)
   let html = template
@@ -54,6 +115,14 @@ function render(pathname, seo) {
     /(<meta\s+name="twitter:description"\s+content=")[\s\S]*?(")/,
     `$1${esc(seo.description)}$2`
   )
+  html = html.replace(
+    /<script type="application\/ld\+json">[\s\S]*?<\/script>/,
+    `<script type="application/ld+json">${buildLdJson(pathname, seo)}</script>`
+  )
+
+  const prerenderedBody = `<div id="root"><div style="max-width:1200px;margin:0 auto;padding:2rem 1rem;font-family:system-ui,sans-serif"><h1 style="font-size:1.75rem;font-weight:700">${esc(seo.heading || seo.title)}</h1><p style="color:#475569;margin-top:0.75rem;line-height:1.6">${esc(seo.blurb || seo.description)}</p></div></div>`
+  html = html.replace('<div id="root"></div>', prerenderedBody)
+
   return html
 }
 
