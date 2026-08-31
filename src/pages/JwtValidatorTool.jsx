@@ -110,9 +110,14 @@ export default function JwtValidatorTool() {
           title="Token"
           description="Nothing is sent anywhere, so pasting a real token is safe."
           actions={
-            <Button variant="ghost" type="button" onClick={() => setToken('')}>
-              Clear
-            </Button>
+            <div className="flex items-center gap-1.5">
+              <Button variant="ghost" type="button" onClick={() => setToken(SAMPLE_JWT)}>
+                Sample
+              </Button>
+              <Button variant="ghost" type="button" onClick={() => setToken('')}>
+                Clear
+              </Button>
+            </div>
           }
         >
           <TextArea rows={4} value={token} onChange={(e) => setToken(e.target.value)} placeholder="Paste a JWT…" />
@@ -121,11 +126,33 @@ export default function JwtValidatorTool() {
               <ErrorBanner>{result.error}</ErrorBanner>
             </div>
           )}
+          {!result.error && token.trim().split('.').length === 3 && (
+            <div className="mt-3 space-y-2">
+              <div className="flex flex-wrap items-center gap-3 text-xs">
+                <span className="flex items-center gap-1.5 font-medium text-rose-500 dark:text-rose-400">
+                  <span className="h-2 w-2 rounded-full bg-rose-500" /> Header
+                </span>
+                <span className="flex items-center gap-1.5 font-medium text-sky-500 dark:text-sky-400">
+                  <span className="h-2 w-2 rounded-full bg-sky-500" /> Payload
+                </span>
+                <span className="flex items-center gap-1.5 font-medium text-emerald-500 dark:text-emerald-400">
+                  <span className="h-2 w-2 rounded-full bg-emerald-500" /> Signature
+                </span>
+              </div>
+              <div className="bd sunken mono break-all rounded-lg border p-3 text-xs leading-relaxed">
+                <span className="text-rose-500 dark:text-rose-400">{token.trim().split('.')[0]}</span>
+                <span className="font-bold text-zinc-400 dark:text-zinc-500">.</span>
+                <span className="text-sky-500 dark:text-sky-400">{token.trim().split('.')[1]}</span>
+                <span className="font-bold text-zinc-400 dark:text-zinc-500">.</span>
+                <span className="text-emerald-500 dark:text-emerald-400">{token.trim().split('.')[2]}</span>
+              </div>
+            </div>
+          )}
         </Panel>
 
         {!result.error && result.checks?.length > 0 && (
           <Panel title="Checks" description="Structural and time-based claims. Signature verification needs the key and is deliberately not done here.">
-            <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-4">
               {result.checks.map((c) => (
                 <CheckRow key={c.label} {...c} />
               ))}

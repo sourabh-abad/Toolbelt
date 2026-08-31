@@ -94,7 +94,9 @@ export default function TopNav({ onOpenPalette, onPrefetch }) {
 
                 {isOpen && (
                   <div
-                    className="panel animate-fade-up absolute left-0 top-full z-50 mt-1 w-[22rem] overflow-hidden rounded-xl border p-1.5 shadow-2xl"
+                    className={`panel animate-fade-up absolute left-0 top-full z-50 mt-1 overflow-hidden rounded-xl border p-1.5 shadow-2xl ${
+                      items.length === 1 ? 'w-[18rem]' : 'w-[22rem]'
+                    }`}
                     role="menu"
                   >
                     {items.map(({ to, label, icon: Icon, description, accent }) => {
