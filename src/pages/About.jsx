@@ -1,10 +1,10 @@
-import { Mail, Globe, ShieldCheck, Zap, Code2, Heart, ExternalLink } from 'lucide-react'
-import { GithubIcon, LinkedinIcon, XIcon } from '../components/BrandIcons'
-import { PROFILE, activeLinks, REPO_URL } from '../lib/profile'
+import { Mail, Globe, ShieldCheck, Zap, Code2, Heart } from 'lucide-react'
+import { LinkedinIcon, XIcon } from '../components/BrandIcons'
+import { PROFILE, activeLinks } from '../lib/profile'
 import { navItems } from '../lib/nav'
 import { PageHeader, Panel } from '../components/ui'
 
-const ICONS = { github: GithubIcon, email: Mail, linkedin: LinkedinIcon, x: XIcon, website: Globe }
+const ICONS = { email: Mail, linkedin: LinkedinIcon, x: XIcon, website: Globe }
 
 const PRINCIPLES = [
   {
@@ -19,8 +19,8 @@ const PRINCIPLES = [
   },
   {
     icon: Code2,
-    title: 'Open source',
-    body: 'MIT-spirited and readable. Fork it, strip out what you do not need, add the one tool your team keeps asking for.',
+    title: 'Keyboard-first',
+    body: 'Press ⌘K to jump to any tool, ⌘\\ to collapse the sidebar. Built for people who would rather not reach for the mouse mid-task.',
   },
 ]
 
@@ -106,16 +106,6 @@ export default function About() {
               </span>
             ))}
           </div>
-          <a
-            href={REPO_URL}
-            target="_blank"
-            rel="noreferrer noopener"
-            className="mt-4 inline-flex items-center gap-2 rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-3.5 py-2 text-sm font-medium text-emerald-500 transition-colors hover:bg-emerald-500/20"
-          >
-            <GithubIcon className="h-4 w-4" />
-            View source on GitHub
-            <ExternalLink className="h-3 w-3" aria-hidden="true" />
-          </a>
         </Panel>
 
         <p className="t-faint pb-4 text-center text-xs">

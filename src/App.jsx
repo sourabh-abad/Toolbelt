@@ -4,9 +4,8 @@ import {
   Wrench, Search, Command, Sun, Moon, PanelLeftClose, PanelLeftOpen,
   History, Loader2, Menu, X, Heart,
 } from 'lucide-react'
-import { GithubIcon } from './components/BrandIcons'
 import { navItems, NAV_GROUPS, ACCENTS, pushRecent, getRecent } from './lib/nav'
-import { REPO_URL, PROFILE } from './lib/profile'
+import { PROFILE } from './lib/profile'
 import { useTheme } from './lib/theme'
 import CommandPalette from './components/CommandPalette'
 import Home from './pages/Home'
@@ -187,18 +186,6 @@ export default function App() {
         <div className="pt-3">
           {!collapsed && <div className="t-faint mb-1 px-2.5 text-[10px] font-semibold tracking-wider uppercase">Project</div>}
           <NavRow item={{ to: '/about', label: 'About', icon: Heart, accent: 'emerald' }} collapsed={collapsed} />
-          <a
-            href={REPO_URL}
-            target="_blank"
-            rel="noreferrer noopener"
-            title={collapsed ? 'Source on GitHub' : undefined}
-            className={`t-muted hover-surface hover:t-main group flex items-center gap-3 rounded-xl border border-transparent px-2.5 py-2 text-sm font-medium transition-all hover:translate-x-0.5 ${collapsed ? 'lg:justify-center' : ''}`}
-          >
-            <div aria-hidden="true" className="sunken flex h-7 w-7 shrink-0 items-center justify-center rounded-lg">
-              <GithubIcon className="h-3.5 w-3.5" />
-            </div>
-            {collapsed ? <span className="sr-only">Source on GitHub</span> : <span className="truncate">Source</span>}
-          </a>
         </div>
       </nav>
 

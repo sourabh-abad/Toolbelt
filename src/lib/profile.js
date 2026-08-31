@@ -14,14 +14,12 @@ your browser. No backend, no analytics, no network calls. Your data never leaves
   // Served from public/ — WebP with a JPEG fallback for older browsers.
   avatar: { webp: './sourabh.webp', jpg: './sourabh.jpg' },
   links: [
-    { id: 'github', label: 'GitHub', handle: '@sourabh-abad', url: 'https://github.com/sourabh-abad' },
     { id: 'email', label: 'Email', handle: 'sourabhabad@gmail.com', url: 'mailto:sourabhabad@gmail.com' },
     { id: 'linkedin', label: 'LinkedIn', handle: 'Sourabh Kumar', url: 'https://www.linkedin.com/in/sourabh-kumar-12859374/' },
     { id: 'x', label: 'X', handle: '@sourabhabad', url: 'https://x.com/sourabhabad' },
   ],
 }
 
-export const REPO_URL = 'https://github.com/sourabh-abad/Toolbelt'
 export const SITE_URL = 'https://sourabh.site'
 
 export const activeLinks = () => PROFILE.links.filter((l) => l.url && l.handle)
