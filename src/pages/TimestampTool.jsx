@@ -285,7 +285,7 @@ export default function TimestampTool() {
   return (
     <div>
       <PageHeader icon={Clock} title="Time / UUID / Regex" subtitle="Multi-zone clocks (IST & SAST included), timestamp conversion, UUIDs and regex." accent="rose" />
-      <div className="space-y-4 p-6">
+      <div className="space-y-4 p-4 sm:p-6">
         <WorldClock date={new Date(now)} />
         <NowClock now={now} />
         <TimestampConverter />

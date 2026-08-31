@@ -114,3 +114,84 @@ body {
   to { opacity: 1; transform: translateY(0) scale(1); }
 }
 .animate-toast-in { animation: toast-in 0.18s ease-out; }
+
+/* ---- Motion ------------------------------------------------------------
+   Subtle by design: entrances are short and small-travel so the app feels
+   alive without getting in the way of repeated daily use. */
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes slide-in-left {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(0); }
+}
+
+.animate-fade-up { animation: fade-up 0.28s ease-out both; }
+.animate-fade-in { animation: fade-in 0.2s ease-out both; }
+.animate-slide-in-left { animation: slide-in-left 0.22s ease-out both; }
+
+/* Stagger children slightly for a gentle cascade. */
+.stagger > * { animation: fade-up 0.3s ease-out both; }
+.stagger > *:nth-child(1) { animation-delay: 0.02s; }
+.stagger > *:nth-child(2) { animation-delay: 0.05s; }
+.stagger > *:nth-child(3) { animation-delay: 0.08s; }
+.stagger > *:nth-child(4) { animation-delay: 0.11s; }
+.stagger > *:nth-child(5) { animation-delay: 0.14s; }
+.stagger > *:nth-child(6) { animation-delay: 0.17s; }
+
+/* ---- Accessibility ---------------------------------------------------- */
+:focus-visible {
+  outline: 2px solid #10b981;
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+/* Mouse users shouldn't see rings, keyboard users always should. */
+:focus:not(:focus-visible) { outline: none; }
+
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  z-index: 100;
+}
+.skip-link:focus {
+  left: 1rem;
+  top: 1rem;
+  padding: 0.5rem 1rem;
+  background: var(--bg-elev);
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  color: var(--text);
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* Respect the OS "reduce motion" setting — no exceptions. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Comfortable tap targets on touch devices. */
+@media (hover: none) and (pointer: coarse) {
+  button, a, select, [role="button"] { min-height: 40px; }
+}

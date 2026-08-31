@@ -156,7 +156,7 @@ export default function JsonXmlTool() {
   return (
     <div>
       <PageHeader icon={Braces} title="JSON / XML Formatter & Search" subtitle="Beautify, minify, validate and search through JSON or XML documents." accent="sky" />
-      <div className="space-y-4 p-6">
+      <div className="space-y-4 p-4 sm:p-6">
         <Tabs
           value={mode}
           onChange={(m) => {

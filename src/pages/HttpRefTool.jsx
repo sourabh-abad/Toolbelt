@@ -17,7 +17,7 @@ export default function HttpRefTool() {
   return (
     <div>
       <PageHeader icon={Globe} title="HTTP Reference" subtitle="Status codes, methods and headers — searchable, no tab-switching to MDN." accent="blue" />
-      <div className="space-y-4 p-6">
+      <div className="space-y-4 p-4 sm:p-6">
         <div className="flex flex-wrap items-center gap-3">
           <Tabs
             value={tab}

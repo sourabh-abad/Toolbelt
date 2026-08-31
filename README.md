@@ -29,8 +29,18 @@ Everything runs client-side in your browser. Nothing you paste in is ever sent t
 
 - **⌘K / Ctrl+K** — command palette to jump to any tool (arrow keys + Enter).
 - **⌘\ / Ctrl+\** — collapse the sidebar to icons.
-- Light / dark theme toggle (remembers your choice), recently-used tools, toast notifications, and drag-to-resize split panes on the input/output tools.
+- Light / dark theme toggle (remembers your choice), recently-used tools, toast notifications, and drag-to-resize split panes.
+- **Responsive** — the sidebar becomes a slide-out drawer on phones and tablets, panels stack, tap targets grow.
+- **Accessible** — full keyboard navigation, visible focus rings, skip-to-content link, ARIA labels on icon-only controls, and `prefers-reduced-motion` respected throughout.
+- **Share-ready** — Open Graph and Twitter card metadata plus a generated `og.png`, so links unfurl properly in Slack, WhatsApp, LinkedIn and X. Includes JSON-LD structured data for search engines.
 
+## Made by
+
+**Sourabh Kumar** — Backend Developer
+
+[GitHub](https://github.com/sourabh-abad) · [LinkedIn](https://www.linkedin.com/in/sourabh-kumar-12859374/) · [X](https://x.com/sourabhabad) · [Email](mailto:sourabhabad@gmail.com)
+
+Profile details live in `src/lib/profile.js` — edit that one file and the About page and sidebar update automatically. Links with an empty `url` are hidden rather than rendered broken.
 
 ## Deploying to GitHub Pages
 

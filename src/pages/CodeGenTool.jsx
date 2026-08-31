@@ -53,7 +53,7 @@ export default function CodeGenTool() {
         subtitle="Turn an API payload into typed models for your service layer."
         accent="indigo"
       />
-      <div className="space-y-4 p-6">
+      <div className="space-y-4 p-4 sm:p-6">
         <Panel>
           <div className="flex flex-wrap items-center gap-3">
             <div className="flex items-center gap-2">

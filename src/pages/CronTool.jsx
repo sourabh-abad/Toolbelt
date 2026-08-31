@@ -47,7 +47,7 @@ export default function CronTool() {
   return (
     <div>
       <PageHeader icon={CalendarClock} title="Cron Builder" subtitle="Decode cron expressions in plain English and preview the next runs." accent="lime" />
-      <div className="space-y-4 p-6">
+      <div className="space-y-4 p-4 sm:p-6">
         <Panel>
           <div className="flex flex-col gap-3 lg:flex-row lg:items-center">
             <Input

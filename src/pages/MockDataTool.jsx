@@ -42,7 +42,7 @@ export default function MockDataTool() {
   return (
     <div>
       <PageHeader icon={Boxes} title="Mock Data Generator" subtitle="Seed a dev database or stub an API response in seconds." accent="fuchsia" />
-      <div className="space-y-4 p-6">
+      <div className="space-y-4 p-4 sm:p-6">
         <Panel title="Fields" description="Pick the columns you need — output keeps this order.">
           <div className="flex flex-wrap gap-1.5">
             {FIELDS.map((f) => {

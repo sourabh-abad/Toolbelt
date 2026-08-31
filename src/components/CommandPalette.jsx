@@ -49,10 +49,13 @@ export default function CommandPalette({ open, onClose }) {
   if (!open) return null
 
   return (
-    <div className="fixed inset-0 z-50 flex items-start justify-center bg-slate-950/60 pt-[14vh] backdrop-blur-sm" onClick={onClose}>
+    <div className="fixed inset-0 z-50 flex items-start justify-center bg-slate-950/60 px-4 pt-[14vh] backdrop-blur-sm" onClick={onClose}>
       <div
-        className="panel w-full max-w-lg overflow-hidden rounded-2xl border shadow-2xl"
+        className="panel animate-fade-up w-full max-w-lg overflow-hidden rounded-2xl border shadow-2xl"
         onClick={(e) => e.stopPropagation()}
+        role="dialog"
+        aria-modal="true"
+        aria-label="Search tools"
       >
         <div className="bd flex items-center gap-2 border-b px-4 py-3">
           <Search className="t-faint h-4 w-4" />

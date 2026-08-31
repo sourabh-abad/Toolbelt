@@ -137,7 +137,7 @@ export default function EncodeDecodeTool() {
   return (
     <div>
       <PageHeader icon={Binary} title="Encode / Decode" subtitle="Base64, URL encoding and hashing — all computed locally in your browser." accent="violet" />
-      <div className="space-y-4 p-6">
+      <div className="space-y-4 p-4 sm:p-6">
         <Base64Section />
         <UrlSection />
         <HashSection />

@@ -62,7 +62,7 @@ export default function SqlTool() {
   return (
     <div>
       <PageHeader icon={Database} title="SQL Formatter" subtitle="Pretty-print or minify queries across 11 dialects." accent="orange" />
-      <div className="space-y-4 p-6">
+      <div className="space-y-4 p-4 sm:p-6">
         <Panel>
           <div className="flex flex-wrap items-center gap-3">
             <div className="flex items-center gap-2">

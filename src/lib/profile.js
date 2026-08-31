@@ -1,0 +1,25 @@
+// Developer profile shown in the About page and sidebar footer.
+// Links with an empty `url` are simply not rendered, so it is safe to leave
+// a field blank until you have the real handle.
+
+export const PROFILE = {
+  name: 'Sourabh Kumar',
+  role: 'Backend Developer',
+  tagline: 'I build tools to remove the small daily frictions of backend work.',
+  bio: `Toolbelt started as a scratch-your-own-itch project: too many browser tabs open on
+formatter sites, cron decoders and "what does HTTP 409 mean again?" references — most of
+them slow, ad-heavy, or quietly uploading whatever you paste. So this one runs entirely in
+your browser. No backend, no analytics, no network calls. Your data never leaves the tab.`,
+  location: 'India',
+  links: [
+    { id: 'github', label: 'GitHub', handle: '@sourabh-abad', url: 'https://github.com/sourabh-abad' },
+    { id: 'email', label: 'Email', handle: 'sourabhabad@gmail.com', url: 'mailto:sourabhabad@gmail.com' },
+    { id: 'linkedin', label: 'LinkedIn', handle: 'Sourabh Kumar', url: 'https://www.linkedin.com/in/sourabh-kumar-12859374/' },
+    { id: 'x', label: 'X', handle: '@sourabhabad', url: 'https://x.com/sourabhabad' },
+  ],
+}
+
+export const REPO_URL = 'https://github.com/sourabh-abad/Toolbelt'
+export const SITE_URL = 'https://sourabh.site'
+
+export const activeLinks = () => PROFILE.links.filter((l) => l.url && l.handle)

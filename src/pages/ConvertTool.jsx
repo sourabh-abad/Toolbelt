@@ -76,7 +76,7 @@ export default function ConvertTool() {
         subtitle="Convert between the config and data formats you touch every day."
         accent="teal"
       />
-      <div className="space-y-4 p-6">
+      <div className="space-y-4 p-4 sm:p-6">
         <Panel>
           <div className="flex flex-wrap items-center gap-3">
             <div className="flex items-center gap-2">

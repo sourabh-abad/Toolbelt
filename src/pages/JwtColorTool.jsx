@@ -171,7 +171,7 @@ export default function JwtColorTool() {
   return (
     <div>
       <PageHeader icon={KeyRound} title="JWT & Color Tools" subtitle="Decode JWTs and work with colors & CSS units." accent="cyan" />
-      <div className="space-y-4 p-6">
+      <div className="space-y-4 p-4 sm:p-6">
         <JwtSection />
         <ColorSection />
         <UnitConverter />

@@ -155,11 +155,11 @@ export function StatRow({ label, value, mono = true }) {
 export function PageHeader({ icon: Icon, title, subtitle, accent = 'emerald', actions }) {
   const a = ACCENTS[accent] || ACCENTS.emerald
   return (
-    <div className="bd sticky top-0 z-10 flex items-center gap-3 border-b px-6 py-5 backdrop-blur-md"
+    <div className="bd sticky top-0 z-10 flex items-center gap-3 border-b px-4 py-4 backdrop-blur-md sm:px-6 sm:py-5"
          style={{ backgroundColor: 'color-mix(in srgb, var(--bg) 80%, transparent)' }}>
       {Icon && (
         <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br ${a.grad} text-white shadow-lg ${a.glow}`}>
-          <Icon className="h-5 w-5" />
+          <Icon className="h-5 w-5" aria-hidden="true" />
         </div>
       )}
       <div className="min-w-0">
