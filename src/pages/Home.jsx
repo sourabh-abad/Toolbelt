@@ -19,7 +19,7 @@ export default function Home() {
           reshaping JSON, decoding tokens, reading cron expressions, seeding test data and checking what a
           409 actually means.
         </p>
-        <div className="t-faint mt-4 hidden flex-wrap items-center gap-4 text-xs sm:flex">
+        <div className="t-muted mt-4 hidden flex-wrap items-center gap-4 text-xs sm:flex">
           <span className="flex items-center gap-1.5">
             <Keyboard className="h-3.5 w-3.5" />
             <kbd className="bd rounded border px-1.5 py-0.5">⌘K</kbd> jump to a tool
