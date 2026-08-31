@@ -144,18 +144,19 @@ body {
   to { transform: translateX(0); }
 }
 
-.animate-fade-up { animation: fade-up 0.28s ease-out both; }
-.animate-fade-in { animation: fade-in 0.2s ease-out both; }
-.animate-slide-in-left { animation: slide-in-left 0.22s ease-out both; }
+.animate-fade-up { animation: fade-up 0.28s ease-out; }
+.animate-fade-in { animation: fade-in 0.2s ease-out; }
+.animate-slide-in-left { animation: slide-in-left 0.22s ease-out; }
 
-/* Stagger children slightly for a gentle cascade. */
-.stagger > * { animation: fade-up 0.3s ease-out both; }
-.stagger > *:nth-child(1) { animation-delay: 0.02s; }
-.stagger > *:nth-child(2) { animation-delay: 0.05s; }
-.stagger > *:nth-child(3) { animation-delay: 0.08s; }
-.stagger > *:nth-child(4) { animation-delay: 0.11s; }
-.stagger > *:nth-child(5) { animation-delay: 0.14s; }
-.stagger > *:nth-child(6) { animation-delay: 0.17s; }
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
 
 /* ---- Accessibility ---------------------------------------------------- */
 :focus-visible {

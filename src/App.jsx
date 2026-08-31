@@ -134,7 +134,7 @@ export default function App() {
       <div className="relative z-10 flex min-w-0 flex-1 flex-col">
         <main id="main" className="mx-auto w-full max-w-[1600px] flex-1">
           <Suspense fallback={<RouteFallback />}>
-            <div key={location.pathname} className="animate-fade-in">
+            <div key={location.pathname}>
               <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/json-xml" element={<JsonXmlTool />} />

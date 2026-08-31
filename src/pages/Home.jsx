@@ -10,7 +10,7 @@ export default function Home() {
           <Sparkles className="h-3 w-3" />
           Local-first · nothing leaves your browser
         </div>
-        <h1 className="t-main animate-fade-up max-w-2xl text-3xl font-bold tracking-tight sm:text-4xl lg:text-5xl">
+        <h1 className="t-main max-w-2xl text-3xl font-bold tracking-tight sm:text-4xl lg:text-5xl">
           Your daily{' '}
           <span className="bg-gradient-to-r from-emerald-500 to-sky-500 bg-clip-text text-transparent">backend toolbox</span>
         </h1>
