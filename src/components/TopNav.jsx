@@ -156,7 +156,7 @@ export default function TopNav({ onOpenPalette, onPrefetch }) {
           </button>
 
           <Link to="/about" className="hidden shrink-0 lg:block" aria-label="About">
-            <Avatar size={28} rounded="rounded-full" decorative />
+            <Avatar size={28} rounded="rounded-full" decorative loading="lazy" />
           </Link>
 
           <button

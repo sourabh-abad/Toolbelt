@@ -14,7 +14,6 @@ import {
   Palette,
   ArrowUpDown,
   Layers,
-  Boxes as BoxesIcon,
   Code,
   Eraser,
   GitMerge,
@@ -41,7 +40,7 @@ export const navItems = [
   // --- JSON toolkit: one route per task so each ranks for its own query
   { to: '/json-sort-keys', label: 'JSON Sort Keys', icon: ArrowUpDown, group: 'JSON Toolkit', accent: 'sky', description: 'Alphabetise keys at every level' },
   { to: '/json-flatten', label: 'JSON Flattener', icon: Layers, group: 'JSON Toolkit', accent: 'teal', description: 'Collapse nesting into dot-notation keys' },
-  { to: '/json-unflatten', label: 'JSON Unflattener', icon: BoxesIcon, group: 'JSON Toolkit', accent: 'teal', description: 'Rebuild nesting from dot-notation keys' },
+  { to: '/json-unflatten', label: 'JSON Unflattener', icon: Boxes, group: 'JSON Toolkit', accent: 'teal', description: 'Rebuild nesting from dot-notation keys' },
   { to: '/json-escape', label: 'JSON Escape', icon: Code, group: 'JSON Toolkit', accent: 'violet', description: 'Escape or unescape a JSON string literal' },
   { to: '/json-remove-nulls', label: 'Remove Nulls', icon: Eraser, group: 'JSON Toolkit', accent: 'amber', description: 'Strip every null value' },
   { to: '/json-remove-empty', label: 'Remove Empty Values', icon: Eraser, group: 'JSON Toolkit', accent: 'rose', description: 'Strip nulls, "", [] and {}' },
