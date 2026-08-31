@@ -42,6 +42,28 @@ Everything runs client-side in your browser. Nothing you paste in is ever sent t
 
 Profile details live in `src/lib/profile.js` — edit that one file and the About page and sidebar update automatically. Links with an empty `url` are hidden rather than rendered broken.
 
+
+## SEO
+
+Each tool is a real, indexable URL (`/cron`, `/sql`, `/json-xml`…) rather than a hash fragment, so search engines can rank them individually.
+
+The build step (`scripts/prerender.mjs`) runs after Vite and emits:
+
+- **One static HTML file per route** with its own `<title>`, meta description, canonical URL and Open Graph tags — crawlers get correct metadata without executing JavaScript.
+- **`sitemap.xml`** listing all 13 URLs.
+- **`robots.txt`** pointing at the sitemap.
+- **`404.html`** so deep links resolve on GitHub Pages.
+
+Copy for each route lives in one place: `src/lib/seo.js`. Edit a title or description there and both the static HTML and the in-app `<SeoFooter>` copy update together.
+
+### After deploying
+
+1. Add the site at [Google Search Console](https://search.google.com/search-console) (verify via the DNS TXT record).
+2. Submit `https://sourabh.site/sitemap.xml` under **Sitemaps**.
+3. Use **URL Inspection → Request indexing** for the homepage to speed up first discovery.
+
+Indexing typically takes a few days to a few weeks; ranking for competitive terms takes longer and depends on links from other sites.
+
 ## Deploying to GitHub Pages
 
 Deployment is automated — **GitHub builds and publishes the site itself on every push to `main`.** You never run a build or deploy command locally.

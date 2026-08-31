@@ -1,10 +1,10 @@
-import { Mail, Globe, ShieldCheck, Zap, Code2, Heart } from 'lucide-react'
-import { LinkedinIcon, XIcon } from '../components/BrandIcons'
+import { Globe, ShieldCheck, Zap, Code2, Heart } from 'lucide-react'
+import { LinkedinIcon, MediumIcon, InstagramIcon } from '../components/BrandIcons'
 import { PROFILE, activeLinks } from '../lib/profile'
 import { navItems } from '../lib/nav'
 import { PageHeader, Panel } from '../components/ui'
 
-const ICONS = { email: Mail, linkedin: LinkedinIcon, x: XIcon, website: Globe }
+const ICONS = { linkedin: LinkedinIcon, medium: MediumIcon, instagram: InstagramIcon, website: Globe }
 
 const PRINCIPLES = [
   {
@@ -61,12 +61,12 @@ export default function About() {
                 <div className="mt-4 flex flex-wrap gap-2">
                   {links.map((l) => {
                     const Icon = ICONS[l.id] || Globe
-                    const external = !l.url.startsWith('mailto:')
                     return (
                       <a
                         key={l.id}
                         href={l.url}
-                        {...(external ? { target: '_blank', rel: 'noreferrer noopener' } : {})}
+                        target="_blank"
+                        rel="noreferrer noopener"
                         aria-label={`${l.label}: ${l.handle}`}
                         className="field hover-surface t-muted group inline-flex items-center gap-2 rounded-xl border px-3 py-2 text-xs font-medium transition-all hover:-translate-y-0.5 hover:text-emerald-500"
                       >
