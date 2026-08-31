@@ -44,9 +44,11 @@ export default function TopNav({ onOpenPalette, onPrefetch }) {
   }, [])
 
   useEffect(() => {
-    document.body.style.overflow = mobileOpen ? 'hidden' : ''
-    return () => {
-      document.body.style.overflow = ''
+    if (mobileOpen) {
+      document.body.style.overflow = 'hidden'
+      return () => {
+        document.body.style.overflow = ''
+      }
     }
   }, [mobileOpen])
 

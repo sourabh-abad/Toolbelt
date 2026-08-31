@@ -96,7 +96,9 @@ export default function App() {
   // Without this the new page inherits the previous page's scroll offset,
   // which reads as a broken jump rather than a navigation.
   useEffect(() => {
-    window.scrollTo({ top: 0, behavior: 'instant' })
+    if (window.scrollY > 0) {
+      window.scrollTo({ top: 0, behavior: 'instant' })
+    }
   }, [location.pathname])
 
   useEffect(() => {
