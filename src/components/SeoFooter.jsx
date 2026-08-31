@@ -19,7 +19,7 @@ export default function SeoFooter() {
         <p className="t-muted mt-2 max-w-3xl text-sm leading-relaxed">{seo.blurb}</p>
 
         <nav aria-label="Other tools" className="mt-5">
-          <h3 className="t-faint text-[11px] font-semibold tracking-wider uppercase">More tools</h3>
+          <h3 className="t-muted text-[11px] font-semibold tracking-wider uppercase">More tools</h3>
           <ul className="mt-1 flex flex-wrap gap-x-5">
             {others.map((n) => (
               <li key={n.to}>
@@ -34,7 +34,7 @@ export default function SeoFooter() {
           </ul>
         </nav>
 
-        <p className="t-faint mt-5 text-xs">
+        <p className="t-muted mt-5 text-xs">
           Free · no sign-up · nothing you paste leaves your browser ·{' '}
           <Link to="/about" className="inline-flex min-h-[36px] items-center underline-offset-2 hover:underline">
             about this project

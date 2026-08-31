@@ -4,9 +4,10 @@ import { Loader2 } from 'lucide-react'
 import { pushRecent } from './lib/nav'
 import { useSeo } from './lib/useSeo'
 import SeoFooter from './components/SeoFooter'
-import CommandPalette from './components/CommandPalette'
 import TopNav from './components/TopNav'
 import Home from './pages/Home'
+
+const CommandPalette = lazy(() => import('./components/CommandPalette'))
 
 // Route-level code splitting: heavy tools (sql-formatter, js-yaml, cronstrue)
 // load on demand instead of inflating the initial bundle.
@@ -174,7 +175,11 @@ export default function App() {
         </main>
       </div>
 
-      <CommandPalette open={paletteOpen} onClose={() => setPaletteOpen(false)} />
+      {paletteOpen && (
+        <Suspense fallback={null}>
+          <CommandPalette open={paletteOpen} onClose={() => setPaletteOpen(false)} />
+        </Suspense>
+      )}
     </div>
   )
 }

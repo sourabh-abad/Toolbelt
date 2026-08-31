@@ -135,7 +135,7 @@ export default function TopNav({ onOpenPalette, onPrefetch }) {
             onClick={onOpenPalette}
             type="button"
             aria-label="Search tools (Command K)"
-            className="field hover-surface t-faint flex items-center gap-2 rounded-lg border px-2.5 py-1.5 text-sm transition-colors"
+            className="field hover-surface t-muted flex items-center gap-2 rounded-lg border px-2.5 py-1.5 text-sm transition-colors"
           >
             <Search className="h-3.5 w-3.5" aria-hidden="true" />
             <span className="hidden sm:inline">Search tools…</span>
@@ -174,7 +174,7 @@ export default function TopNav({ onOpenPalette, onPrefetch }) {
         <div className="bd animate-fade-in max-h-[calc(100vh-3.5rem)] overflow-y-auto border-t px-3 pb-4 lg:hidden">
           {NAV_GROUPS.map((group) => (
             <div key={group} className="pt-4">
-              <div className="t-faint mb-1.5 px-1 text-[10px] font-semibold tracking-wider uppercase">{group}</div>
+              <div className="t-muted mb-1.5 px-1 text-[10px] font-semibold tracking-wider uppercase">{group}</div>
               <div className="grid grid-cols-1 gap-1 sm:grid-cols-2">
                 {navItems.filter((n) => n.group === group).map(({ to, label, icon: Icon, accent }) => {
                   const a = ACCENTS[accent] || ACCENTS.emerald

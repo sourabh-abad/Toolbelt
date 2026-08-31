@@ -1,8 +1,6 @@
 import { useMemo, useState } from 'react'
 import { Braces, Wand2, Minimize2, CheckCircle2, Trash2, Search as SearchIcon } from 'lucide-react'
 import {
-  syntaxHighlightJson,
-  syntaxHighlightXml,
   formatXml,
   parseXmlOrThrow,
   jsonParseErrorLocation,

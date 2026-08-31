@@ -35,7 +35,7 @@ export default function Home() {
           const cards = navItems.filter((n) => n.group === group)
           return (
             <section key={group}>
-              <h2 className="t-faint mb-3 text-[11px] font-semibold tracking-wider uppercase">{group}</h2>
+              <h2 className="t-muted mb-3 text-[11px] font-semibold tracking-wider uppercase">{group}</h2>
               <div className="stagger grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
                 {cards.map(({ to, label, icon: Icon, description, accent }) => {
                   const a = ACCENTS[accent] || ACCENTS.emerald
@@ -55,7 +55,7 @@ export default function Home() {
                         <h3 className="t-main text-sm font-semibold">{label}</h3>
                         <p className="t-muted mt-1.5 text-xs leading-relaxed">{description}</p>
                       </div>
-                      <div className={`t-faint relative mt-5 flex items-center gap-1 text-xs font-medium transition-colors ${a.groupHoverText}`}>
+                      <div className={`t-muted relative mt-5 flex items-center gap-1 text-xs font-medium transition-colors ${a.groupHoverText}`}>
                         Open tool
                         <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
                       </div>
