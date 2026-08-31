@@ -120,7 +120,7 @@ function render(pathname, seo) {
     `<script type="application/ld+json">${buildLdJson(pathname, seo)}</script>`
   )
 
-  const prerenderedBody = `<div id="root"><div style="max-width:1200px;margin:0 auto;padding:2rem 1rem;font-family:system-ui,sans-serif"><h1 style="font-size:1.75rem;font-weight:700">${esc(seo.heading || seo.title)}</h1><p style="color:#475569;margin-top:0.75rem;line-height:1.6">${esc(seo.blurb || seo.description)}</p></div></div>`
+  const prerenderedBody = `<div id="root"><div class="app-bg flex min-h-screen flex-col antialiased"><header class="bd sidebar-bg border-b"><div class="mx-auto flex h-14 max-w-[1600px] items-center gap-2.5 px-3 sm:px-5"><a href="/" class="flex shrink-0 items-center gap-2.5" aria-label="DevPocket home"><span class="flex h-7 w-7 items-center justify-center rounded-lg bg-emerald-500/15 text-emerald-500 font-bold text-sm">D</span><span class="t-main text-base font-bold tracking-tight">DevPocket</span></a></div></header><main class="mx-auto w-full max-w-[1600px] flex-1"><div class="bd border-b px-5 pt-10 pb-8 sm:px-8 sm:pt-14 sm:pb-10"><h1 class="t-main text-3xl font-bold tracking-tight sm:text-4xl lg:text-5xl">${esc(seo.heading || seo.title)}</h1><p class="t-muted mt-3 max-w-xl text-sm leading-relaxed">${esc(seo.blurb || seo.description)}</p></div></main></div></div>`
   html = html.replace('<div id="root"></div>', prerenderedBody)
 
   return html
