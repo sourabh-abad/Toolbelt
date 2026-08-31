@@ -1,68 +1,7 @@
 import { useMemo, useState } from 'react'
-import { KeyRound } from 'lucide-react'
-import { base64UrlDecode, syntaxHighlightJson, hexToRgb, rgbToHex, rgbToHsl, hslToRgb } from '../lib/utils'
-import { Panel, CopyButton, TextArea, Input, ErrorBanner, OutputBlock, PageHeader } from '../components/ui'
-
-const SAMPLE_JWT =
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkFkYSBMb3ZlbGFjZSIsImlhdCI6MTcwMDAwMDAwMCwiZXhwIjoxNzk5OTk5OTk5fQ.dQw4w9WgXcQ-dummySignature'
-
-function JwtSection() {
-  const [token, setToken] = useState(SAMPLE_JWT)
-
-  const decoded = useMemo(() => {
-    const parts = token.trim().split('.')
-    if (parts.length < 2) return { error: 'A JWT should have 3 dot-separated parts (header.payload.signature).' }
-    try {
-      const header = JSON.parse(base64UrlDecode(parts[0]))
-      const payload = JSON.parse(base64UrlDecode(parts[1]))
-      return { header, payload, signature: parts[2] || '' }
-    } catch (e) {
-      return { error: `Could not decode token: ${e.message}` }
-    }
-  }, [token])
-
-  const dateFields = ['iat', 'exp', 'nbf']
-
-  return (
-    <Panel title="JWT Decoder" description="Decodes header & payload locally. Signature is shown but not verified.">
-      <TextArea rows={4} value={token} onChange={(e) => setToken(e.target.value)} placeholder="Paste a JWT…" />
-      {decoded.error ? (
-        <div className="mt-3">
-          <ErrorBanner>{decoded.error}</ErrorBanner>
-        </div>
-      ) : (
-        <div className="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-2">
-          <div>
-            <div className="mb-1.5 flex items-center justify-between text-xs t-muted">
-              <span>Header</span>
-              <CopyButton text={JSON.stringify(decoded.header, null, 2)} label="" />
-            </div>
-            <OutputBlock html={syntaxHighlightJson(JSON.stringify(decoded.header, null, 2))} />
-          </div>
-          <div>
-            <div className="mb-1.5 flex items-center justify-between text-xs t-muted">
-              <span>Payload</span>
-              <CopyButton text={JSON.stringify(decoded.payload, null, 2)} label="" />
-            </div>
-            <OutputBlock html={syntaxHighlightJson(JSON.stringify(decoded.payload, null, 2))} />
-            {dateFields.some((f) => decoded.payload?.[f]) && (
-              <div className="mt-2 space-y-1 text-xs t-muted">
-                {dateFields
-                  .filter((f) => decoded.payload?.[f])
-                  .map((f) => (
-                    <div key={f}>
-                      <span className="t-faint">{f}: </span>
-                      {new Date(decoded.payload[f] * 1000).toLocaleString()}
-                    </div>
-                  ))}
-              </div>
-            )}
-          </div>
-        </div>
-      )}
-    </Panel>
-  )
-}
+import { Palette } from 'lucide-react'
+import { hexToRgb, rgbToHex, rgbToHsl, hslToRgb } from '../lib/utils'
+import { Panel, CopyButton, Input, ErrorBanner, PageHeader } from '../components/ui'
 
 function ColorSection() {
   const [hex, setHex] = useState('#10b981')
@@ -167,12 +106,16 @@ function Row({ label, value }) {
   )
 }
 
-export default function JwtColorTool() {
+export default function ColorTool() {
   return (
     <div>
-      <PageHeader icon={KeyRound} title="JWT & Color Tools" subtitle="Decode JWTs and work with colors & CSS units." accent="cyan" />
+      <PageHeader
+        icon={Palette}
+        title="Colour & CSS Units"
+        subtitle="Convert between HEX, RGB and HSL, and between px, rem, em and pt."
+        accent="pink"
+      />
       <div className="space-y-4 p-4 sm:p-6">
-        <JwtSection />
         <ColorSection />
         <UnitConverter />
       </div>

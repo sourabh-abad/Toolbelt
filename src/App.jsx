@@ -1,5 +1,5 @@
 import { useEffect, useState, lazy, Suspense } from 'react'
-import { Routes, Route, NavLink, useLocation, Link } from 'react-router-dom'
+import { Routes, Route, NavLink, useLocation, Link, Navigate } from 'react-router-dom'
 import {
   Search, Command, Sun, Moon, PanelLeftClose, PanelLeftOpen,
   History, Loader2, Menu, X, Heart,
@@ -25,7 +25,8 @@ const LOADERS = {
   '/sql': () => import('./pages/SqlTool'),
   '/diff': () => import('./pages/DiffTool'),
   '/encode-decode': () => import('./pages/EncodeDecodeTool'),
-  '/jwt-color': () => import('./pages/JwtColorTool'),
+  '/jwtvalidator': () => import('./pages/JwtValidatorTool'),
+  '/color': () => import('./pages/ColorTool'),
   '/timestamp': () => import('./pages/TimestampTool'),
   '/cron': () => import('./pages/CronTool'),
   '/http': () => import('./pages/HttpRefTool'),
@@ -44,7 +45,8 @@ const JsonXmlTool = lazy(LOADERS['/json-xml'])
 const EncodeDecodeTool = lazy(LOADERS['/encode-decode'])
 const DiffTool = lazy(LOADERS['/diff'])
 const TimestampTool = lazy(LOADERS['/timestamp'])
-const JwtColorTool = lazy(LOADERS['/jwt-color'])
+const JwtValidatorTool = lazy(LOADERS['/jwtvalidator'])
+const ColorTool = lazy(LOADERS['/color'])
 const ConvertTool = lazy(LOADERS['/convert'])
 const CodeGenTool = lazy(LOADERS['/codegen'])
 const SqlTool = lazy(LOADERS['/sql'])
@@ -324,7 +326,10 @@ export default function App() {
                 <Route path="/sql" element={<SqlTool />} />
                 <Route path="/diff" element={<DiffTool />} />
                 <Route path="/encode-decode" element={<EncodeDecodeTool />} />
-                <Route path="/jwt-color" element={<JwtColorTool />} />
+                <Route path="/jwtvalidator" element={<JwtValidatorTool />} />
+                <Route path="/color" element={<ColorTool />} />
+                {/* The JWT tool used to live at /jwt-color; keep old links working. */}
+                <Route path="/jwt-color" element={<Navigate to="/jwtvalidator" replace />} />
                 <Route path="/timestamp" element={<TimestampTool />} />
                 <Route path="/cron" element={<CronTool />} />
                 <Route path="/http" element={<HttpRefTool />} />

@@ -11,6 +11,7 @@ import {
   Boxes,
   Globe,
   Shuffle,
+  Palette,
 } from 'lucide-react'
 
 export const navItems = [
@@ -25,7 +26,8 @@ export const navItems = [
   // --- Text & compare
   { to: '/diff', label: 'Diff Checker', icon: GitCompare, group: 'Text', accent: 'amber', description: 'Compare two blocks of text' },
   { to: '/encode-decode', label: 'Encode / Decode', icon: Binary, group: 'Text', accent: 'violet', description: 'Base64, URL & hashing' },
-  { to: '/jwt-color', label: 'JWT & Color', icon: KeyRound, group: 'Text', accent: 'cyan', description: 'Decode JWTs, convert colors & CSS units' },
+  { to: '/jwtvalidator', label: 'JWT Validator', icon: KeyRound, group: 'Text', accent: 'cyan', description: 'Decode and check JSON Web Tokens' },
+  { to: '/color', label: 'Colour & CSS Units', icon: Palette, group: 'Text', accent: 'pink', description: 'HEX, RGB, HSL and px / rem / em / pt' },
 
   // --- Time
   { to: '/timestamp', label: 'Time / UUID / Regex', icon: Clock, group: 'Time', accent: 'rose', description: 'Timestamps across zones, UUIDs, regex' },
@@ -52,6 +54,7 @@ export const ACCENTS = {
   orange: { groupHoverText: 'group-hover:text-orange-500', bg: 'bg-orange-500/10', text: 'text-orange-500', border: 'border-orange-500/30', grad: 'from-orange-500 to-red-600', glow: 'shadow-orange-500/20' },
   lime: { groupHoverText: 'group-hover:text-lime-500', bg: 'bg-lime-500/10', text: 'text-lime-500', border: 'border-lime-500/30', grad: 'from-lime-500 to-green-600', glow: 'shadow-lime-500/20' },
   blue: { groupHoverText: 'group-hover:text-blue-500', bg: 'bg-blue-500/10', text: 'text-blue-500', border: 'border-blue-500/30', grad: 'from-blue-500 to-indigo-600', glow: 'shadow-blue-500/20' },
+  pink: { groupHoverText: 'group-hover:text-pink-500', bg: 'bg-pink-500/10', text: 'text-pink-500', border: 'border-pink-500/30', grad: 'from-pink-500 to-rose-600', glow: 'shadow-pink-500/20' },
   fuchsia: { groupHoverText: 'group-hover:text-fuchsia-500', bg: 'bg-fuchsia-500/10', text: 'text-fuchsia-500', border: 'border-fuchsia-500/30', grad: 'from-fuchsia-500 to-pink-600', glow: 'shadow-fuchsia-500/20' },
 }
 

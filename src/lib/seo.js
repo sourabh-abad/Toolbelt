@@ -61,13 +61,21 @@ export const SEO = {
     blurb:
       'Base64 encode or decode any text with full Unicode support, switch between component and full-URI encoding, and generate MD5 and SHA-family digests. Hashes are computed with the browser’s native Web Crypto API, so the input never leaves your machine.',
   },
-  '/jwt-color': {
-    title: 'JWT Decoder & HEX / RGB / HSL Color Converter — DevPocket',
+  '/jwtvalidator': {
+    title: 'JWT Decoder & Validator — Check Token Expiry Online — DevPocket',
     description:
-      'Decode a JWT to read its header and payload, with expiry dates in plain English. Plus HEX, RGB and HSL colour conversion and px / rem / em / pt units.',
-    heading: 'JWT decoder and colour tools',
+      'Decode a JSON Web Token and check its structure, algorithm and expiry. Runs entirely in your browser, so pasting a real token never sends it anywhere.',
+    heading: 'JWT decoder and validator',
     blurb:
-      'Paste a JSON Web Token to inspect its header and payload as formatted JSON, with iat, exp and nbf timestamps rendered as readable dates. Decoding happens locally and the signature is never verified or transmitted, so pasting a real token is safe. Also converts colours between HEX, RGB and HSL, and CSS units between px, rem, em and pt.',
+      'Paste a JSON Web Token to read its header and payload as formatted JSON, with iat, exp and nbf rendered as readable dates. It checks that the three segments decode correctly, flags an "alg" of none, and tells you whether the token has expired or is not yet valid. Decoding happens locally and the token is never transmitted, so a real production token is safe to paste. The signature is shown but not verified — doing that would mean pasting your signing key into a web page, which this tool deliberately does not ask for.',
+  },
+  '/color': {
+    title: 'Colour Converter — HEX, RGB, HSL & px / rem / em — DevPocket',
+    description:
+      'Convert colours between HEX, RGB and HSL with a live picker, and convert CSS units between px, rem, em and pt using any root font size. Free and offline.',
+    heading: 'Colour and CSS unit converter',
+    blurb:
+      'Pick a colour or paste a value and read it back in HEX, RGB and HSL, with every field editable so you can nudge a hue or lightness and see the others follow. The CSS unit converter turns pixels into rem, em and pt against whatever root font size your project uses — handy when translating a design handoff into stylesheet values.',
   },
   '/timestamp': {
     title: 'Unix Timestamp Converter (IST, SAST, UTC), UUID & Regex Tester — DevPocket',

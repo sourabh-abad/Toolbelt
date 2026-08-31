@@ -73,6 +73,34 @@ for (const pathname of routes) {
 // deep links work even before the per-route files are hit.
 writeFileSync(join(dist, '404.html'), render('/', SEO['/']))
 
+// Retired URLs: a static page that redirects, plus a canonical pointing at the
+// new location so search engines transfer rather than index a duplicate.
+// GitHub Pages cannot issue 301s, so this is the closest equivalent.
+const REDIRECTS = { '/jwt-color': '/jwtvalidator' }
+for (const [from, to] of Object.entries(REDIRECTS)) {
+  const target = canonicalUrl(to)
+  const dir = join(dist, from.replace(/^\//, ''))
+  if (!existsSync(dir)) mkdirSync(dir, { recursive: true })
+  writeFileSync(
+    join(dir, 'index.html'),
+    `<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Moved — ${esc(SEO[to].title)}</title>
+    <link rel="canonical" href="${target}" />
+    <meta name="robots" content="noindex, follow" />
+    <meta http-equiv="refresh" content="0; url=${target}" />
+    <script>window.location.replace(${JSON.stringify(target)})</script>
+  </head>
+  <body>
+    <p>This tool moved to <a href="${target}">${target}</a>.</p>
+  </body>
+</html>
+`
+  )
+}
+
 const today = new Date().toISOString().slice(0, 10)
 const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
