@@ -81,6 +81,21 @@ function buildLdJson(pathname, seo) {
           },
         ],
       },
+      // Only emitted when the route's SEO entry has an faq array, and the
+      // same Q&A pairs are rendered visibly on the page via
+      // ToolContentSections — structured data must match visible content.
+      ...(seo.faq
+        ? [
+            {
+              '@type': 'FAQPage',
+              mainEntity: seo.faq.map(({ q, a }) => ({
+                '@type': 'Question',
+                name: q,
+                acceptedAnswer: { '@type': 'Answer', text: a },
+              })),
+            },
+          ]
+        : []),
     ],
   })
 }

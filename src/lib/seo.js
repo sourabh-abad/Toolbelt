@@ -20,6 +20,37 @@ export const SEO = {
     heading: 'JSON and XML formatter, validator and search',
     blurb:
       'Paste JSON or XML to pretty-print it with syntax highlighting, minify it back down, or validate it with the exact line and column of any syntax error. The search box walks the parsed document and returns every matching key, attribute, tag or value with its full path, so you can find a field buried deep in an API response without scrolling.',
+    howItWorks: [
+      'Paste or type JSON or XML into the input pane.',
+      'DevPocket parses it immediately and shows the formatted, syntax-highlighted result — or the exact line and column of the first syntax error.',
+      'Use Minify to collapse it to one line, or Search to walk the parsed document by key, attribute or value.',
+      'Copy the result or export it as a file — nothing is sent anywhere in between.',
+    ],
+    useCases: [
+      'Pretty-printing a minified API response before reading it',
+      'Validating a config file before committing it',
+      'Finding a value buried in a large XML/JSON payload without scrolling',
+      'Minifying JSON before pasting it into a URL or config field',
+    ],
+    faq: [
+      {
+        q: 'Why does it show a line and column for errors instead of just "Invalid JSON"?',
+        a: 'DevPocket runs the parser far enough to report exactly where it stopped, matching the position your editor’s cursor should move to. Most other formatters just report a boolean.',
+      },
+      {
+        q: 'Does it handle JSON5 or JSONC (comments, trailing commas)?',
+        a: 'No — it validates strict JSON per the spec. Comments or trailing commas will be reported as syntax errors.',
+      },
+      {
+        q: 'Is there a file size limit?',
+        a: 'No hard limit, but very large payloads (tens of MB) will be slower to parse and render in a browser tab than a dedicated CLI tool like jq.',
+      },
+      {
+        q: 'What’s the difference between this and the JSON Validator tool?',
+        a: 'This page also handles XML and includes a path-based search; the JSON Validator page adds a collapsible tree view and duplicate-key detection specifically for JSON.',
+      },
+    ],
+    related: ['/jsonvalidator', '/convert', '/codegen', '/json-tree'],
   },
   '/convert': {
     title: 'JSON to YAML to CSV Converter — Free & Online — DevPocket',
@@ -60,6 +91,37 @@ export const SEO = {
     heading: 'Base64, URL encoding and hashing',
     blurb:
       'Base64 encode or decode any text with full Unicode support, switch between component and full-URI encoding, and generate MD5 and SHA-family digests. Hashes are computed with the browser’s native Web Crypto API, so the input never leaves your machine.',
+    howItWorks: [
+      'Paste text into the Base64 or URL section to encode or decode it, or into the Hash section to compute a digest.',
+      'Base64 encoding and decoding correctly handles full Unicode via UTF-8, not just ASCII.',
+      'Hashes (MD5, SHA-1, SHA-256, SHA-384, SHA-512) are computed with the browser’s native Web Crypto API where available.',
+      'Copy any result — nothing you paste is sent anywhere.',
+    ],
+    useCases: [
+      'Decoding a Base64-encoded JWT segment or Basic Auth header to read what’s inside',
+      'URL-encoding a query parameter that contains spaces or special characters',
+      'Generating a SHA-256 checksum to compare against a downloaded file’s published hash',
+      'Quickly checking what a Base64 blob in a config file or log actually contains',
+    ],
+    faq: [
+      {
+        q: 'Is Base64 encryption?',
+        a: 'No — it’s a reversible encoding, not encryption. Anyone can decode it back to the original text with no key required. Never use it to hide secrets.',
+      },
+      {
+        q: 'Does it handle Unicode correctly?',
+        a: 'Yes — text is UTF-8 encoded before Base64 conversion, so non-ASCII characters round-trip correctly, unlike a naive btoa() call.',
+      },
+      {
+        q: 'Is MD5 or SHA-1 secure for passwords?',
+        a: 'No — both are broken for password hashing and have known collision attacks. They’re included here for checksums and legacy compatibility, not for storing credentials; use a dedicated password-hashing algorithm (bcrypt, Argon2) server-side instead.',
+      },
+      {
+        q: 'What’s the difference between "encode" and "encode component"?',
+        a: 'Full URL encoding escapes characters unsafe anywhere in a URL; component encoding also escapes characters like & and = that are safe in a full URL but not inside a single query parameter value.',
+      },
+    ],
+    related: ['/jwtvalidator', '/json-xml'],
   },
   '/jwtvalidator': {
     title: 'JWT Decoder & Validator — Check Token Expiry Online — DevPocket',
@@ -68,6 +130,37 @@ export const SEO = {
     heading: 'JWT decoder and validator',
     blurb:
       'Paste a JSON Web Token to read its header and payload as formatted JSON, with iat, exp and nbf rendered as readable dates. It checks that the three segments decode correctly, flags an "alg" of none, and tells you whether the token has expired or is not yet valid. Decoding happens locally and the token is never transmitted, so a real production token is safe to paste. The signature is shown but not verified — doing that would mean pasting your signing key into a web page, which this tool deliberately does not ask for.',
+    howItWorks: [
+      'Paste a JWT (three dot-separated base64url segments).',
+      'DevPocket decodes the header and payload locally and renders them as formatted JSON.',
+      'Standard time claims (iat, exp, nbf) are converted to readable dates, and the token’s expiry status is checked against your device clock.',
+      'The signature is shown as-is for reference — it is not verified, since that would require pasting your signing secret into a web page.',
+    ],
+    useCases: [
+      'Checking why an API call is failing with a 401 by inspecting a token’s exp claim',
+      'Reading the aud or iss claims to confirm a token was issued for the right service',
+      'Debugging an auth integration without pasting a production token into a third-party site',
+      'Confirming a refreshed token actually has a later exp than the one it replaced',
+    ],
+    faq: [
+      {
+        q: 'Does this verify the signature?',
+        a: 'No. Decoding and verifying are different operations — verifying needs the signing secret or public key, which this tool deliberately never asks for. It only decodes and inspects the claims.',
+      },
+      {
+        q: 'Is it safe to paste a real production token?',
+        a: 'The token is decoded entirely in your browser and never transmitted — you can confirm this yourself in DevTools → Network. See the Privacy page for how to check.',
+      },
+      {
+        q: 'What does "alg: none" mean and why is it flagged?',
+        a: 'It’s a JWT that claims to need no signature at all, a known attack vector against poorly configured verifiers. DevPocket flags it so you notice, but still decodes the token so you can inspect it.',
+      },
+      {
+        q: 'Why is the expiry check based on my device clock?',
+        a: 'A JWT’s exp claim is a Unix timestamp — checking it just compares your local clock to that number. If your device clock is wrong, the check will be too.',
+      },
+    ],
+    related: ['/timestamp', '/encode-decode', '/json-xml'],
   },
   '/color': {
     title: 'Colour Converter — HEX, RGB, HSL & px / rem / em — DevPocket',
@@ -84,6 +177,36 @@ export const SEO = {
     heading: 'Timestamps, UUIDs and regular expressions',
     blurb:
       'Convert a Unix timestamp in seconds or milliseconds into a readable date in every timezone at once — local, India (IST), South Africa (SAST) and UTC — or go the other way from a date to an epoch. Live clocks show the same instant across all four zones. Also generates UUID v4 identifiers in bulk and tests regular expressions with live match indexes and capture groups.',
+    howItWorks: [
+      'Paste a Unix timestamp (seconds or milliseconds) to see it converted to UTC, your local time, IST and SAST at once — or enter a date to go the other way.',
+      'Live clocks below show the current time in all four zones, updating every second.',
+      'The same page also includes a bulk UUID v4 generator and a live regex tester with match and capture-group highlighting.',
+    ],
+    useCases: [
+      'Converting an epoch value from a log line or API response into a readable date',
+      'Checking what a timestamp means in a teammate’s timezone before a release',
+      'Testing a regex pattern against sample strings before dropping it into code',
+      'Quickly generating a UUID while already on the page for something else',
+    ],
+    faq: [
+      {
+        q: 'Does it handle timestamps in seconds and milliseconds?',
+        a: 'Yes — DevPocket detects which unit you likely mean based on magnitude, or you can set it explicitly.',
+      },
+      {
+        q: 'Which timezones are shown?',
+        a: 'Local (your device), UTC, IST (India) and SAST (South Africa) — chosen because they’re common in the distributed teams DevPocket was built for.',
+      },
+      {
+        q: 'Does the regex tester support all JS regex flags?',
+        a: 'It supports the standard g, i, m, s and u flags and highlights every match and capture group live as you type.',
+      },
+      {
+        q: 'Why are timestamp, UUID and regex on one page instead of three?',
+        a: 'They’re all quick, single-input utilities developers reach for in the same debugging session — keeping them together avoids a page reload between them.',
+      },
+    ],
+    related: ['/jwtvalidator', '/cron', '/uuid'],
   },
   '/cron': {
     title: 'Cron Expression Builder & Parser — Next Run Times — DevPocket',
@@ -212,6 +335,36 @@ export const SEO = {
     heading: 'Generate UUIDs and Nano IDs',
     blurb:
       'Produces UUID v4 identifiers via the browser’s crypto.randomUUID, or shorter URL-friendly Nano IDs at whatever length you need. Generate up to a hundred at once and copy them individually or as a block.',
+    howItWorks: [
+      'Choose UUID v4 or Nano ID and set how many you need (up to 100).',
+      'DevPocket generates them using the browser’s crypto.getRandomValues source, not Math.random.',
+      'Copy one at a time or copy the whole batch, then regenerate as needed.',
+    ],
+    useCases: [
+      'Seeding test fixtures or mock database rows with unique IDs',
+      'Generating a primary key or idempotency key while prototyping',
+      'Creating short, URL-safe Nano IDs for slugs instead of full UUIDs',
+      'Bulk-generating IDs for a CSV or seed script',
+    ],
+    faq: [
+      {
+        q: 'Are these cryptographically random?',
+        a: 'Yes — both use the browser’s Web Crypto API (crypto.getRandomValues), the same source used for cryptographic key generation, not a pseudo-random Math.random() fallback.',
+      },
+      {
+        q: 'What UUID version is generated?',
+        a: 'Version 4 (random), the most common choice when you don’t need time-ordering or a namespace-derived ID.',
+      },
+      {
+        q: 'What’s a Nano ID and why would I use it over a UUID?',
+        a: 'A shorter, URL-friendly random ID (21 characters by default) — useful when a full 36-character UUID is overkill, e.g. in a URL slug.',
+      },
+      {
+        q: 'Is there a collision risk?',
+        a: 'Statistically negligible at any realistic scale — a UUID v4 has 122 random bits, and even generating billions of them keeps collision probability effectively zero.',
+      },
+    ],
+    related: ['/timestamp', '/password', '/mock'],
   },
   '/password': {
     title: 'Password Generator — Strong Random Passwords Online — DevPocket',

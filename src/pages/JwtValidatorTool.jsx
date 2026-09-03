@@ -3,6 +3,7 @@ import { KeyRound, CheckCircle2, XCircle, AlertTriangle, Clock } from 'lucide-re
 import { base64UrlDecode } from '../lib/utils'
 import { useToast } from '../lib/toast'
 import { Panel, CopyButton, TextArea, ErrorBanner, OutputBlock, PageHeader, StatRow, Button } from '../components/ui'
+import ToolContentSections from '../components/ToolContentSections'
 import CodeViewer from '../components/CodeViewer'
 
 const SAMPLE_JWT =
@@ -192,6 +193,8 @@ export default function JwtValidatorTool() {
             <OutputBlock text={result.signature} />
           </Panel>
         )}
+
+        <ToolContentSections />
       </div>
     </div>
   )
