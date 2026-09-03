@@ -101,6 +101,118 @@ function buildLdJson(pathname, seo) {
   })
 }
 
+// The nav table lives in nav.js next to lucide icon imports, which can't be
+// evaluated here — so the fields this file needs are read off the source text.
+// One item per line is the format nav.js is written in and the assertion below
+// fails the build if that ever stops holding.
+const navSrc = readFileSync(join(root, 'src/lib/nav.js'), 'utf8')
+const NAV = [
+  ...navSrc.matchAll(
+    /\{ to: '([^']+)', label: '([^']*)',[^}]*?group: (?:'([^']*)'|null),[^}]*?description: '([^']*)' \}/g
+  ),
+].map(([, to, label, group, description]) => ({ to, label, group, description }))
+const NAV_GROUPS = JSON.parse(
+  navSrc.match(/export const NAV_GROUPS = (\[[^\]]*\])/)[1].replace(/'/g, '"')
+)
+if (NAV.length < 20) throw new Error(`prerender: parsed only ${NAV.length} nav items from nav.js`)
+
+// Internal hrefs use the trailing-slash form the canonical tags advertise, so
+// the crawler follows links to exactly the URLs it is told to index.
+const hrefFor = (to) => (to === '/' ? '/' : `${to}/`)
+
+const H2 = 'class="t-main text-base font-semibold tracking-tight"'
+const P = 'class="t-muted mt-2 text-sm leading-relaxed"'
+
+// Everything below `render` writes the same copy React renders on mount —
+// ToolContentSections and SeoFooter read the same seo.js/nav.js fields. Static
+// HTML that differs from the hydrated page is cloaking; this has to stay a
+// mirror, not an SEO-only variant.
+// Replaces whatever sits inside <div id="root"> — an empty div straight out of
+// Vite, or a previously prerendered body. Matching the real closing tag rather
+// than the literal `<div id="root"></div>` keeps `node scripts/prerender.mjs`
+// safe to re-run without a rebuild in between.
+function replaceRoot(html, inner) {
+  const openTag = '<div id="root">'
+  const start = html.indexOf(openTag)
+  if (start === -1) throw new Error('prerender: <div id="root"> not found in dist/index.html')
+  const from = start + openTag.length
+  const tag = /<(\/?)div\b/gi
+  tag.lastIndex = from
+  let depth = 1
+  let m
+  while ((m = tag.exec(html)) !== null) {
+    depth += m[1] ? -1 : 1
+    if (depth === 0) return html.slice(0, from) + inner + html.slice(m.index)
+  }
+  throw new Error('prerender: unbalanced <div id="root">')
+}
+
+function sectionsHtml(seo) {
+  const parts = []
+
+  if (seo.howItWorks) {
+    parts.push(
+      `<section class="mt-8"><h2 ${H2}>How it works</h2><ol class="mt-3 space-y-2.5">${seo.howItWorks
+        .map(
+          (step, i) =>
+            `<li class="t-muted text-sm leading-relaxed"><span class="t-faint mono">${i + 1}.</span> ${esc(step)}</li>`
+        )
+        .join('')}</ol></section>`
+    )
+  }
+
+  if (seo.useCases) {
+    parts.push(
+      `<section class="mt-8"><h2 ${H2}>Common use cases</h2><ul class="mt-3 space-y-1.5">${seo.useCases
+        .map((item) => `<li class="t-muted text-sm leading-relaxed">• ${esc(item)}</li>`)
+        .join('')}</ul></section>`
+    )
+  }
+
+  if (seo.faq) {
+    parts.push(
+      `<section class="mt-8"><h2 ${H2}>FAQ</h2><div class="mt-3 space-y-4">${seo.faq
+        .map(
+          ({ q, a }) =>
+            `<div><h3 class="t-main text-sm font-medium">${esc(q)}</h3><p ${P}>${esc(a)}</p></div>`
+        )
+        .join('')}</div></section>`
+    )
+  }
+
+  const related = (seo.related || []).map((to) => NAV.find((n) => n.to === to)).filter(Boolean)
+  if (related.length) {
+    parts.push(
+      `<section class="mt-8"><h2 ${H2}>Related tools</h2><ul class="mt-3 space-y-1.5">${related
+        .map(
+          (n) =>
+            `<li class="text-sm leading-relaxed"><a href="${hrefFor(n.to)}" class="t-main underline-offset-2">${esc(n.label)}</a> <span class="t-muted">— ${esc(n.description)}</span></li>`
+        )
+        .join('')}</ul></section>`
+    )
+  }
+
+  return parts.length ? `<div class="space-y-4 px-4 pb-6 sm:px-6">${parts.join('')}</div>` : ''
+}
+
+// Mirrors SeoFooter: every tool linked from every page. Before this the static
+// HTML carried a single link, so an audit crawler saw 29 orphan pages.
+function footerHtml(pathname, seo) {
+  const groups = NAV_GROUPS.map((group) => {
+    const items = NAV.filter((n) => n.group === group)
+    if (!items.length) return ''
+    return `<div><h3 class="t-muted text-[11px] font-semibold tracking-wider uppercase">${esc(group)}</h3><ul class="mt-1">${items
+      .map((n) =>
+        n.to === pathname
+          ? `<li><span class="t-faint inline-flex min-h-[32px] items-center text-xs" aria-current="page">${esc(n.label)}</span></li>`
+          : `<li><a href="${hrefFor(n.to)}" class="t-muted inline-flex min-h-[32px] items-center text-xs underline-offset-2">${esc(n.label)}</a></li>`
+      )
+      .join('')}</ul></div>`
+  }).join('')
+
+  return `<footer class="bd mt-2 border-t px-4 py-8 sm:px-6"><div class="mx-auto max-w-4xl"><h2 class="t-main text-sm font-semibold">${esc(seo.heading || seo.title)}</h2><p class="t-muted mt-2 max-w-3xl text-sm leading-relaxed">${esc(seo.blurb || seo.description)}</p><nav aria-label="All tools" class="mt-6 grid grid-cols-2 gap-x-6 gap-y-5 sm:grid-cols-3 lg:grid-cols-4">${groups}</nav><p class="t-muted mt-6 text-xs">Free · no sign-up · nothing you paste leaves your browser · <a href="/" class="inline-flex min-h-[36px] items-center underline-offset-2">all tools</a> · <a href="/privacy/" class="inline-flex min-h-[36px] items-center underline-offset-2">privacy</a> · <a href="/about/" class="inline-flex min-h-[36px] items-center underline-offset-2">about this project</a></p></div></footer>`
+}
+
 function render(pathname, seo) {
   const url = canonicalUrl(pathname)
   let html = template
@@ -136,8 +248,21 @@ function render(pathname, seo) {
     `<script type="application/ld+json">${buildLdJson(pathname, seo)}</script>`
   )
 
-  const prerenderedBody = `<div id="root"><div class="app-bg flex min-h-screen flex-col antialiased"><header class="bd sidebar-bg border-b"><div class="mx-auto flex h-14 max-w-[1600px] items-center gap-2.5 px-3 sm:px-5"><a href="/" class="flex shrink-0 items-center gap-2.5" aria-label="DevPocket home"><span class="flex h-7 w-7 items-center justify-center rounded-lg bg-emerald-500/15 text-emerald-500 font-bold text-sm">D</span><span class="t-main text-base font-bold tracking-tight">DevPocket</span></a></div></header><main class="mx-auto w-full max-w-[1600px] flex-1"><div class="bd border-b px-5 pt-10 pb-8 sm:px-8 sm:pt-14 sm:pb-10"><h1 class="t-main text-3xl font-bold tracking-tight sm:text-4xl lg:text-5xl">${esc(seo.heading || seo.title)}</h1><p class="t-muted mt-3 max-w-xl text-sm leading-relaxed">${esc(seo.blurb || seo.description)}</p></div></main></div></div>`
-  html = html.replace('<div id="root"></div>', prerenderedBody)
+  const body =
+    `<div class="app-bg flex min-h-screen flex-col antialiased">` +
+    `<header class="bd sidebar-bg border-b"><div class="mx-auto flex h-14 max-w-[1600px] items-center gap-2.5 px-3 sm:px-5">` +
+    `<a href="/" class="flex shrink-0 items-center gap-2.5" aria-label="DevPocket home">` +
+    `<span class="flex h-7 w-7 items-center justify-center rounded-lg bg-emerald-500/15 text-emerald-500 font-bold text-sm">D</span>` +
+    `<span class="t-main text-base font-bold tracking-tight">DevPocket</span></a></div></header>` +
+    `<main class="mx-auto w-full max-w-[1600px] flex-1">` +
+    `<div class="bd border-b px-5 pt-10 pb-8 sm:px-8 sm:pt-14 sm:pb-10">` +
+    `<h1 class="t-main text-3xl font-bold tracking-tight sm:text-4xl lg:text-5xl">${esc(seo.heading || seo.title)}</h1>` +
+    `<p class="t-muted mt-3 max-w-xl text-sm leading-relaxed">${esc(seo.blurb || seo.description)}</p></div>` +
+    sectionsHtml(seo) +
+    footerHtml(pathname, seo) +
+    `</main></div>`
+
+  html = replaceRoot(html, body)
 
   return html
 }

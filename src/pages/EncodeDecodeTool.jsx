@@ -3,7 +3,6 @@ import md5 from 'md5'
 import { Binary } from 'lucide-react'
 import { bytesToBase64, sha } from '../lib/utils'
 import { Panel, Button, CopyButton, TextArea, ErrorBanner, PageHeader } from '../components/ui'
-import ToolContentSections from '../components/ToolContentSections'
 
 function Base64Section() {
   const [input, setInput] = useState('Hello, world!')
@@ -142,7 +141,6 @@ export default function EncodeDecodeTool() {
         <Base64Section />
         <UrlSection />
         <HashSection />
-        <ToolContentSections />
       </div>
     </div>
   )

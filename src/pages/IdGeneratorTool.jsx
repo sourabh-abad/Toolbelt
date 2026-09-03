@@ -2,7 +2,6 @@ import { useCallback, useEffect, useState } from 'react'
 import { Fingerprint, RefreshCw } from 'lucide-react'
 import { useToast } from '../lib/toast'
 import { Panel, Button, CopyButton, Input, Checkbox, PageHeader, Tabs } from '../components/ui'
-import ToolContentSections from '../components/ToolContentSections'
 
 const NANO_ALPHABET = 'useandom-26T198340PX75pxJACKVERYMINDBUSHWOLF_GQZbfghjklqvwyzrict'
 
@@ -87,7 +86,6 @@ export default function IdGeneratorTool() {
           </div>
         </Panel>
 
-        <ToolContentSections />
       </div>
     </div>
   )

@@ -6,7 +6,13 @@ import { seoFor } from '../lib/seo'
 
 /**
  * "How it works" / "Common use cases" / FAQ / "Related tools" for tool pages
- * that have this content in their src/lib/seo.js entry. Pulls from seo.js
+ * that have this content in their src/lib/seo.js entry. Rendered once from
+ * App.jsx for every route rather than per page, so a route only needs copy in
+ * seo.js to get these sections — and scripts/prerender.mjs writes the same
+ * markup into the static HTML.
+ *
+ * Original note:
+ *  Pulls from seo.js
  * rather than a second data file, since that's already the per-route
  * metadata source of truth and scripts/prerender.mjs reads the same object
  * to emit matching FAQPage structured data.
@@ -20,7 +26,7 @@ export default function ToolContentSections() {
   const relatedItems = (related || []).map((to) => navItems.find((n) => n.to === to)).filter(Boolean)
 
   return (
-    <>
+    <div className="space-y-4 px-4 pb-6 sm:px-6">
       {howItWorks && (
         <Panel title="How it works">
           <ol className="space-y-2.5">
@@ -70,6 +76,6 @@ export default function ToolContentSections() {
           </div>
         </div>
       )}
-    </>
+    </div>
   )
 }

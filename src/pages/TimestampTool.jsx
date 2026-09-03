@@ -2,7 +2,6 @@ import { useEffect, useMemo, useState } from 'react'
 import { Clock, RefreshCw, Copy, Globe2 } from 'lucide-react'
 import { useToast } from '../lib/toast'
 import { Panel, Button, CopyButton, Input, TextArea, ErrorBanner, PageHeader, StatRow } from '../components/ui'
-import ToolContentSections from '../components/ToolContentSections'
 
 const ZONES = [
   { id: 'local', label: 'Local', sub: Intl.DateTimeFormat().resolvedOptions().timeZone, accent: 'border-emerald-500/30 bg-emerald-500/5' },
@@ -292,7 +291,6 @@ export default function TimestampTool() {
         <TimestampConverter />
         <UuidSection />
         <RegexTester />
-        <ToolContentSections />
       </div>
     </div>
   )

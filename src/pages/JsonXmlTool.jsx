@@ -12,7 +12,6 @@ import { useDebounced } from '../lib/useDebounced'
 import SplitPane from '../components/SplitPane'
 import CodeViewer from '../components/CodeViewer'
 import { Panel, Button, CopyButton, TextArea, Input, ErrorBanner, PageHeader, Checkbox, Tabs } from '../components/ui'
-import ToolContentSections from '../components/ToolContentSections'
 
 const SAMPLE_JSON = `{
   "id": 42,
@@ -226,7 +225,6 @@ export default function JsonXmlTool() {
           )}
         </Panel>
 
-        <ToolContentSections />
       </div>
     </div>
   )

@@ -4,6 +4,7 @@ import { Loader2 } from 'lucide-react'
 import { pushRecent } from './lib/nav'
 import { useSeo } from './lib/useSeo'
 import SeoFooter from './components/SeoFooter'
+import ToolContentSections from './components/ToolContentSections'
 import TopNav from './components/TopNav'
 import Home from './pages/Home'
 
@@ -177,6 +178,7 @@ export default function App() {
                 <Route path="/lorem" element={<LoremTool />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
+              <ToolContentSections />
               <SeoFooter />
             </div>
           </Suspense>
