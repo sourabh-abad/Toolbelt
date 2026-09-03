@@ -31,7 +31,7 @@ export default function About() {
 
   return (
     <div>
-      <PageHeader icon={Heart} title="About" subtitle={`DevPocket — ${toolCount} tools, built by one developer.`} accent="emerald" />
+      <PageHeader icon={Heart} title="About" subtitle={`DevPocket — ${toolCount} tools, built by one developer.`} accent="emerald" isTool={false} />
 
       <div className="mx-auto max-w-4xl space-y-4 p-4 sm:p-6">
         {/* Developer card */}

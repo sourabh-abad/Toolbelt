@@ -6,12 +6,12 @@ export const SITE_ORIGIN = 'https://devpocket.in'
 // `blurb` is real copy rendered on the page — crawlers rank text, not widgets.
 export const SEO = {
   '/': {
-    title: 'DevPocket — Free Developer Tools That Run In Your Browser',
+    title: 'DevPocket — Developer Tools That Stay In Your Browser',
     description:
-      'Free developer tools: JSON & XML formatter, SQL beautifier, JWT decoder, cron builder, diff checker and mock data generator. No uploads, no sign-up.',
-    heading: 'Free developer utilities',
+      'Format JSON, decode JWTs, generate UUIDs, test regex and convert timestamps — free developer tools that run entirely client-side. No signup, no uploads, no tracking.',
+    heading: 'Developer tools that stay in your browser',
     blurb:
-      'DevPocket is a collection of 26 everyday developer tools that run entirely in your browser. Nothing you paste is uploaded to a server, so you can safely work with production payloads, tokens and customer data.',
+      'DevPocket is a toolbox of everyday developer utilities that run entirely in your browser — JSON, JWTs, UUIDs, regex, timestamps and more. Nothing you paste is uploaded to a server, so you can safely work with production payloads, tokens and customer data.',
   },
   '/json-xml': {
     title: 'JSON & XML Formatter, Validator and Search — DevPocket',
@@ -108,6 +108,14 @@ export const SEO = {
     heading: 'Mock and test data generator',
     blurb:
       'Build up to 500 realistic records from 21 field types including names, emails, phone numbers, addresses, prices, timestamps and IP addresses. Export as JSON to stub an API response, CSV to import into a spreadsheet, or ready-to-run SQL INSERT statements to seed a development database.',
+  },
+  '/jsonvalidator': {
+    title: 'JSON Validator Online — Format, Tree View & Duplicate Keys — DevPocket',
+    description:
+      'Validate JSON online with exact error line/column, a live collapsible tree view, duplicate-key detection and search. Free, offline, like a lightweight JSON editor.',
+    heading: 'JSON validator and editor',
+    blurb:
+      'Paste or upload JSON to validate it with the precise line and column of any syntax error, then switch between a formatted code view and a collapsible tree — the two views a full JSON editor gives you, without the upload. Object keys repeated within the same literal are flagged, since JSON.parse silently keeps only the last one. Sort keys, choose an indent width, search by key or value, and export the result as a file, all locally in your browser.',
   },
   '/json-sort-keys': {
     title: 'JSON Sort Keys Online — Alphabetise Object Keys — DevPocket',
@@ -220,6 +228,14 @@ export const SEO = {
     heading: 'Generate placeholder text',
     blurb:
       'Produces filler copy in whatever quantity a layout needs — a handful of words for a label, a few sentences for a card, or several paragraphs for an article mock-up — with the traditional "Lorem ipsum dolor sit amet" opening available as a toggle.',
+  },
+  '/privacy': {
+    title: 'Privacy — How DevPocket Handles Your Data',
+    description:
+      'DevPocket runs entirely client-side: no backend, no analytics, no cookies, no error tracking. See exactly what is stored locally and how to verify it yourself in DevTools.',
+    heading: 'How DevPocket actually handles your data',
+    blurb:
+      'A plain description of the architecture, not a marketing claim: what runs locally, what (if anything) leaves your browser, what is stored in localStorage, and how to check all of it yourself in the Network tab.',
   },
   '/about': {
     title: 'About DevPocket — Built by Sourabh Kumar',

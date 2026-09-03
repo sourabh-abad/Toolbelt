@@ -36,6 +36,10 @@ export default function SeoFooter() {
 
         <p className="t-muted mt-5 text-xs">
           Free · no sign-up · nothing you paste leaves your browser ·{' '}
+          <Link to="/privacy" className="inline-flex min-h-[36px] items-center underline-offset-2 hover:underline">
+            privacy
+          </Link>{' '}
+          ·{' '}
           <Link to="/about" className="inline-flex min-h-[36px] items-center underline-offset-2 hover:underline">
             about this project
           </Link>

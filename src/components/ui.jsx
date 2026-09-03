@@ -1,6 +1,8 @@
 import { useState } from 'react'
-import { Check, Copy } from 'lucide-react'
+import { useLocation } from 'react-router-dom'
+import { Check, Copy, Lock, Globe, Star } from 'lucide-react'
 import { ACCENTS } from '../lib/nav'
+import { useFavorites } from '../lib/favorites'
 
 export function Panel({ title, description, actions, children, className = '' }) {
   return (
@@ -152,8 +154,61 @@ export function StatRow({ label, value, mono = true }) {
   )
 }
 
-export function PageHeader({ icon: Icon, title, subtitle, accent = 'emerald', actions }) {
+/**
+ * Discloses whether a tool sends anything over the network. Defaults to
+ * "local" because every current DevPocket tool runs entirely client-side —
+ * a tool that genuinely needs the network should pass `privacy="network"`
+ * explicitly rather than this component guessing.
+ */
+export function PrivacyBadge({ privacy = 'local', className = '' }) {
+  if (privacy === 'network') {
+    return (
+      <span
+        title="This tool makes a network request to work. Check its privacy notice for exactly what is sent."
+        className={`inline-flex items-center gap-1 rounded-full border border-amber-500/30 bg-amber-500/10 px-2 py-0.5 text-[11px] font-medium text-amber-700 dark:text-amber-400 ${className}`}
+      >
+        <Globe className="h-3 w-3" aria-hidden="true" />
+        Needs network
+      </span>
+    )
+  }
+  return (
+    <span
+      title="Your input is processed locally and is not sent to DevPocket."
+      className={`inline-flex items-center gap-1 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2 py-0.5 text-[11px] font-medium text-emerald-600 dark:text-emerald-400 ${className}`}
+    >
+      <Lock className="h-3 w-3" aria-hidden="true" />
+      Runs locally
+    </span>
+  )
+}
+
+/** Star toggle backed by localStorage — works for any tool path, not just the current page. */
+export function FavoriteButton({ path, size = 'md', className = '' }) {
+  const { isFavorite, toggle } = useFavorites()
+  const active = isFavorite(path)
+  const dim = size === 'sm' ? 'h-7 w-7' : 'h-8 w-8'
+  return (
+    <button
+      type="button"
+      onClick={(e) => {
+        e.preventDefault()
+        e.stopPropagation()
+        toggle(path)
+      }}
+      aria-pressed={active}
+      aria-label={active ? 'Remove from favorites' : 'Add to favorites'}
+      title={active ? 'Remove from favorites' : 'Add to favorites'}
+      className={`hover-surface flex ${dim} shrink-0 items-center justify-center rounded-lg transition-colors ${className}`}
+    >
+      <Star className={`h-4 w-4 ${active ? 'fill-amber-400 text-amber-400' : 't-faint'}`} aria-hidden="true" />
+    </button>
+  )
+}
+
+export function PageHeader({ icon: Icon, title, subtitle, accent = 'emerald', privacy = 'local', isTool = true, actions }) {
   const a = ACCENTS[accent] || ACCENTS.emerald
+  const { pathname } = useLocation()
   return (
     <div className="bd sticky top-0 z-10 flex items-center gap-3 border-b px-4 py-4 backdrop-blur-md sm:px-6 sm:py-5"
          style={{ backgroundColor: 'color-mix(in srgb, var(--bg) 80%, transparent)' }}>
@@ -163,10 +218,16 @@ export function PageHeader({ icon: Icon, title, subtitle, accent = 'emerald', ac
         </div>
       )}
       <div className="min-w-0">
-        <h1 className="t-main text-base font-semibold">{title}</h1>
+        <div className="flex flex-wrap items-center gap-2">
+          <h1 className="t-main text-base font-semibold">{title}</h1>
+          {isTool && <PrivacyBadge privacy={privacy} />}
+        </div>
         {subtitle && <p className="t-muted truncate text-xs">{subtitle}</p>}
       </div>
-      {actions && <div className="ml-auto flex items-center gap-2">{actions}</div>}
+      <div className="ml-auto flex shrink-0 items-center gap-1.5">
+        {actions}
+        {isTool && <FavoriteButton path={pathname} />}
+      </div>
     </div>
   )
 }

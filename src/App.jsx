@@ -27,6 +27,7 @@ const LOADERS = {
   '/http': () => import('./pages/HttpRefTool'),
   '/mock': () => import('./pages/MockDataTool'),
   '/about': () => import('./pages/About'),
+  '/privacy': () => import('./pages/Privacy'),
   '/json-sort-keys': () => import('./pages/JsonSortKeys'),
   '/json-flatten': () => import('./pages/JsonFlatten'),
   '/json-unflatten': () => import('./pages/JsonUnflatten'),
@@ -35,6 +36,7 @@ const LOADERS = {
   '/json-remove-empty': () => import('./pages/JsonClean'),
   '/json-merge': () => import('./pages/JsonMerge'),
   '/json-tree': () => import('./pages/JsonTreeTool'),
+  '/jsonvalidator': () => import('./pages/JsonValidatorTool'),
   '/json-stats': () => import('./pages/JsonStats'),
   '/jsonpath': () => import('./pages/JsonPathTool'),
   '/json-schema': () => import('./pages/JsonSchemaTool'),
@@ -63,6 +65,7 @@ const CronTool = lazy(LOADERS['/cron'])
 const HttpRefTool = lazy(LOADERS['/http'])
 const MockDataTool = lazy(LOADERS['/mock'])
 const About = lazy(LOADERS['/about'])
+const Privacy = lazy(LOADERS['/privacy'])
 const JsonSortKeys = lazy(LOADERS['/json-sort-keys'])
 const JsonFlatten = lazy(LOADERS['/json-flatten'])
 const JsonUnflatten = lazy(LOADERS['/json-unflatten'])
@@ -70,6 +73,7 @@ const JsonEscape = lazy(LOADERS['/json-escape'])
 const JsonClean = lazy(LOADERS['/json-remove-nulls'])
 const JsonMerge = lazy(LOADERS['/json-merge'])
 const JsonTreeTool = lazy(LOADERS['/json-tree'])
+const JsonValidatorTool = lazy(LOADERS['/jsonvalidator'])
 const JsonStats = lazy(LOADERS['/json-stats'])
 const JsonPathTool = lazy(LOADERS['/jsonpath'])
 const JsonSchemaTool = lazy(LOADERS['/json-schema'])
@@ -154,6 +158,7 @@ export default function App() {
                 <Route path="/http" element={<HttpRefTool />} />
                 <Route path="/mock" element={<MockDataTool />} />
                 <Route path="/about" element={<About />} />
+                <Route path="/privacy" element={<Privacy />} />
 
                 <Route path="/json-sort-keys" element={<JsonSortKeys />} />
                 <Route path="/json-flatten" element={<JsonFlatten />} />
@@ -163,6 +168,7 @@ export default function App() {
                 <Route path="/json-remove-empty" element={<JsonClean />} />
                 <Route path="/json-merge" element={<JsonMerge />} />
                 <Route path="/json-tree" element={<JsonTreeTool />} />
+                <Route path="/jsonvalidator" element={<JsonValidatorTool />} />
                 <Route path="/json-stats" element={<JsonStats />} />
                 <Route path="/jsonpath" element={<JsonPathTool />} />
                 <Route path="/json-schema" element={<JsonSchemaTool />} />

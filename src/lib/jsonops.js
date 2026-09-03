@@ -218,6 +218,91 @@ export function jsonPath(value, expression) {
   return nodes
 }
 
+/**
+ * Scans raw (already-valid) JSON text for object keys repeated within the
+ * same object literal — a bug `JSON.parse` hides silently by keeping only
+ * the last value. Written as a small hand-rolled scanner rather than reusing
+ * `JSON.parse` because the parser needs to see every key before dedup.
+ */
+export function findDuplicateKeys(text) {
+  const len = text.length
+  const duplicates = []
+  let i = 0
+
+  const posAt = (idx) => {
+    const upto = text.slice(0, idx)
+    const line = upto.split('\n').length
+    return { line, col: idx - upto.lastIndexOf('\n') }
+  }
+  const skipWs = () => {
+    while (i < len && /\s/.test(text[i])) i++
+  }
+  const readString = () => {
+    const start = i
+    i++ // opening quote
+    while (i < len) {
+      if (text[i] === '\\') i += 2
+      else if (text[i] === '"') { i++; break }
+      else i++
+    }
+    return JSON.parse(text.slice(start, i))
+  }
+  const readScalar = () => {
+    while (i < len && !/[\s,}\]]/.test(text[i])) i++
+  }
+
+  function readValue(path) {
+    skipWs()
+    const c = text[i]
+    if (c === '{') return readObject(path)
+    if (c === '[') return readArray(path)
+    if (c === '"') return void readString()
+    return readScalar()
+  }
+
+  function readObject(path) {
+    i++ // {
+    const seen = new Set()
+    skipWs()
+    if (text[i] === '}') { i++; return }
+    for (;;) {
+      skipWs()
+      const keyStart = i
+      const key = readString()
+      const childPath = path ? `${path}.${key}` : key
+      if (seen.has(key)) {
+        const { line, col } = posAt(keyStart)
+        duplicates.push({ key, path: childPath, line, col })
+      }
+      seen.add(key)
+      skipWs()
+      i++ // ':'
+      readValue(childPath)
+      skipWs()
+      if (text[i] === ',') { i++; continue }
+      break
+    }
+    if (text[i] === '}') i++
+  }
+
+  function readArray(path) {
+    i++ // [
+    skipWs()
+    if (text[i] === ']') { i++; return }
+    let idx = 0
+    for (;;) {
+      readValue(`${path}[${idx++}]`)
+      skipWs()
+      if (text[i] === ',') { i++; continue }
+      break
+    }
+    if (text[i] === ']') i++
+  }
+
+  readValue('')
+  return duplicates
+}
+
 /** Infers a JSON Schema (draft 2020-12) from a sample value. */
 export function inferSchema(value) {
   const build = (val) => {

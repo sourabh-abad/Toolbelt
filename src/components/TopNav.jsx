@@ -1,10 +1,9 @@
 import { useEffect, useRef, useState } from 'react'
 import { NavLink, Link, useLocation } from 'react-router-dom'
-import { ChevronDown, Search, Command, Sun, Moon, Menu, X, Heart } from 'lucide-react'
+import { ChevronDown, Search, Command, Sun, Moon, Menu, X, Heart, Lock, Info } from 'lucide-react'
 import { navItems, NAV_GROUPS, ACCENTS } from '../lib/nav'
 import { useTheme } from '../lib/theme'
 import Logo from './Logo'
-import Avatar from './Avatar'
 import { PROFILE } from '../lib/profile'
 
 /**
@@ -155,8 +154,19 @@ export default function TopNav({ onOpenPalette, onPrefetch }) {
             {theme === 'dark' ? <Sun className="h-3.5 w-3.5" aria-hidden="true" /> : <Moon className="h-3.5 w-3.5" aria-hidden="true" />}
           </button>
 
-          <Link to="/about" className="hidden shrink-0 lg:block" aria-label="About">
-            <Avatar size={28} rounded="rounded-full" decorative loading="lazy" />
+          <Link
+            to="/privacy"
+            className="t-muted hover:t-main hidden shrink-0 text-sm font-medium lg:block"
+          >
+            Privacy
+          </Link>
+
+          <Link
+            to="/about"
+            aria-label="About"
+            className="field hover-surface t-muted hidden h-8 w-8 shrink-0 items-center justify-center rounded-lg border transition-colors lg:flex"
+          >
+            <Info className="h-3.5 w-3.5" aria-hidden="true" />
           </Link>
 
           <button
@@ -198,10 +208,16 @@ export default function TopNav({ onOpenPalette, onPrefetch }) {
               </div>
             </div>
           ))}
-          <Link to="/about" className="t-muted hover-surface mt-4 flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm">
-            <Heart className="h-4 w-4" aria-hidden="true" />
-            About · by {PROFILE.name.split(' ')[0]}
-          </Link>
+          <div className="mt-4 flex flex-col gap-1">
+            <Link to="/about" className="t-muted hover-surface flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm">
+              <Heart className="h-4 w-4" aria-hidden="true" />
+              About · by {PROFILE.name.split(' ')[0]}
+            </Link>
+            <Link to="/privacy" className="t-muted hover-surface flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm">
+              <Lock className="h-4 w-4" aria-hidden="true" />
+              Privacy
+            </Link>
+          </div>
         </div>
       )}
     </header>

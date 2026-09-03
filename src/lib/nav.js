@@ -23,6 +23,7 @@ import {
   FileJson,
   Fingerprint,
   Type,
+  ShieldCheck,
 } from 'lucide-react'
 
 export const navItems = [
@@ -38,6 +39,7 @@ export const navItems = [
   { to: '/sql', label: 'SQL Formatter', icon: Database, group: 'Data', accent: 'orange', description: 'Pretty-print & minify SQL across dialects' },
 
   // --- JSON toolkit: one route per task so each ranks for its own query
+  { to: '/jsonvalidator', label: 'JSON Validator', icon: ShieldCheck, group: 'JSON Toolkit', accent: 'emerald', description: 'Validate, format & explore JSON in a live tree view' },
   { to: '/json-sort-keys', label: 'JSON Sort Keys', icon: ArrowUpDown, group: 'JSON Toolkit', accent: 'sky', description: 'Alphabetise keys at every level' },
   { to: '/json-flatten', label: 'JSON Flattener', icon: Layers, group: 'JSON Toolkit', accent: 'teal', description: 'Collapse nesting into dot-notation keys' },
   { to: '/json-unflatten', label: 'JSON Unflattener', icon: Boxes, group: 'JSON Toolkit', accent: 'teal', description: 'Rebuild nesting from dot-notation keys' },
