@@ -24,6 +24,11 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          # Full history: the build derives each page's sitemap
+          # <lastmod> from its last commit date, which the default
+          # shallow clone hides.
+          fetch-depth: 0
 
       - name: Set up Node
         uses: actions/setup-node@v4

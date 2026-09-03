@@ -9,6 +9,7 @@
  * client-side routing.
  */
 import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'node:fs'
+import { execFileSync } from 'node:child_process'
 import { join, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
@@ -185,14 +186,68 @@ for (const [from, to] of Object.entries(REDIRECTS)) {
   )
 }
 
-const today = new Date().toISOString().slice(0, 10)
+// --- sitemap <lastmod> ------------------------------------------------
+// One shared build date on all 29 URLs tells a crawler nothing: it either
+// refetches every page or trusts none of them. Each page's date instead comes
+// from git — the last commit touching the component that renders it, or the
+// SEO copy printed above the fold, whichever is newer.
+const buildDate = new Date().toISOString().slice(0, 10)
+
+// Route -> page module, parsed out of App.jsx's LOADERS table so adding a tool
+// there can't leave a stale mapping here.
+const appSrc = readFileSync(join(root, 'src/App.jsx'), 'utf8')
+const ROUTE_SOURCE = { '/': 'src/pages/Home.jsx' }
+for (const [, route, mod] of appSrc.matchAll(
+  /'(\/[^']*)':\s*\(\)\s*=>\s*import\('\.\/([^']+)'\)/g
+)) {
+  ROUTE_SOURCE[route] = `src/${mod}.jsx`
+}
+
+// Returns a YYYY-MM-DD date, or null when git can't answer — an unbuilt
+// checkout, a tarball, or a shallow CI clone that doesn't reach the commit.
+function gitDate(args) {
+  try {
+    const out = execFileSync('git', args, {
+      cwd: root,
+      encoding: 'utf8',
+      stdio: ['ignore', 'pipe', 'ignore'],
+    })
+    const first = out.split('\n', 1)[0].trim()
+    return /^\d{4}-\d{2}-\d{2}$/.test(first) ? first : null
+  } catch {
+    return null
+  }
+}
+
+// `git log -L` limits history to one line range, letting a route pick up edits
+// to its own SEO block without every other route inheriting the same date.
+// The range regex has to match seo.js as it stands now, hence the literal
+// two-space indent the table is written with.
+function seoEntryDate(pathname) {
+  const key = pathname.replace(/\//g, '\\/')
+  return gitDate(['log', '-1', '--format=%cs', '-L', `/^  '${key}': {/,/^  },$/:src/lib/seo.js`])
+}
+
+const lastmodCache = new Map()
+function lastmodFor(pathname) {
+  if (lastmodCache.has(pathname)) return lastmodCache.get(pathname)
+  const file = ROUTE_SOURCE[pathname]
+  const dates = [
+    file ? gitDate(['log', '-1', '--format=%cs', '--', file]) : null,
+    seoEntryDate(pathname),
+  ].filter(Boolean)
+  // ISO dates sort lexically, so the last one is the newest.
+  const value = dates.length ? dates.sort()[dates.length - 1] : buildDate
+  lastmodCache.set(pathname, value)
+  return value
+}
 const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${routes
   .map((p) => {
     const url = canonicalUrl(p)
     const priority = p === '/' ? '1.0' : p === '/about' ? '0.5' : '0.8'
-    return `  <url>\n    <loc>${url}</loc>\n    <lastmod>${today}</lastmod>\n    <changefreq>monthly</changefreq>\n    <priority>${priority}</priority>\n  </url>`
+    return `  <url>\n    <loc>${url}</loc>\n    <lastmod>${lastmodFor(p)}</lastmod>\n    <changefreq>monthly</changefreq>\n    <priority>${priority}</priority>\n  </url>`
   })
   .join('\n')}
 </urlset>
