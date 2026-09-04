@@ -36,10 +36,12 @@ jobs:
           node-version: 22
           cache: npm
 
-      # `npm ci` needs a committed package-lock.json; fall back to a plain
-      # install so a missing lockfile doesn't break the deploy.
+      # Strictly `npm ci`: it installs from the lockfile without re-resolving,
+      # and the setup-node cache above is keyed on that lockfile. Falling back
+      # to `npm install` on a stale lock is what turned a 30-second deploy into
+      # a four-minute one — the fallback hid the drift instead of failing.
       - name: Install dependencies
-        run: npm ci || npm install
+        run: npm ci
 
       - name: Build
         run: npm run build
