@@ -23,6 +23,7 @@ const LOADERS = {
   '/encode-decode': () => import('./pages/EncodeDecodeTool'),
   '/jwtvalidator': () => import('./pages/JwtValidatorTool'),
   '/color': () => import('./pages/ColorTool'),
+  '/markdown': () => import('./pages/MarkdownTool'),
   '/timestamp': () => import('./pages/TimestampTool'),
   '/cron': () => import('./pages/CronTool'),
   '/http': () => import('./pages/HttpRefTool'),
@@ -59,6 +60,7 @@ const DiffTool = lazy(LOADERS['/diff'])
 const TimestampTool = lazy(LOADERS['/timestamp'])
 const JwtValidatorTool = lazy(LOADERS['/jwtvalidator'])
 const ColorTool = lazy(LOADERS['/color'])
+const MarkdownTool = lazy(LOADERS['/markdown'])
 const ConvertTool = lazy(LOADERS['/convert'])
 const CodeGenTool = lazy(LOADERS['/codegen'])
 const SqlTool = lazy(LOADERS['/sql'])
@@ -152,6 +154,7 @@ export default function App() {
                 <Route path="/encode-decode" element={<EncodeDecodeTool />} />
                 <Route path="/jwtvalidator" element={<JwtValidatorTool />} />
                 <Route path="/color" element={<ColorTool />} />
+                <Route path="/markdown" element={<MarkdownTool />} />
                 {/* The JWT tool used to live at /jwt-color; keep old links working. */}
                 <Route path="/jwt-color" element={<Navigate to="/jwtvalidator" replace />} />
                 <Route path="/timestamp" element={<TimestampTool />} />

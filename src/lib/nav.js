@@ -23,6 +23,7 @@ import {
   FileJson,
   Fingerprint,
   Type,
+  FileText,
   ShieldCheck,
 } from 'lucide-react'
 
@@ -56,6 +57,7 @@ export const navItems = [
   { to: '/diff', label: 'Diff Checker', icon: GitCompare, group: 'Text', accent: 'amber', description: 'Compare two blocks of text' },
   { to: '/encode-decode', label: 'Encode / Decode', icon: Binary, group: 'Text', accent: 'violet', description: 'Base64, URL & hashing' },
   { to: '/color', label: 'Colour & CSS Units', icon: Palette, group: 'Text', accent: 'pink', description: 'HEX, RGB, HSL and px / rem / em / pt' },
+  { to: '/markdown', label: 'Markdown Preview', icon: FileText, group: 'Text', accent: 'blue', description: 'Live GitHub-flavoured Markdown with Mermaid diagrams' },
 
   // --- Time
   { to: '/timestamp', label: 'Time / UUID / Regex', icon: Clock, group: 'Time', accent: 'rose', description: 'Timestamps across zones, UUIDs, regex' },

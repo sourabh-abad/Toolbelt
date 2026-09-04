@@ -224,7 +224,7 @@ export const SEO = {
         a: 'No hard limit, but diffing runs in your tab, so two very large files will be slower here than a native diff tool.',
       },
     ],
-    related: ['/json-sort-keys', '/json-xml', '/sql', '/encode-decode'],
+    related: ['/markdown', '/json-sort-keys', '/json-xml', '/sql'],
   },
   '/encode-decode': {
     title: 'Base64, URL & Hash Encoder / Decoder — DevPocket',
@@ -337,7 +337,50 @@ export const SEO = {
         a: 'The picker works with opaque colours. For a translucent variant, take the RGB values and add the alpha channel yourself as rgba() or an eight-digit HEX.',
       },
     ],
-    related: ['/encode-decode', '/lorem', '/diff', '/http'],
+    related: ['/markdown', '/encode-decode', '/lorem', '/diff'],
+  },
+  '/markdown': {
+    title: 'Markdown Preview — Live GitHub-Flavoured Editor',
+    description:
+      'Live Markdown preview with GitHub-flavoured tables, task lists, highlighted code and Mermaid diagrams. Copy the HTML or download a file. Nothing is uploaded.',
+    heading: 'Markdown live preview',
+    blurb:
+      'Type or paste Markdown on the left and read it rendered on the right, as GitHub would show it — tables, task lists, footnoted links, blockquotes and fenced code with syntax highlighting. Fenced blocks tagged mermaid become real diagrams. Raw HTML in the source is shown as text rather than executed, so pasting a README you did not write cannot run anything in your browser.',
+    howItWorks: [
+      'Paste Markdown, or open a .md file from your machine — it is read locally and never uploaded.',
+      'The preview updates as you type, with scrolling synced between the two panes.',
+      'Switch to the HTML tab to read the generated markup instead of the rendered page.',
+      'Copy the HTML, or download a self-contained .html file that carries its own styling.',
+    ],
+    useCases: [
+      'Checking a README renders correctly before pushing it',
+      'Drafting a pull request description or release notes with a table in it',
+      'Turning meeting notes into an HTML file you can send to someone',
+      'Sketching a flowchart or sequence diagram in Mermaid without opening a diagram tool',
+    ],
+    faq: [
+      {
+        q: 'Which Markdown flavour does it follow?',
+        a: 'GitHub-flavoured Markdown: tables, task lists, strikethrough, autolinks and fenced code blocks on top of standard CommonMark.',
+      },
+      {
+        q: 'What happens to HTML written inside the Markdown?',
+        a: 'It is escaped and displayed as text rather than rendered. GitHub sanitises inline HTML instead; escaping is stricter, and it means a document from an untrusted source cannot run a script in your tab. If you need the HTML to render, download the file and open it yourself.',
+      },
+      {
+        q: 'Do Mermaid diagrams cost anything to load?',
+        a: 'Only if you use one. The diagram renderer is a large dependency, so it is fetched the first time a document actually contains a mermaid block — a document without one never downloads it.',
+      },
+      {
+        q: 'Is the downloaded HTML self-contained?',
+        a: 'Yes. Styles are inlined and it renders in light or dark mode, so the file works on its own with no stylesheet or network access. Mermaid diagrams are exported as inline SVG.',
+      },
+      {
+        q: 'Is my document uploaded when I open a file?',
+        a: 'No. The file is read in your browser with the File API, the same as pasting the text. Nothing leaves your machine at any point.',
+      },
+    ],
+    related: ['/diff', '/json-xml', '/encode-decode', '/http'],
   },
   '/timestamp': {
     title: 'Unix Timestamp Converter — IST, SAST & UTC — DevPocket',
