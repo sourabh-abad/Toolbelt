@@ -41,7 +41,6 @@ export const SEO = {
         a: 'Only your theme choice, favourites, recently used tools and split-pane widths, in localStorage. Tool inputs are never persisted — reloading the page clears them.',
       },
     ],
-    related: ['/json-xml', '/jwtvalidator', '/timestamp', '/uuid'],
   },
   '/json-xml': {
     title: 'JSON & XML Formatter, Validator and Search — DevPocket',
@@ -80,7 +79,6 @@ export const SEO = {
         a: 'This page also handles XML and includes a path-based search; the JSON Validator page adds a collapsible tree view and duplicate-key detection specifically for JSON.',
       },
     ],
-    related: ['/jsonvalidator', '/convert', '/codegen', '/json-tree'],
   },
   '/convert': {
     title: 'JSON to YAML to CSV Converter — Free & Online — DevPocket',
@@ -115,7 +113,6 @@ export const SEO = {
         a: 'YAML 1.2 via js-yaml, which covers anchors, multi-line scalars and the block styles used by Kubernetes, Docker Compose and CI configs.',
       },
     ],
-    related: ['/json-xml', '/codegen', '/jsonvalidator', '/json-flatten'],
   },
   '/codegen': {
     title: 'JSON to Java, TypeScript & Go Generator — DevPocket',
@@ -154,7 +151,6 @@ export const SEO = {
         a: 'ISO 8601 date-time strings are mapped to Instant in Java and to the closest equivalent in the other languages. Other date formats come through as strings.',
       },
     ],
-    related: ['/json-schema', '/json-xml', '/convert', '/mock'],
   },
   '/sql': {
     title: 'SQL Formatter & Beautifier — 11 Dialects — DevPocket',
@@ -189,7 +185,6 @@ export const SEO = {
         a: 'Yes — it strips comments and collapses whitespace, while leaving whitespace inside string literals untouched.',
       },
     ],
-    related: ['/diff', '/mock', '/json-xml', '/http'],
   },
   '/diff': {
     title: 'Text Diff Checker — Compare Two Files Online — DevPocket',
@@ -224,7 +219,6 @@ export const SEO = {
         a: 'No hard limit, but diffing runs in your tab, so two very large files will be slower here than a native diff tool.',
       },
     ],
-    related: ['/markdown', '/json-sort-keys', '/json-xml', '/sql'],
   },
   '/encode-decode': {
     title: 'Base64, URL & Hash Encoder / Decoder — DevPocket',
@@ -263,7 +257,6 @@ export const SEO = {
         a: 'Full URL encoding escapes characters unsafe anywhere in a URL; component encoding also escapes characters like & and = that are safe in a full URL but not inside a single query parameter value.',
       },
     ],
-    related: ['/jwtvalidator', '/json-xml'],
   },
   '/jwtvalidator': {
     title: 'JWT Decoder & Validator — Check Token Expiry',
@@ -302,7 +295,6 @@ export const SEO = {
         a: 'A JWT’s exp claim is a Unix timestamp — checking it just compares your local clock to that number. If your device clock is wrong, the check will be too.',
       },
     ],
-    related: ['/timestamp', '/encode-decode', '/json-xml'],
   },
   '/color': {
     title: 'Colour Converter — HEX, RGB, HSL & px / rem / em — DevPocket',
@@ -337,9 +329,10 @@ export const SEO = {
         a: 'The picker works with opaque colours. For a translucent variant, take the RGB values and add the alpha channel yourself as rgba() or an eight-digit HEX.',
       },
     ],
-    related: ['/markdown', '/encode-decode', '/lorem', '/diff'],
   },
   '/markdown': {
+    // The editor wants the viewport; the copy below it renders collapsed.
+    collapsedContent: true,
     title: 'Markdown Preview — Live GitHub-Flavoured Editor',
     description:
       'Live Markdown preview with GitHub-flavoured tables, task lists, highlighted code and Mermaid diagrams. Copy the HTML or download a file. Nothing is uploaded.',
@@ -380,7 +373,6 @@ export const SEO = {
         a: 'No. The file is read in your browser with the File API, the same as pasting the text. Nothing leaves your machine at any point.',
       },
     ],
-    related: ['/diff', '/json-xml', '/encode-decode', '/http'],
   },
   '/timestamp': {
     title: 'Unix Timestamp Converter — IST, SAST & UTC — DevPocket',
@@ -418,7 +410,6 @@ export const SEO = {
         a: 'They’re all quick, single-input utilities developers reach for in the same debugging session — keeping them together avoids a page reload between them.',
       },
     ],
-    related: ['/jwtvalidator', '/cron', '/uuid'],
   },
   '/cron': {
     title: 'Cron Expression Builder & Parser — DevPocket',
@@ -457,7 +448,6 @@ export const SEO = {
         a: 'The preview uses the timezone rules your browser has, so a schedule shown in a zone that observes DST reflects the shift. IST and SAST do not observe DST at all.',
       },
     ],
-    related: ['/timestamp', '/http', '/uuid', '/mock'],
   },
   '/http': {
     title: 'HTTP Status Codes, Methods & Headers Reference — DevPocket',
@@ -492,7 +482,6 @@ export const SEO = {
         a: 'When the method must be preserved. Historically 301 and 302 caused clients to turn a POST into a GET; 308 and 307 are the permanent and temporary equivalents that forbid that rewrite.',
       },
     ],
-    related: ['/jwtvalidator', '/encode-decode', '/mock', '/cron'],
   },
   '/mock': {
     title: 'Mock Data Generator — JSON, CSV & SQL Inserts — DevPocket',
@@ -527,7 +516,6 @@ export const SEO = {
         a: 'Generation and rendering happen in your tab. 500 rows covers fixtures and demos while keeping the page responsive; for a bulk load, generate a batch and repeat it in your seed script.',
       },
     ],
-    related: ['/codegen', '/json-schema', '/uuid', '/convert'],
   },
   '/jsonvalidator': {
     title: 'JSON Validator Online — Tree View & Duplicate Keys',
@@ -566,7 +554,6 @@ export const SEO = {
         a: 'That page also handles XML and offers path-based search. This one is JSON-only and adds the tree view and duplicate-key detection.',
       },
     ],
-    related: ['/json-tree', '/json-xml', '/json-stats', '/json-schema'],
   },
   '/json-sort-keys': {
     title: 'JSON Sort Keys Online — Alphabetise Object Keys — DevPocket',
@@ -601,7 +588,6 @@ export const SEO = {
         a: 'Keys are compared as strings, so uppercase letters sort before lowercase and 10 sorts before 9. Consistency between two documents is what matters here, and string comparison gives that.',
       },
     ],
-    related: ['/diff', '/jsonvalidator', '/json-flatten', '/json-stats'],
   },
   '/json-flatten': {
     title: 'JSON Flattener — Nested JSON to Dot Notation',
@@ -636,7 +622,6 @@ export const SEO = {
         a: 'Yes, for documents without dots inside key names. Run the result through the JSON Unflattener and you get the original structure back.',
       },
     ],
-    related: ['/json-unflatten', '/convert', '/jsonpath', '/json-stats'],
   },
   '/json-unflatten': {
     title: 'JSON Unflattener — Dot Notation to Nested JSON',
@@ -671,7 +656,6 @@ export const SEO = {
         a: 'If one path treats a segment as a value and another treats the same segment as a parent, the structure is contradictory and the conflict is reported rather than silently resolved.',
       },
     ],
-    related: ['/json-flatten', '/convert', '/json-merge', '/jsonvalidator'],
   },
   '/json-escape': {
     title: 'JSON Escape & Unescape Online — DevPocket',
@@ -706,7 +690,6 @@ export const SEO = {
         a: 'Usually because it was escaped twice on the way in — once by the producing code and once by the transport. Run unescape twice and check whether the second pass gives readable text.',
       },
     ],
-    related: ['/encode-decode', '/jsonvalidator', '/json-xml', '/diff'],
   },
   '/json-remove-nulls': {
     title: 'Remove Nulls from JSON Online — Free Cleaner — DevPocket',
@@ -741,7 +724,6 @@ export const SEO = {
         a: 'Yes. The remaining elements close up, so anything referring to a position by index needs rechecking afterwards.',
       },
     ],
-    related: ['/json-remove-empty', '/jsonvalidator', '/json-merge', '/json-stats'],
   },
   '/json-remove-empty': {
     title: 'Remove Empty Values from JSON — DevPocket',
@@ -776,7 +758,6 @@ export const SEO = {
         a: 'Children are cleaned before their parent is checked. So an object whose only key held an empty array becomes empty itself and is then removed too, rather than surviving as {}.',
       },
     ],
-    related: ['/json-remove-nulls', '/json-stats', '/jsonvalidator', '/json-merge'],
   },
   '/json-merge': {
     title: 'JSON Merge Online — Deep Merge Two Documents — DevPocket',
@@ -811,7 +792,6 @@ export const SEO = {
         a: 'As a value, so it overwrites whatever the base had. To drop a key entirely, remove it from both documents or clean the result with Remove Nulls.',
       },
     ],
-    related: ['/json-remove-nulls', '/diff', '/jsonvalidator', '/json-unflatten'],
   },
   '/json-tree': {
     title: 'JSON Tree Viewer Online — Explore Nested JSON — DevPocket',
@@ -846,7 +826,6 @@ export const SEO = {
         a: 'It is the same idea with a different focus. The validator leads with error reporting and duplicate keys; this page is the tree on its own, for reading rather than checking.',
       },
     ],
-    related: ['/jsonvalidator', '/json-stats', '/jsonpath', '/json-xml'],
   },
   '/json-stats': {
     title: 'JSON Statistics — Node Count, Depth & Types',
@@ -881,7 +860,6 @@ export const SEO = {
         a: 'A payload with three hundred nodes but eight distinct keys is a repeated record shape; one with three hundred distinct keys is a configuration document. They call for very different handling.',
       },
     ],
-    related: ['/json-tree', '/json-schema', '/jsonvalidator', '/json-remove-empty'],
   },
   '/jsonpath': {
     title: 'JSONPath Evaluator Online — Test $.path Queries',
@@ -916,7 +894,6 @@ export const SEO = {
         a: 'Most often a case mismatch in a key name, or a missing array index where the path crosses a list. Try the same path one segment shorter to see where it stops matching.',
       },
     ],
-    related: ['/json-tree', '/json-flatten', '/jsonvalidator', '/json-schema'],
   },
   '/json-schema': {
     title: 'JSON Schema Generator — Infer a Schema from JSON — DevPocket',
@@ -951,7 +928,6 @@ export const SEO = {
         a: 'Draft 2020-12, the current version, which is what OpenAPI 3.1 aligns with.',
       },
     ],
-    related: ['/codegen', '/jsonvalidator', '/json-stats', '/mock'],
   },
   '/uuid': {
     title: 'UUID Generator & Nano ID Generator Online — Bulk — DevPocket',
@@ -989,7 +965,6 @@ export const SEO = {
         a: 'Statistically negligible at any realistic scale — a UUID v4 has 122 random bits, and even generating billions of them keeps collision probability effectively zero.',
       },
     ],
-    related: ['/timestamp', '/password', '/mock'],
   },
   '/password': {
     title: 'Password Generator — Strong Random Passwords',
@@ -1028,7 +1003,6 @@ export const SEO = {
         a: 'Usually, yes. Length contributes more entropy than symbol variety does, and a long password is easier to type correctly.',
       },
     ],
-    related: ['/uuid', '/encode-decode', '/jwtvalidator', '/privacy'],
   },
   '/lorem': {
     title: 'Lorem Ipsum Generator — Words & Paragraphs',
@@ -1063,7 +1037,6 @@ export const SEO = {
         a: 'It is scrambled Latin, derived from a passage of Cicero, and does not read as meaningful prose. That is precisely why it works as filler.',
       },
     ],
-    related: ['/mock', '/color', '/diff', '/uuid'],
   },
   '/privacy': {
     title: 'Privacy — How DevPocket Handles Your Data',
@@ -1090,7 +1063,6 @@ export const SEO = {
         a: 'Open DevTools, go to the Network tab, clear it, then use any tool on the site. If a payload were being uploaded, a request would appear. None does.',
       },
     ],
-    related: ['/about', '/jwtvalidator', '/password'],
   },
   '/about': {
     title: 'About DevPocket — Built by Sourabh Kumar',
@@ -1113,7 +1085,6 @@ export const SEO = {
         a: 'Yes. The tools here exist because they came up in day-to-day backend work, so a gap someone else hits is worth hearing about.',
       },
     ],
-    related: ['/privacy', '/json-xml', '/jwtvalidator'],
   },
 }
 

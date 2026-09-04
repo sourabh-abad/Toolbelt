@@ -1,32 +1,29 @@
 import { useLocation } from 'react-router-dom'
+import { ChevronRight } from 'lucide-react'
 import { Panel } from './ui'
-import ToolCard from './ToolCard'
-import { navItems } from '../lib/nav'
 import { seoFor } from '../lib/seo'
 
 /**
- * "How it works" / "Common use cases" / FAQ / "Related tools" for tool pages
- * that have this content in their src/lib/seo.js entry. Rendered once from
- * App.jsx for every route rather than per page, so a route only needs copy in
- * seo.js to get these sections — and scripts/prerender.mjs writes the same
- * markup into the static HTML.
+ * "How it works" / "Common use cases" / FAQ for tool pages that carry this
+ * copy in their src/lib/seo.js entry. Rendered once from App.jsx for every
+ * route rather than per page, so a route only needs copy in seo.js to get
+ * these sections. Pulling from seo.js rather than a second data file keeps
+ * one source of truth: scripts/prerender.mjs reads the same object to write
+ * matching static HTML and FAQPage structured data.
  *
- * Original note:
- *  Pulls from seo.js
- * rather than a second data file, since that's already the per-route
- * metadata source of truth and scripts/prerender.mjs reads the same object
- * to emit matching FAQPage structured data.
+ * A route can set `collapsedContent: true` to have the whole thing rendered
+ * closed behind a disclosure. The copy is still in the HTML — crawlers read
+ * markup, not layout — but the page stays given over to the tool. That is the
+ * right trade on pages where the tool wants the whole viewport.
  */
 export default function ToolContentSections() {
   const { pathname } = useLocation()
-  const { howItWorks, useCases, faq, related } = seoFor(pathname)
+  const { howItWorks, useCases, faq, heading, collapsedContent } = seoFor(pathname)
 
-  if (!howItWorks && !useCases && !faq && !related) return null
+  if (!howItWorks && !useCases && !faq) return null
 
-  const relatedItems = (related || []).map((to) => navItems.find((n) => n.to === to)).filter(Boolean)
-
-  return (
-    <div className="space-y-4 px-4 pb-6 sm:px-6">
+  const sections = (
+    <>
       {howItWorks && (
         <Panel title="How it works">
           <ol className="space-y-2.5">
@@ -65,17 +62,22 @@ export default function ToolContentSections() {
           </div>
         </Panel>
       )}
-
-      {relatedItems.length > 0 && (
-        <div>
-          <h2 className="t-muted mb-2.5 px-0.5 text-[11px] font-semibold tracking-wider uppercase">Related tools</h2>
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
-            {relatedItems.map((item) => (
-              <ToolCard key={item.to} item={item} />
-            ))}
-          </div>
-        </div>
-      )}
-    </div>
+    </>
   )
+
+  if (collapsedContent) {
+    return (
+      <div className="px-4 pb-6 sm:px-6">
+        <details className="group">
+          <summary className="t-muted hover:t-main flex cursor-pointer items-center gap-1.5 text-xs font-medium select-none">
+            <ChevronRight className="h-3.5 w-3.5 transition-transform group-open:rotate-90" aria-hidden="true" />
+            About {heading ? heading.toLowerCase() : 'this tool'}
+          </summary>
+          <div className="mt-3 space-y-4">{sections}</div>
+        </details>
+      </div>
+    )
+  }
+
+  return <div className="space-y-4 px-4 pb-6 sm:px-6">{sections}</div>
 }

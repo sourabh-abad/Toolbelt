@@ -1,5 +1,5 @@
 import { useEffect, useState, lazy, Suspense } from 'react'
-import { Routes, Route, NavLink, useLocation, Link, Navigate } from 'react-router-dom'
+import { Routes, Route, useLocation, Navigate } from 'react-router-dom'
 import { Loader2 } from 'lucide-react'
 import { pushRecent } from './lib/nav'
 import { useSeo } from './lib/useSeo'

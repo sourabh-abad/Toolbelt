@@ -5,7 +5,7 @@ import { useTheme } from '../lib/theme'
 import { useDebounced } from '../lib/useDebounced'
 import { renderMarkdown, documentStats, hasMermaid, standaloneHtml } from '../lib/markdown'
 import SplitPane from '../components/SplitPane'
-import { Panel, Button, CopyButton, TextArea, Tabs, Checkbox, PageHeader } from '../components/ui'
+import { Button, CopyButton, Tabs, Checkbox, PageHeader } from '../components/ui'
 
 const SAMPLE = `# Release notes — v2.4.0
 
@@ -54,6 +54,14 @@ const VIEWS = [
   { value: 'html', label: 'HTML' },
 ]
 
+// Both panes fill what is left of the viewport under the sticky page header.
+// This page is the editor — everything else on it is deliberately one line.
+// Full height once the panes sit side by side; below lg they stack, where two
+// full-viewport panes would mean scrolling past one to reach the other.
+const PANE =
+  'panel bd flex h-[65vh] min-h-[20rem] flex-col overflow-hidden rounded-2xl border lg:h-[calc(100vh-11.5rem)]'
+const PANE_HEAD = 'bd flex flex-wrap items-center justify-between gap-x-3 gap-y-1.5 border-b px-3 py-1.5'
+
 export default function MarkdownTool() {
   const [source, setSource] = useState(SAMPLE)
   const [view, setView] = useState('preview')
@@ -74,11 +82,11 @@ export default function MarkdownTool() {
   const html = useMemo(() => renderMarkdown(debouncedSource), [debouncedSource])
   const stats = useMemo(() => documentStats(source), [source])
 
-  // Mermaid is roughly the size of the rest of the app put together, so it is
-  // fetched only once a document actually contains a diagram — and never at
-  // all for the majority of visits.
   useEffect(() => () => window.clearTimeout(scrollTimer.current), [])
 
+  // Mermaid is roughly the size of the rest of the app, so it is fetched only
+  // once a document actually contains a diagram — and never at all for the
+  // majority of visits.
   useEffect(() => {
     const host = previewRef.current
     if (!host || view !== 'preview' || !hasMermaid(html)) return
@@ -104,15 +112,20 @@ export default function MarkdownTool() {
         if (cancelled) return
         const block = blocks[i]
         try {
-          const { svg } = await mermaid.render(`md-mermaid-${i}-${Math.random().toString(36).slice(2, 8)}`, block.dataset.src)
+          const { svg } = await mermaid.render(
+            `md-mermaid-${i}-${Math.random().toString(36).slice(2, 8)}`,
+            block.dataset.src
+          )
           if (!cancelled) block.innerHTML = svg
         } catch (err) {
           if (!cancelled) {
             block.classList.add('md-mermaid-failed')
-            block.querySelector('.md-mermaid-src')?.insertAdjacentHTML(
-              'beforebegin',
-              `<p class="md-mermaid-error">Diagram error: ${String(err?.message || err).slice(0, 200)}</p>`
-            )
+            block
+              .querySelector('.md-mermaid-src')
+              ?.insertAdjacentHTML(
+                'beforebegin',
+                `<p class="md-mermaid-error">Diagram error: ${String(err?.message || err).slice(0, 200)}</p>`
+              )
           }
         }
       }
@@ -170,43 +183,35 @@ export default function MarkdownTool() {
       <PageHeader
         icon={FileText}
         title="Markdown Preview"
-        subtitle="Live GitHub-flavoured Markdown, with tables, task lists, code and Mermaid diagrams."
+        subtitle="Live GitHub-flavoured Markdown — tables, task lists, code and Mermaid diagrams."
         accent="blue"
       />
 
-      <div className="space-y-4 p-4 sm:p-6">
-        <Panel>
-          <div className="flex flex-wrap items-center gap-3">
-            <Tabs options={VIEWS} value={view} onChange={setView} />
-            <Checkbox checked={syncScroll} onChange={(e) => setSyncScroll(e.target.checked)} label="Sync scrolling" />
-            <span className="t-faint text-xs">
-              {stats.words.toLocaleString()} words · {stats.characters.toLocaleString()} characters · {stats.lines.toLocaleString()} lines · ~
-              {stats.readingMinutes} min read
-            </span>
-          </div>
-        </Panel>
-
+      <div className="p-3 sm:p-4">
         <SplitPane
           storageKey="devpocket-split-markdown"
           left={
-            <Panel
-              title="Markdown"
-              actions={
-                <>
+            <div className={PANE}>
+              <div className={PANE_HEAD}>
+                <span className="t-faint text-[11px] tracking-wide uppercase">
+                  Markdown
+                  <span className="ml-2 normal-case">
+                    {stats.words.toLocaleString()} words · ~{stats.readingMinutes} min
+                  </span>
+                </span>
+                <div className="flex items-center gap-1">
                   <Button variant="ghost" type="button" onClick={() => fileInputRef.current?.click()}>
                     <Upload className="h-3.5 w-3.5" />
-                    Open .md
+                    Open
                   </Button>
                   <Button variant="ghost" type="button" onClick={() => setSource(SAMPLE)}>
                     Sample
                   </Button>
-                  <Button variant="ghost" type="button" onClick={() => setSource('')}>
+                  <Button variant="ghost" type="button" onClick={() => setSource('')} title="Clear the editor">
                     <Trash2 className="h-3.5 w-3.5" />
-                    Clear
                   </Button>
-                </>
-              }
-            >
+                </div>
+              </div>
               <input
                 ref={fileInputRef}
                 type="file"
@@ -214,23 +219,28 @@ export default function MarkdownTool() {
                 onChange={handleOpenFile}
                 className="hidden"
               />
-              <TextArea
+              <textarea
                 ref={editorRef}
-                rows={22}
+                spellCheck={false}
                 value={source}
                 onChange={(e) => setSource(e.target.value)}
                 onScroll={() => linkScroll(editorRef.current, previewRef.current, 'editor')}
                 placeholder="Type or paste Markdown here…"
-                className="h-[60vh] overflow-auto"
+                className="mono t-main min-h-0 flex-1 resize-none bg-transparent px-3.5 py-3 text-sm leading-relaxed outline-none"
               />
-            </Panel>
+            </div>
           }
           right={
-            <Panel
-              title={view === 'preview' ? 'Preview' : 'HTML output'}
-              actions={
-                <>
-                  <CopyButton text={html} label="Copy HTML" onCopied={() => toast('HTML copied')} />
+            <div className={PANE}>
+              <div className={PANE_HEAD}>
+                <Tabs options={VIEWS} value={view} onChange={setView} />
+                <div className="flex items-center gap-2">
+                  <Checkbox
+                    checked={syncScroll}
+                    onChange={(e) => setSyncScroll(e.target.checked)}
+                    label="Sync scroll"
+                  />
+                  <CopyButton text={html} label="HTML" onCopied={() => toast('HTML copied')} />
                   <Button
                     variant="ghost"
                     type="button"
@@ -249,29 +259,29 @@ export default function MarkdownTool() {
                     <Download className="h-3.5 w-3.5" />
                     .md
                   </Button>
-                </>
-              }
-            >
+                </div>
+              </div>
+
               {view === 'preview' ? (
                 source.trim() ? (
                   <div
                     ref={previewRef}
-                    className="md-preview h-[60vh] overflow-auto pr-1"
+                    className="md-preview min-h-0 flex-1 overflow-auto px-4 py-3"
                     onScroll={() => linkScroll(previewRef.current, editorRef.current, 'preview')}
                     dangerouslySetInnerHTML={{ __html: html }}
                   />
                 ) : (
-                  <div className="bd sunken t-faint flex h-[60vh] flex-col items-center justify-center gap-2 rounded-xl border border-dashed text-sm">
+                  <div className="t-faint flex min-h-0 flex-1 flex-col items-center justify-center gap-2 text-sm">
                     <Eye className="h-5 w-5" aria-hidden="true" />
                     Paste Markdown on the left to see it rendered here.
                   </div>
                 )
               ) : (
-                <pre className="sunken bd mono t-muted h-[60vh] overflow-auto rounded-xl border p-3 text-xs whitespace-pre-wrap">
+                <pre className="mono t-muted min-h-0 flex-1 overflow-auto px-3.5 py-3 text-xs whitespace-pre-wrap">
                   {html}
                 </pre>
               )}
-            </Panel>
+            </div>
           }
         />
       </div>

@@ -180,19 +180,18 @@ function sectionsHtml(seo) {
     )
   }
 
-  const related = (seo.related || []).map((to) => NAV.find((n) => n.to === to)).filter(Boolean)
-  if (related.length) {
-    parts.push(
-      `<section class="mt-8"><h2 ${H2}>Related tools</h2><ul class="mt-3 space-y-1.5">${related
-        .map(
-          (n) =>
-            `<li class="text-sm leading-relaxed"><a href="${hrefFor(n.to)}" class="t-main underline-offset-2">${esc(n.label)}</a> <span class="t-muted">— ${esc(n.description)}</span></li>`
-        )
-        .join('')}</ul></section>`
-    )
+  if (!parts.length) return ''
+
+  // Mirrors ToolContentSections: a route marked collapsedContent renders the
+  // copy inside a closed <details>. It is still in the HTML, which is what a
+  // crawler reads, while the page itself stays given over to the tool.
+  if (seo.collapsedContent) {
+    return `<div class="px-4 pb-6 sm:px-6"><details><summary class="t-muted text-xs font-medium">About ${esc(
+      (seo.heading || 'this tool').toLowerCase()
+    )}</summary><div class="mt-3 space-y-4">${parts.join('')}</div></details></div>`
   }
 
-  return parts.length ? `<div class="space-y-4 px-4 pb-6 sm:px-6">${parts.join('')}</div>` : ''
+  return `<div class="space-y-4 px-4 pb-6 sm:px-6">${parts.join('')}</div>`
 }
 
 // Mirrors SeoFooter: every tool linked from every page. Before this the static
