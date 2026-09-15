@@ -186,6 +186,45 @@ export const SEO = {
       },
     ],
   },
+  '/sql-guide': {
+    title: 'SQL Query Guide \u2014 Searchable Syntax, Recipes & Gotchas \u2014 DevPocket',
+    description:
+      'Search 117 SQL queries with runnable examples: joins, window functions, CTEs, upserts, indexing and the traps that return wrong results. Free and browser-based.',
+    heading: 'SQL query guide and searchable reference',
+    blurb:
+      'A searchable catalogue of the SQL you actually write: the syntax reference (joins, GROUP BY, window functions, CTEs, DDL, transactions), the recipes that keep coming back (find duplicates, top N per group, running totals, keyset pagination, gaps and islands) and the pitfalls that return a plausible wrong answer rather than an error. Every entry carries a syntax skeleton, a runnable example against one small schema, the gotchas, and dialect notes for PostgreSQL, MySQL, SQL Server and Oracle wherever the syntax differs.',
+    collapsedContent: true,
+    howItWorks: [
+      'Type what you are trying to do \u2014 duplicate, latest per user, upsert, pagination \u2014 or browse a category.',
+      'Search covers titles, summaries, tags, examples and notes, so a keyword from the query text finds the entry too.',
+      'Open an entry for its syntax, a runnable example, what it does, the traps, and the dialect differences.',
+      'Copy the example with one click, or copy the link \u2014 every entry is its own URL you can paste into a review.',
+    ],
+    useCases: [
+      'Remembering the exact syntax for an upsert or a window frame mid-task',
+      'Finding the standard query for duplicates, top N per group or a running total',
+      'Checking why a LEFT JOIN quietly dropped rows, or why NOT IN returned nothing',
+      'Looking up how a query differs between PostgreSQL, MySQL, SQL Server and Oracle',
+    ],
+    faq: [
+      {
+        q: 'Which SQL dialect do the examples use?',
+        a: 'They are written in standard SQL, leaning on PostgreSQL syntax where the standard is ambiguous. Entries whose syntax genuinely differs carry dialect notes for PostgreSQL, MySQL, SQL Server, Oracle and SQLite.',
+      },
+      {
+        q: 'Can I link to a single entry?',
+        a: 'Yes. Selecting an entry puts its id in the URL, so the link you paste into a pull request or a chat opens on the same entry, with the same search and category filter.',
+      },
+      {
+        q: 'Do the examples run as written?',
+        a: 'They target one small sample schema \u2014 users, orders, order_items and products, shown on the page \u2014 so they read as one coherent database. Swap in your own table and column names.',
+      },
+      {
+        q: 'How is this different from the SQL Formatter?',
+        a: 'The formatter pretty-prints a query you already have. This page is the reference for writing one. They sit next to each other in the menu.',
+      },
+    ],
+  },
   '/diff': {
     title: 'Text Diff Checker — Compare Two Files Online — DevPocket',
     description:

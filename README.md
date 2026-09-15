@@ -22,6 +22,7 @@ Everything runs client-side in your browser. Nothing you paste in is ever sent t
 - **Cron Builder** — plain-English description of any cron expression, the next 8 run times (viewable in IST/SAST/UTC/local), and one-click presets.
 
 **Reference**
+- **SQL Query Guide** — 117 searchable entries covering SQL syntax, task recipes and the pitfalls that return a wrong answer without an error. Each has a syntax skeleton, a runnable example, the gotchas and dialect notes; every entry is its own link.
 - **HTTP Reference** — searchable status codes, methods (safe/idempotent flags) and common headers.
 - **Mock Data** — generate fake records from 21 field types, output as JSON, CSV or SQL `INSERT` statements.
 

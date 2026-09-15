@@ -25,6 +25,7 @@ import {
   Type,
   FileText,
   ShieldCheck,
+  BookOpen,
 } from 'lucide-react'
 
 export const navItems = [
@@ -64,6 +65,7 @@ export const navItems = [
   { to: '/cron', label: 'Cron Builder', icon: CalendarClock, group: 'Time', accent: 'lime', description: 'Decode cron expressions & preview next runs' },
 
   // --- Reference
+  { to: '/sql-guide', label: 'SQL Query Guide', icon: BookOpen, group: 'Reference', accent: 'cyan', description: 'Searchable SQL syntax, recipes and gotchas' },
   { to: '/http', label: 'HTTP Reference', icon: Globe, group: 'Reference', accent: 'blue', description: 'Status codes, methods & headers' },
   { to: '/mock', label: 'Mock Data', icon: Boxes, group: 'Reference', accent: 'fuchsia', description: 'Generate fake records as JSON, CSV or SQL' },
 
