@@ -182,20 +182,22 @@ function sectionsHtml(seo) {
 
   if (!parts.length) return ''
 
-  // Mirrors ToolContentSections: a route marked collapsedContent renders the
-  // copy inside a closed <details>. It is still in the HTML, which is what a
-  // crawler reads, while the page itself stays given over to the tool.
-  if (seo.collapsedContent) {
-    return `<div class="px-4 pb-6 sm:px-6"><details><summary class="t-muted text-xs font-medium">About ${esc(
-      (seo.heading || 'this tool').toLowerCase()
-    )}</summary><div class="mt-3 space-y-4">${parts.join('')}</div></details></div>`
+  // Mirrors ToolContentSections: closed <details> by default, open only where a
+  // route sets collapsedContent: false. Either way the copy is in the HTML, which
+  // is what a crawler reads, while the page stays given over to the tool.
+  if (seo.collapsedContent === false) {
+    return `<div class="space-y-4 px-4 pb-6 sm:px-6">${parts.join('')}</div>`
   }
 
-  return `<div class="space-y-4 px-4 pb-6 sm:px-6">${parts.join('')}</div>`
+  return `<div class="px-4 pb-6 sm:px-6"><details><summary class="bd t-muted inline-flex cursor-pointer items-center gap-1.5 rounded-lg border px-2.5 py-1.5 text-xs font-medium">About ${esc(
+    (seo.heading || 'this tool').toLowerCase()
+  )}</summary><div class="mt-3 space-y-4">${parts.join('')}</div></details></div>`
 }
 
-// Mirrors SeoFooter: every tool linked from every page. Before this the static
-// HTML carried a single link, so an audit crawler saw 29 orphan pages.
+// Mirrors SeoFooter: every tool linked from every page (before this the static
+// HTML carried a single link, so an audit crawler saw 29 orphan pages), with the
+// directory inside a closed <details> — still in the markup a crawler parses,
+// without a wall of links under every tool.
 function footerHtml(pathname, seo) {
   const groups = NAV_GROUPS.map((group) => {
     const items = NAV.filter((n) => n.group === group)
@@ -209,7 +211,9 @@ function footerHtml(pathname, seo) {
       .join('')}</ul></div>`
   }).join('')
 
-  return `<footer class="bd mt-2 border-t px-4 py-8 sm:px-6"><div class="mx-auto max-w-4xl"><h2 class="t-main text-sm font-semibold">${esc(seo.heading || seo.title)}</h2><p class="t-muted mt-2 max-w-3xl text-sm leading-relaxed">${esc(seo.blurb || seo.description)}</p><nav aria-label="All tools" class="mt-6 grid grid-cols-2 gap-x-6 gap-y-5 sm:grid-cols-3 lg:grid-cols-4">${groups}</nav><p class="t-muted mt-6 text-xs">Free · no sign-up · nothing you paste leaves your browser · <a href="/" class="inline-flex min-h-[36px] items-center underline-offset-2">all tools</a> · <a href="/privacy/" class="inline-flex min-h-[36px] items-center underline-offset-2">privacy</a> · <a href="/about/" class="inline-flex min-h-[36px] items-center underline-offset-2">about this project</a></p></div></footer>`
+  return `<footer class="bd mt-2 border-t px-4 py-8 sm:px-6"><div class="mx-auto max-w-4xl"><h2 class="t-main text-sm font-semibold">${esc(seo.heading || seo.title)}</h2><p class="t-muted mt-2 max-w-3xl text-sm leading-relaxed">${esc(seo.blurb || seo.description)}</p><details class="mt-5"><summary class="bd t-muted inline-flex cursor-pointer items-center gap-1.5 rounded-lg border px-2.5 py-1.5 text-xs font-medium">All ${
+    NAV.length - 1
+  } tools</summary><nav aria-label="All tools" class="mt-4 grid grid-cols-2 gap-x-6 gap-y-5 sm:grid-cols-3 lg:grid-cols-4">${groups}</nav></details><p class="t-muted mt-6 text-xs">Free · no sign-up · nothing you paste leaves your browser · <a href="/" class="inline-flex min-h-[36px] items-center underline-offset-2">all tools</a> · <a href="/privacy/" class="inline-flex min-h-[36px] items-center underline-offset-2">privacy</a> · <a href="/about/" class="inline-flex min-h-[36px] items-center underline-offset-2">about this project</a></p></div></footer>`
 }
 
 function render(pathname, seo) {

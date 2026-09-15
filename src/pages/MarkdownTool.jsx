@@ -1,5 +1,15 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
-import { FileText, Trash2, Upload, Download, Eye, Maximize2, Minimize2 } from 'lucide-react'
+import {
+  FileText,
+  Trash2,
+  Upload,
+  Download,
+  Eye,
+  Maximize2,
+  Minimize2,
+  PanelLeftClose,
+  PanelLeftOpen,
+} from 'lucide-react'
 import { useToast } from '../lib/toast'
 import { useTheme } from '../lib/theme'
 import { useDebounced } from '../lib/useDebounced'
@@ -65,6 +75,7 @@ const PANE_HEAD = 'bd flex flex-wrap items-center justify-between gap-x-3 gap-y-
 // nav (z-40) but below toasts (z-60). Fixed rather than a layout change, so the
 // pane is never unmounted and rendered Mermaid diagrams and scroll position survive.
 const FULL_PANE = 'panel fixed inset-0 z-50 flex flex-col overflow-hidden'
+const EDITOR_HIDDEN_KEY = 'devpocket-markdown-editor-hidden'
 
 export default function MarkdownTool() {
   const [source, setSource] = useState(SAMPLE)
@@ -72,6 +83,16 @@ export default function MarkdownTool() {
   const [syncScroll, setSyncScroll] = useState(true)
   const [fileName, setFileName] = useState('document')
   const [fullscreen, setFullscreen] = useState(false)
+  // Preview-only: the editor is hidden and the rendered document takes the whole
+  // page. Remembered, because someone who reads more than they write wants it
+  // that way every time — the same reason the split position is remembered.
+  const [editorHidden, setEditorHidden] = useState(() => {
+    try {
+      return localStorage.getItem(EDITOR_HIDDEN_KEY) === '1'
+    } catch {
+      return false
+    }
+  })
   const toast = useToast()
   const { theme } = useTheme()
 
@@ -94,6 +115,20 @@ export default function MarkdownTool() {
   // drew into the preview — toggling any control used to blank the diagrams.
   // Memoising it means the markup is only written when the document changes.
   const previewHtml = useMemo(() => ({ __html: html }), [html])
+
+  // Both modes leave the preview alone with the full width, which is too wide a
+  // line to read comfortably and means there is no editor to sync scroll with.
+  const previewOnly = fullscreen || editorHidden
+
+  const toggleEditor = useCallback(() => {
+    const next = !editorHidden
+    setEditorHidden(next)
+    try {
+      localStorage.setItem(EDITOR_HIDDEN_KEY, next ? '1' : '0')
+    } catch {
+      // private mode, or storage disabled — the toggle still works this session
+    }
+  }, [editorHidden])
 
   useEffect(() => () => window.clearTimeout(scrollTimer.current), [])
 
@@ -261,8 +296,8 @@ export default function MarkdownTool() {
       <div className="p-3 sm:p-4">
         <SplitPane
           storageKey="devpocket-split-markdown"
+          collapsed={previewOnly}
           left={
-            <div className={fullscreen ? 'hidden' : undefined}>
             <div className={PANE}>
               <div className={PANE_HEAD}>
                 <span className="t-faint text-[11px] tracking-wide uppercase">
@@ -281,6 +316,15 @@ export default function MarkdownTool() {
                   </Button>
                   <Button variant="ghost" type="button" onClick={() => setSource('')} title="Clear the editor">
                     <Trash2 className="h-3.5 w-3.5" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    type="button"
+                    onClick={toggleEditor}
+                    title="Hide the editor and show only the preview"
+                  >
+                    <PanelLeftClose className="h-3.5 w-3.5" />
+                    Hide
                   </Button>
                 </div>
               </div>
@@ -301,19 +345,24 @@ export default function MarkdownTool() {
                 className="mono t-main min-h-0 flex-1 resize-none bg-transparent px-3.5 py-3 text-sm leading-relaxed outline-none"
               />
             </div>
-            </div>
           }
           right={
             <div ref={outputRef} className={fullscreen ? FULL_PANE : PANE}>
               <div className={PANE_HEAD}>
                 <Tabs options={VIEWS} value={view} onChange={setView} />
                 <div className="flex items-center gap-2">
-                  {!fullscreen && (
+                  {!previewOnly && (
                     <Checkbox
                       checked={syncScroll}
                       onChange={(e) => setSyncScroll(e.target.checked)}
                       label="Sync scroll"
                     />
+                  )}
+                  {editorHidden && !fullscreen && (
+                    <Button variant="ghost" type="button" onClick={toggleEditor} title="Bring the editor back">
+                      <PanelLeftOpen className="h-3.5 w-3.5" />
+                      Editor
+                    </Button>
                   )}
                   <CopyButton text={html} label="HTML" onCopied={() => toast('HTML copied')} />
                   <Button
@@ -356,15 +405,15 @@ export default function MarkdownTool() {
                   >
                     {/* Full width would give a 1400px line length; cap the measure instead. */}
                     <div
-                      className={`md-preview ${fullscreen ? 'mx-auto max-w-4xl' : ''}`}
+                      className={`md-preview ${previewOnly ? 'mx-auto max-w-4xl' : ''}`}
                       dangerouslySetInnerHTML={previewHtml}
                     />
                   </div>
                 ) : (
                   <div className="t-faint flex min-h-0 flex-1 flex-col items-center justify-center gap-2 text-sm">
                     <Eye className="h-5 w-5" aria-hidden="true" />
-                    {fullscreen
-                      ? 'Nothing to show yet — leave full screen to write some Markdown.'
+                    {previewOnly
+                      ? 'Nothing to show yet — bring the editor back to write some Markdown.'
                       : 'Paste Markdown on the left to see it rendered here.'}
                   </div>
                 )

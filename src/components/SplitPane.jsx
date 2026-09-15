@@ -3,8 +3,13 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 /**
  * Horizontal split with a draggable divider. Falls back to a stacked layout
  * below `lg` where dragging a divider makes little sense on narrow screens.
+ *
+ * `collapsed` hides the left side and gives the whole width to the right one.
+ * The left pane stays mounted (hidden, not unmounted) so its state, scroll
+ * position and anything a child rendered into the DOM survive the toggle, and
+ * the remembered divider position is waiting when it comes back.
  */
-export default function SplitPane({ left, right, storageKey = 'devpocket-split', initial = 50 }) {
+export default function SplitPane({ left, right, storageKey = 'devpocket-split', initial = 50, collapsed = false }) {
   const containerRef = useRef(null)
   const draggingRef = useRef(false)
   const [pct, setPct] = useState(() => {
@@ -65,7 +70,7 @@ export default function SplitPane({ left, right, storageKey = 'devpocket-split',
 
   return (
     <div ref={containerRef} className="flex flex-col gap-4 lg:flex-row lg:gap-0">
-      <div className="min-w-0 lg:pr-2" style={{ flexBasis: `${pct}%` }}>
+      <div className={`min-w-0 lg:pr-2 ${collapsed ? 'hidden' : ''}`} style={{ flexBasis: collapsed ? 0 : `${pct}%` }}>
         {left}
       </div>
       <div
@@ -73,11 +78,13 @@ export default function SplitPane({ left, right, storageKey = 'devpocket-split',
         onTouchStart={start}
         onDoubleClick={() => setPct(50)}
         title="Drag to resize · double-click to reset"
-        className="group hidden w-3 shrink-0 cursor-col-resize items-center justify-center lg:flex"
+        className={`group w-3 shrink-0 cursor-col-resize items-center justify-center ${
+          collapsed ? 'hidden' : 'hidden lg:flex'
+        }`}
       >
         <div className="bd h-16 w-1 rounded-full border-l-2 border-r-2 transition-colors group-hover:border-emerald-500/60" />
       </div>
-      <div className="min-w-0 flex-1 lg:pl-2">{right}</div>
+      <div className={`min-w-0 flex-1 ${collapsed ? '' : 'lg:pl-2'}`}>{right}</div>
     </div>
   )
 }

@@ -11,10 +11,11 @@ import { seoFor } from '../lib/seo'
  * one source of truth: scripts/prerender.mjs reads the same object to write
  * matching static HTML and FAQPage structured data.
  *
- * A route can set `collapsedContent: true` to have the whole thing rendered
- * closed behind a disclosure. The copy is still in the HTML — crawlers read
- * markup, not layout — but the page stays given over to the tool. That is the
- * right trade on pages where the tool wants the whole viewport.
+ * Collapsed by default: the copy sits behind a closed disclosure so the page
+ * stays given over to the tool, and only someone who wants the background opens
+ * it. It is still in the HTML either way — crawlers read markup, not layout.
+ * A route sets `collapsedContent: false` to render it open, which is right only
+ * where the copy IS the page (About, Privacy) rather than notes about a tool.
  */
 export default function ToolContentSections() {
   const { pathname } = useLocation()
@@ -65,19 +66,19 @@ export default function ToolContentSections() {
     </>
   )
 
-  if (collapsedContent) {
-    return (
-      <div className="px-4 pb-6 sm:px-6">
-        <details className="group">
-          <summary className="t-muted hover:t-main flex cursor-pointer items-center gap-1.5 text-xs font-medium select-none">
-            <ChevronRight className="h-3.5 w-3.5 transition-transform group-open:rotate-90" aria-hidden="true" />
-            About {heading ? heading.toLowerCase() : 'this tool'}
-          </summary>
-          <div className="mt-3 space-y-4">{sections}</div>
-        </details>
-      </div>
-    )
+  if (collapsedContent === false) {
+    return <div className="space-y-4 px-4 pb-6 sm:px-6">{sections}</div>
   }
 
-  return <div className="space-y-4 px-4 pb-6 sm:px-6">{sections}</div>
+  return (
+    <div className="px-4 pb-6 sm:px-6">
+      <details className="group">
+        <summary className="bd hover-surface t-muted hover:t-main inline-flex cursor-pointer items-center gap-1.5 rounded-lg border px-2.5 py-1.5 text-xs font-medium select-none">
+          <ChevronRight className="h-3.5 w-3.5 transition-transform group-open:rotate-90" aria-hidden="true" />
+          About {heading ? heading.toLowerCase() : 'this tool'}
+        </summary>
+        <div className="mt-3 space-y-4">{sections}</div>
+      </details>
+    </div>
+  )
 }

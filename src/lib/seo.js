@@ -193,7 +193,6 @@ export const SEO = {
     heading: 'SQL query guide and searchable reference',
     blurb:
       'A searchable catalogue of the SQL you actually write: the syntax reference (joins, GROUP BY, window functions, CTEs, DDL, transactions), the recipes that keep coming back (find duplicates, top N per group, running totals, keyset pagination, gaps and islands) and the pitfalls that return a plausible wrong answer rather than an error. Every entry carries a syntax skeleton, a runnable example against one small schema, the gotchas, and dialect notes for PostgreSQL, MySQL, SQL Server and Oracle wherever the syntax differs.',
-    collapsedContent: true,
     howItWorks: [
       'Type what you are trying to do \u2014 duplicate, latest per user, upsert, pagination \u2014 or browse a category.',
       'Search covers titles, summaries, tags, examples and notes, so a keyword from the query text finds the entry too.',
@@ -371,7 +370,6 @@ export const SEO = {
   },
   '/markdown': {
     // The editor wants the viewport; the copy below it renders collapsed.
-    collapsedContent: true,
     title: 'Markdown Preview — Live GitHub-Flavoured Editor',
     description:
       'Live Markdown preview with GitHub-flavoured tables, task lists, highlighted code and Mermaid diagrams. Copy the HTML or download a file. Nothing is uploaded.',
@@ -1078,6 +1076,7 @@ export const SEO = {
     ],
   },
   '/privacy': {
+    collapsedContent: false,
     title: 'Privacy — How DevPocket Handles Your Data',
     description:
       'DevPocket runs entirely client-side: no backend, no analytics, no cookies, no error tracking. See what is stored locally and how to verify it yourself.',
@@ -1104,6 +1103,7 @@ export const SEO = {
     ],
   },
   '/about': {
+    collapsedContent: false,
     title: 'About DevPocket — Built by Sourabh Kumar',
     description:
       'DevPocket is a local-first developer toolbox built by Sourabh Kumar, a backend developer. No trackers, no ads, and nothing you paste leaves your browser.',
