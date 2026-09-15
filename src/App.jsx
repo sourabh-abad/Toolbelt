@@ -20,6 +20,7 @@ const LOADERS = {
   '/codegen': () => import('./pages/CodeGenTool'),
   '/sql': () => import('./pages/SqlTool'),
   '/sql-guide': () => import('./pages/SqlGuideTool'),
+  '/docker-guide': () => import('./pages/DockerGuideTool'),
   '/diff': () => import('./pages/DiffTool'),
   '/encode-decode': () => import('./pages/EncodeDecodeTool'),
   '/jwtvalidator': () => import('./pages/JwtValidatorTool'),
@@ -66,6 +67,7 @@ const ConvertTool = lazy(LOADERS['/convert'])
 const CodeGenTool = lazy(LOADERS['/codegen'])
 const SqlTool = lazy(LOADERS['/sql'])
 const SqlGuideTool = lazy(LOADERS['/sql-guide'])
+const DockerGuideTool = lazy(LOADERS['/docker-guide'])
 const CronTool = lazy(LOADERS['/cron'])
 const HttpRefTool = lazy(LOADERS['/http'])
 const MockDataTool = lazy(LOADERS['/mock'])
@@ -153,6 +155,7 @@ export default function App() {
                 <Route path="/codegen" element={<CodeGenTool />} />
                 <Route path="/sql" element={<SqlTool />} />
                 <Route path="/sql-guide" element={<SqlGuideTool />} />
+                <Route path="/docker-guide" element={<DockerGuideTool />} />
                 <Route path="/diff" element={<DiffTool />} />
                 <Route path="/encode-decode" element={<EncodeDecodeTool />} />
                 <Route path="/jwtvalidator" element={<JwtValidatorTool />} />

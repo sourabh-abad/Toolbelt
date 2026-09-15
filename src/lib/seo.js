@@ -224,6 +224,44 @@ export const SEO = {
       },
     ],
   },
+  '/docker-guide': {
+    title: 'Docker & Swarm Command Guide \u2014 Searchable, With Examples \u2014 DevPocket',
+    description:
+      'Search 106 Docker and Docker Swarm commands with real examples: build, run, exec, volumes, networks, Compose, services, stacks, secrets and the traps. Free, no signup.',
+    heading: 'Docker and Docker Swarm command guide',
+    blurb:
+      'A searchable catalogue of the Docker you actually type: building and shipping images, running and debugging containers, the Dockerfile instructions and what each one costs, volumes and networks, Compose, and the Swarm half \u2014 services, rolling updates, stacks, secrets, placement and the errors that come with them. Every entry carries the command, an example against one small sample system, what it does, the gotchas, and the related commands worth knowing next.',
+    howItWorks: [
+      'Type what you are trying to do \u2014 drain, rolling update, secret, overlay, prune \u2014 or browse a category.',
+      'Search covers titles, summaries, tags, examples and notes, so a flag you half-remember finds the entry.',
+      'Open an entry for the command, a runnable example, what it does, the traps, and the related commands.',
+      'Copy the example with one click, or copy the link \u2014 every entry is its own URL you can paste into a runbook.',
+    ],
+    useCases: [
+      'Remembering the exact flags for a rolling update or a placement constraint',
+      'Working out why a Swarm service sits at 0/3 and will not converge',
+      'Getting a private image to pull on every node instead of just the manager',
+      'Checking what stack deploy ignores from a compose file before a deploy',
+    ],
+    faq: [
+      {
+        q: 'Does it cover Docker Swarm as well as plain Docker?',
+        a: 'Yes \u2014 about half the entries are Swarm: cluster setup and quorum, services, scaling, rolling updates and rollbacks, stacks, secrets and configs, placement, and the diagnostics for tasks that will not start.',
+      },
+      {
+        q: 'Are the examples safe to paste?',
+        a: 'They target one small sample system (an app image, a database, a five-node swarm) shown on the page. Read them before running \u2014 several entries deliberately show destructive commands, like prune and stack rm, with what they take with them.',
+      },
+      {
+        q: 'Is this Compose v1 or v2?',
+        a: 'v2: the commands are written as docker compose, not docker-compose. Where Compose and stack deploy differ, the entry says which keys each one ignores.',
+      },
+      {
+        q: 'Why does it not cover Kubernetes?',
+        a: 'Because Swarm is what this guide is about. The two solve similar problems with different vocabulary, and mixing them in one reference helps nobody.',
+      },
+    ],
+  },
   '/diff': {
     title: 'Text Diff Checker — Compare Two Files Online — DevPocket',
     description:

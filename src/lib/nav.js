@@ -26,6 +26,7 @@ import {
   FileText,
   ShieldCheck,
   BookOpen,
+  Container,
 } from 'lucide-react'
 
 export const navItems = [
@@ -66,6 +67,7 @@ export const navItems = [
 
   // --- Reference
   { to: '/sql-guide', label: 'SQL Query Guide', icon: BookOpen, group: 'Reference', accent: 'cyan', description: 'Searchable SQL syntax, recipes and gotchas' },
+  { to: '/docker-guide', label: 'Docker & Swarm Guide', icon: Container, group: 'Reference', accent: 'sky', description: 'Searchable Docker and Swarm commands with examples' },
   { to: '/http', label: 'HTTP Reference', icon: Globe, group: 'Reference', accent: 'blue', description: 'Status codes, methods & headers' },
   { to: '/mock', label: 'Mock Data', icon: Boxes, group: 'Reference', accent: 'fuchsia', description: 'Generate fake records as JSON, CSV or SQL' },
 

@@ -23,6 +23,7 @@ Everything runs client-side in your browser. Nothing you paste in is ever sent t
 
 **Reference**
 - **SQL Query Guide** — 117 searchable entries covering SQL syntax, task recipes and the pitfalls that return a wrong answer without an error. Each has a syntax skeleton, a runnable example, the gotchas and dialect notes; every entry is its own link.
+- **Docker & Swarm Guide** — 106 searchable entries: images, containers, Dockerfile, volumes, networking, Compose, and the Swarm half — services, rolling updates, stacks, secrets and placement. Command, example, what it does, the gotchas and the related commands.
 - **HTTP Reference** — searchable status codes, methods (safe/idempotent flags) and common headers.
 - **Mock Data** — generate fake records from 21 field types, output as JSON, CSV or SQL `INSERT` statements.
 

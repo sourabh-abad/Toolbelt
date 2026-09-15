@@ -10,6 +10,9 @@ const KEYWORDS = {
   typescript: 'export|import|from|interface|type|class|extends|implements|const|let|var|function|return|new|this|if|else|for|while|switch|case|break|continue|try|catch|finally|throw|async|await|public|private|readonly|enum|namespace|declare|null|undefined|true|false|string|number|boolean|any|unknown|void|never',
   sql: 'SELECT|FROM|WHERE|JOIN|LEFT|RIGHT|INNER|OUTER|FULL|CROSS|ON|GROUP|BY|ORDER|HAVING|LIMIT|OFFSET|INSERT|INTO|VALUES|UPDATE|SET|DELETE|CREATE|ALTER|DROP|TABLE|INDEX|VIEW|AS|AND|OR|NOT|IN|IS|NULL|LIKE|BETWEEN|EXISTS|CASE|WHEN|THEN|ELSE|END|UNION|ALL|DISTINCT|COUNT|SUM|AVG|MIN|MAX|WITH|ASC|DESC|PRIMARY|KEY|FOREIGN|REFERENCES|DEFAULT|CONSTRAINT|TRUE|FALSE',
   yaml: 'true|false|null|yes|no|on|off',
+  bash: 'docker|compose|kubectl|sudo|if|then|else|elif|fi|for|while|until|do|done|case|esac|in|function|return|export|local|readonly|source|echo|cd|set|unset|trap|exit|true|false',
+  dockerfile:
+    'FROM|AS|RUN|CMD|LABEL|MAINTAINER|EXPOSE|ENV|ADD|COPY|ENTRYPOINT|VOLUME|USER|WORKDIR|ARG|ONBUILD|STOPSIGNAL|HEALTHCHECK|SHELL',
 }
 
 // Comment syntax differs per family.
@@ -21,6 +24,8 @@ const COMMENT = {
   python: '#[^\\n]*',
   yaml: '#[^\\n]*',
   sql: '--[^\\n]*',
+  bash: '#[^\\n]*',
+  dockerfile: '#[^\\n]*',
 }
 
 const cache = new Map()
