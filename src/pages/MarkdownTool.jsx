@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { FileText, Trash2, Upload, Download, Eye } from 'lucide-react'
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
+import { FileText, Trash2, Upload, Download, Eye, Maximize2, Minimize2 } from 'lucide-react'
 import { useToast } from '../lib/toast'
 import { useTheme } from '../lib/theme'
 import { useDebounced } from '../lib/useDebounced'
@@ -61,18 +61,26 @@ const VIEWS = [
 const PANE =
   'panel bd flex h-[65vh] min-h-[20rem] flex-col overflow-hidden rounded-2xl border lg:h-[calc(100vh-11.5rem)]'
 const PANE_HEAD = 'bd flex flex-wrap items-center justify-between gap-x-3 gap-y-1.5 border-b px-3 py-1.5'
+// Full screen: the output pane leaves the split and covers the window, above the
+// nav (z-40) but below toasts (z-60). Fixed rather than a layout change, so the
+// pane is never unmounted and rendered Mermaid diagrams and scroll position survive.
+const FULL_PANE = 'panel fixed inset-0 z-50 flex flex-col overflow-hidden'
 
 export default function MarkdownTool() {
   const [source, setSource] = useState(SAMPLE)
   const [view, setView] = useState('preview')
   const [syncScroll, setSyncScroll] = useState(true)
   const [fileName, setFileName] = useState('document')
+  const [fullscreen, setFullscreen] = useState(false)
   const toast = useToast()
   const { theme } = useTheme()
 
   const fileInputRef = useRef(null)
   const editorRef = useRef(null)
   const previewRef = useRef(null)
+  const outputRef = useRef(null)
+  // How far down the document the reader was, kept across a full-screen toggle.
+  const scrollRatio = useRef(0)
   // Guards the two scroll handlers against echoing each other into a loop.
   const scrollLock = useRef(null)
   const scrollTimer = useRef(0)
@@ -81,6 +89,11 @@ export default function MarkdownTool() {
   const debouncedSource = useDebounced(source, 120)
   const html = useMemo(() => renderMarkdown(debouncedSource), [debouncedSource])
   const stats = useMemo(() => documentStats(source), [source])
+  // React rewrites dangerouslySetInnerHTML whenever the prop OBJECT changes, not
+  // just its string, so a fresh literal on every render wipes the SVGs Mermaid
+  // drew into the preview — toggling any control used to blank the diagrams.
+  // Memoising it means the markup is only written when the document changes.
+  const previewHtml = useMemo(() => ({ __html: html }), [html])
 
   useEffect(() => () => window.clearTimeout(scrollTimer.current), [])
 
@@ -154,6 +167,64 @@ export default function MarkdownTool() {
     [syncScroll]
   )
 
+  // Hides the editor and gives the whole window to the rendered document. The
+  // browser's own fullscreen is requested as well, so its chrome goes too; where
+  // that is refused (iOS Safari, an iframe without the permission) the fixed
+  // overlay still covers the viewport, so the button behaves the same either way.
+  const toggleFullscreen = useCallback(() => {
+    const pane = previewRef.current
+    if (pane) {
+      const range = pane.scrollHeight - pane.clientHeight
+      scrollRatio.current = range > 0 ? pane.scrollTop / range : 0
+    }
+    if (fullscreen) {
+      setFullscreen(false)
+      if (document.fullscreenElement) document.exitFullscreen?.().catch(() => {})
+    } else {
+      setFullscreen(true)
+      outputRef.current?.requestFullscreen?.().catch(() => {})
+    }
+  }, [fullscreen])
+
+  // The pane changes height on the way in and out, and the browser clamps the
+  // scroll offset to the new range — which drops the reader somewhere else in the
+  // document. Restoring the ratio instead keeps them on the same paragraph.
+  useLayoutEffect(() => {
+    const pane = previewRef.current
+    if (!pane) return
+    const restore = () => {
+      const range = pane.scrollHeight - pane.clientHeight
+      if (range > 0) pane.scrollTop = scrollRatio.current * range
+    }
+    restore()
+    // Again once the browser's own fullscreen transition has settled the size.
+    const frame = requestAnimationFrame(restore)
+    return () => cancelAnimationFrame(frame)
+  }, [fullscreen])
+
+  // Esc leaves, and so does leaving the browser's fullscreen by any other route
+  // (Esc, F11, the OS), which fires fullscreenchange without touching the button.
+  useEffect(() => {
+    if (!fullscreen) return
+    const leave = () => {
+      setFullscreen(false)
+      if (document.fullscreenElement) document.exitFullscreen?.().catch(() => {})
+    }
+    const onKey = (e) => e.key === 'Escape' && leave()
+    const onFullscreenChange = () => {
+      if (!document.fullscreenElement) setFullscreen(false)
+    }
+    window.addEventListener('keydown', onKey)
+    document.addEventListener('fullscreenchange', onFullscreenChange)
+    const previousOverflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    return () => {
+      window.removeEventListener('keydown', onKey)
+      document.removeEventListener('fullscreenchange', onFullscreenChange)
+      document.body.style.overflow = previousOverflow
+    }
+  }, [fullscreen])
+
   function handleOpenFile(e) {
     const file = e.target.files?.[0]
     if (!file) return
@@ -191,6 +262,7 @@ export default function MarkdownTool() {
         <SplitPane
           storageKey="devpocket-split-markdown"
           left={
+            <div className={fullscreen ? 'hidden' : undefined}>
             <div className={PANE}>
               <div className={PANE_HEAD}>
                 <span className="t-faint text-[11px] tracking-wide uppercase">
@@ -229,17 +301,20 @@ export default function MarkdownTool() {
                 className="mono t-main min-h-0 flex-1 resize-none bg-transparent px-3.5 py-3 text-sm leading-relaxed outline-none"
               />
             </div>
+            </div>
           }
           right={
-            <div className={PANE}>
+            <div ref={outputRef} className={fullscreen ? FULL_PANE : PANE}>
               <div className={PANE_HEAD}>
                 <Tabs options={VIEWS} value={view} onChange={setView} />
                 <div className="flex items-center gap-2">
-                  <Checkbox
-                    checked={syncScroll}
-                    onChange={(e) => setSyncScroll(e.target.checked)}
-                    label="Sync scroll"
-                  />
+                  {!fullscreen && (
+                    <Checkbox
+                      checked={syncScroll}
+                      onChange={(e) => setSyncScroll(e.target.checked)}
+                      label="Sync scroll"
+                    />
+                  )}
                   <CopyButton text={html} label="HTML" onCopied={() => toast('HTML copied')} />
                   <Button
                     variant="ghost"
@@ -259,6 +334,16 @@ export default function MarkdownTool() {
                     <Download className="h-3.5 w-3.5" />
                     .md
                   </Button>
+                  <Button
+                    variant={fullscreen ? 'default' : 'ghost'}
+                    type="button"
+                    onClick={toggleFullscreen}
+                    aria-pressed={fullscreen}
+                    title={fullscreen ? 'Exit full screen (Esc)' : 'Hide the editor and fill the screen'}
+                  >
+                    {fullscreen ? <Minimize2 className="h-3.5 w-3.5" /> : <Maximize2 className="h-3.5 w-3.5" />}
+                    {fullscreen ? 'Exit' : 'Full screen'}
+                  </Button>
                 </div>
               </div>
 
@@ -266,14 +351,21 @@ export default function MarkdownTool() {
                 source.trim() ? (
                   <div
                     ref={previewRef}
-                    className="md-preview min-h-0 flex-1 overflow-auto px-4 py-3"
+                    className="min-h-0 flex-1 overflow-auto px-4 py-3"
                     onScroll={() => linkScroll(previewRef.current, editorRef.current, 'preview')}
-                    dangerouslySetInnerHTML={{ __html: html }}
-                  />
+                  >
+                    {/* Full width would give a 1400px line length; cap the measure instead. */}
+                    <div
+                      className={`md-preview ${fullscreen ? 'mx-auto max-w-4xl' : ''}`}
+                      dangerouslySetInnerHTML={previewHtml}
+                    />
+                  </div>
                 ) : (
                   <div className="t-faint flex min-h-0 flex-1 flex-col items-center justify-center gap-2 text-sm">
                     <Eye className="h-5 w-5" aria-hidden="true" />
-                    Paste Markdown on the left to see it rendered here.
+                    {fullscreen
+                      ? 'Nothing to show yet — leave full screen to write some Markdown.'
+                      : 'Paste Markdown on the left to see it rendered here.'}
                   </div>
                 )
               ) : (
