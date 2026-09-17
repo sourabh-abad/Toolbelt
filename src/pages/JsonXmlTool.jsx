@@ -11,7 +11,8 @@ import { useToast } from '../lib/toast'
 import { useDebounced } from '../lib/useDebounced'
 import SplitPane from '../components/SplitPane'
 import CodeViewer from '../components/CodeViewer'
-import { Panel, Button, CopyButton, TextArea, Input, ErrorBanner, PageHeader, Checkbox, Tabs } from '../components/ui'
+import CodeEditor from '../components/CodeEditor'
+import { Panel, Button, CopyButton, Input, ErrorBanner, PageHeader, Checkbox, Tabs } from '../components/ui'
 
 const SAMPLE_JSON = `{
   "id": 42,
@@ -152,7 +153,14 @@ export default function JsonXmlTool() {
               </>
             }
           >
-            <TextArea rows={16} value={input} onChange={(e) => setInput(e.target.value)} placeholder={`Paste ${mode.toUpperCase()} here…`} />
+            <CodeEditor
+              language={mode}
+              rows={24}
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              placeholder={`Paste ${mode.toUpperCase()} here…`}
+              ariaLabel={`${mode.toUpperCase()} input`}
+            />
             <div className="mt-3 flex flex-wrap gap-2">
               <Button onClick={handleFormat} type="button"><Wand2 className="h-3.5 w-3.5" />Format</Button>
               <Button variant="subtle" onClick={handleMinify} type="button"><Minimize2 className="h-3.5 w-3.5" />Minify</Button>

@@ -4,8 +4,9 @@ import { Shuffle, ArrowRight, Trash2 } from 'lucide-react'
 import { csvToObjects, objectsToCsv } from '../lib/csv'
 import { useToast } from '../lib/toast'
 import SplitPane from '../components/SplitPane'
-import { Panel, Button, CopyButton, TextArea, ErrorBanner, PageHeader, Select } from '../components/ui'
+import { Panel, Button, CopyButton, ErrorBanner, PageHeader, Select } from '../components/ui'
 import CodeViewer from '../components/CodeViewer'
+import CodeEditor from '../components/CodeEditor'
 
 const SAMPLE = `{
   "service": "payments-api",
@@ -112,7 +113,14 @@ export default function ConvertTool() {
           storageKey="devpocket-split-convert"
           left={
             <Panel title={`Input · ${from.toUpperCase()}`}>
-              <TextArea rows={18} value={input} onChange={(e) => setInput(e.target.value)} placeholder={`Paste ${from.toUpperCase()} here…`} />
+              <CodeEditor
+                language={from}
+                rows={24}
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                placeholder={`Paste ${from.toUpperCase()} here…`}
+                ariaLabel={`${from.toUpperCase()} input`}
+              />
               <div className="mt-3">
                 <ErrorBanner>{error}</ErrorBanner>
               </div>

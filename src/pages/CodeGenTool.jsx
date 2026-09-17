@@ -3,8 +3,9 @@ import { FileCode2, Wand2 } from 'lucide-react'
 import { generate, LANGUAGES, DEFAULT_LANGUAGE } from '../lib/codegen'
 import { useToast } from '../lib/toast'
 import SplitPane from '../components/SplitPane'
-import { Panel, Button, CopyButton, TextArea, Input, ErrorBanner, PageHeader, Select } from '../components/ui'
+import { Panel, Button, CopyButton, Input, ErrorBanner, PageHeader, Select } from '../components/ui'
 import CodeViewer from '../components/CodeViewer'
+import CodeEditor from '../components/CodeEditor'
 
 // Both Java flavours highlight with the same rules.
 const CODEVIEW_LANG = {
@@ -95,7 +96,14 @@ export default function CodeGenTool() {
           storageKey="devpocket-split-codegen"
           left={
             <Panel title="JSON payload">
-              <TextArea rows={20} value={input} onChange={(e) => setInput(e.target.value)} placeholder="Paste a JSON response…" />
+              <CodeEditor
+              language="json"
+              rows={24}
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              placeholder="Paste a JSON response…"
+              ariaLabel="JSON input"
+            />
               <div className="mt-3">
                 <ErrorBanner>{error}</ErrorBanner>
               </div>

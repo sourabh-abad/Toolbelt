@@ -4,8 +4,9 @@ import { useToast } from '../lib/toast'
 import { useDebounced } from '../lib/useDebounced'
 import { format, toFlow, stripComments, tidy, validate, stats, findIndentTabs } from '../lib/yamlops'
 import SplitPane from '../components/SplitPane'
-import { Panel, Button, CopyButton, TextArea, ErrorBanner, PageHeader, Select, Checkbox } from '../components/ui'
+import { Panel, Button, CopyButton, ErrorBanner, PageHeader, Select, Checkbox } from '../components/ui'
 import CodeViewer from '../components/CodeViewer'
+import CodeEditor from '../components/CodeEditor'
 
 const SAMPLE = `# deployment for the shop API
 # owner: platform team
@@ -232,11 +233,13 @@ export default function YamlTool() {
           storageKey="devpocket-split-yaml"
           left={
             <Panel title="YAML" description={check.empty ? undefined : statusLine(check, summary)}>
-              <TextArea
-                rows={20}
+              <CodeEditor
+                language="yaml"
+                rows={26}
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 placeholder="Paste YAML here…"
+                ariaLabel="YAML input"
               />
 
               {tabLines.length > 0 && (

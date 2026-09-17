@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { escapeHtml, syntaxHighlightJson, syntaxHighlightXml } from '../lib/utils'
-import { highlightCode, CODE_LANGUAGES } from '../lib/highlight'
+import { lineHighlighter } from '../lib/highlight'
 
 // Lines beyond this still render instantly — a long payload should not take
 // several seconds to finish animating in.
@@ -11,13 +10,6 @@ const STAGGER_MS = 14
 const VIRTUALISE_ABOVE = 400
 const LINE_HEIGHT = 24
 const OVERSCAN = 20
-
-function highlighterFor(language) {
-  if (language === 'json') return syntaxHighlightJson
-  if (language === 'xml') return syntaxHighlightXml
-  if (CODE_LANGUAGES.includes(language)) return (line) => highlightCode(line, language)
-  return escapeHtml
-}
 
 /**
  * Read-only code pane: line-number gutter, indent guides, syntax highlighting
@@ -46,7 +38,7 @@ export default function CodeViewer({
 
   const lines = useMemo(() => {
     if (!code) return []
-    const highlight = highlighterFor(language)
+    const highlight = lineHighlighter(language)
     return code.split('\n').map((line) => {
       const leading = line.match(/^[ \t]*/)[0].replace(/\t/g, ' '.repeat(indentSize)).length
       return {

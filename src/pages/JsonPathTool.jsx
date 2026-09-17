@@ -3,7 +3,8 @@ import { Waypoints, Trash2 } from 'lucide-react'
 import { jsonPath } from '../lib/jsonops'
 import { useToast } from '../lib/toast'
 import CodeViewer from '../components/CodeViewer'
-import { Panel, Button, CopyButton, TextArea, Input, ErrorBanner, PageHeader } from '../components/ui'
+import CodeEditor from '../components/CodeEditor'
+import { Panel, Button, CopyButton, Input, ErrorBanner, PageHeader } from '../components/ui'
 
 const SAMPLE = `{
   "store": {
@@ -83,7 +84,14 @@ export default function JsonPathTool() {
               </>
             }
           >
-            <TextArea rows={16} value={input} onChange={(e) => setInput(e.target.value)} placeholder="Paste JSON here…" />
+            <CodeEditor
+              language="json"
+              rows={22}
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              placeholder="Paste JSON here…"
+              ariaLabel="JSON input"
+            />
             <div className="mt-3"><ErrorBanner>{error}</ErrorBanner></div>
           </Panel>
 

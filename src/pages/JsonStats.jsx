@@ -1,7 +1,8 @@
 import { useMemo, useState } from 'react'
 import { BarChart3, Trash2 } from 'lucide-react'
 import { analyse } from '../lib/jsonops'
-import { Panel, Button, TextArea, ErrorBanner, PageHeader } from '../components/ui'
+import { Panel, Button, ErrorBanner, PageHeader } from '../components/ui'
+import CodeEditor from '../components/CodeEditor'
 
 const SAMPLE = `{
   "orders": [
@@ -53,7 +54,14 @@ export default function JsonStats() {
             </>
           }
         >
-          <TextArea rows={10} value={input} onChange={(e) => setInput(e.target.value)} placeholder="Paste JSON here…" />
+          <CodeEditor
+              language="json"
+              rows={16}
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              placeholder="Paste JSON here…"
+              ariaLabel="JSON input"
+            />
           <div className="mt-3"><ErrorBanner>{error}</ErrorBanner></div>
         </Panel>
 

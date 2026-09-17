@@ -4,7 +4,8 @@ import { useToast } from '../lib/toast'
 import { useJsonWorker } from '../lib/useJsonWorker'
 import SplitPane from '../components/SplitPane'
 import CodeViewer from '../components/CodeViewer'
-import { Panel, Button, CopyButton, TextArea, ErrorBanner, PageHeader } from '../components/ui'
+import CodeEditor from './CodeEditor'
+import { Panel, Button, CopyButton, ErrorBanner, PageHeader } from '../components/ui'
 
 const SAMPLE = `{
   "id": 1042,
@@ -78,7 +79,14 @@ export default function JsonToolPage({
                 </>
               }
             >
-              <TextArea rows={18} value={input} onChange={(e) => setInput(e.target.value)} placeholder="Paste JSON here…" />
+              <CodeEditor
+                language="json"
+                rows={24}
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                placeholder="Paste JSON here…"
+                ariaLabel={inputLabel}
+              />
               <div className="mt-3">
                 <ErrorBanner>{error}</ErrorBanner>
               </div>

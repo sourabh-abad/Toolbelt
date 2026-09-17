@@ -3,8 +3,9 @@ import { format } from 'sql-formatter'
 import { Database, Wand2, Minimize2, Trash2 } from 'lucide-react'
 import { useToast } from '../lib/toast'
 import SplitPane from '../components/SplitPane'
-import { Panel, Button, CopyButton, TextArea, ErrorBanner, PageHeader, Select } from '../components/ui'
+import { Panel, Button, CopyButton, ErrorBanner, PageHeader, Select } from '../components/ui'
 import CodeViewer from '../components/CodeViewer'
+import CodeEditor from '../components/CodeEditor'
 
 const SAMPLE = `select u.id, u.email, count(o.id) as order_count, sum(o.total) as lifetime_value from users u left join orders o on o.user_id = u.id where u.created_at >= '2026-01-01' and u.status = 'active' group by u.id, u.email having count(o.id) > 3 order by lifetime_value desc limit 50;`
 
@@ -94,7 +95,14 @@ export default function SqlTool() {
           storageKey="devpocket-split-sql"
           left={
             <Panel title="Query">
-              <TextArea rows={18} value={input} onChange={(e) => setInput(e.target.value)} placeholder="Paste SQL here…" />
+              <CodeEditor
+                language="sql"
+                rows={24}
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                placeholder="Paste SQL here…"
+                ariaLabel="SQL input"
+              />
               <div className="mt-3">
                 <ErrorBanner>{error}</ErrorBanner>
               </div>

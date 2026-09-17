@@ -3,7 +3,8 @@ import { GitMerge, Trash2 } from 'lucide-react'
 import { deepMerge } from '../lib/jsonops'
 import { useToast } from '../lib/toast'
 import CodeViewer from '../components/CodeViewer'
-import { Panel, Button, CopyButton, TextArea, ErrorBanner, PageHeader, Checkbox } from '../components/ui'
+import CodeEditor from '../components/CodeEditor'
+import { Panel, Button, CopyButton, ErrorBanner, PageHeader, Checkbox } from '../components/ui'
 
 const A = `{
   "name": "service-a",
@@ -65,10 +66,24 @@ export default function JsonMerge() {
 
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
           <Panel title="Base document" actions={<Button variant="ghost" type="button" onClick={() => setLeft('')}><Trash2 className="h-3.5 w-3.5" />Clear</Button>}>
-            <TextArea rows={12} value={left} onChange={(e) => setLeft(e.target.value)} placeholder="Paste the base JSON…" />
+            <CodeEditor
+              language="json"
+              rows={18}
+              value={left}
+              onChange={(e) => setLeft(e.target.value)}
+              placeholder="Paste the base JSON…"
+              ariaLabel="Left JSON"
+            />
           </Panel>
           <Panel title="Overriding document" actions={<Button variant="ghost" type="button" onClick={() => setRight('')}><Trash2 className="h-3.5 w-3.5" />Clear</Button>}>
-            <TextArea rows={12} value={right} onChange={(e) => setRight(e.target.value)} placeholder="Paste the JSON that should win…" />
+            <CodeEditor
+              language="json"
+              rows={18}
+              value={right}
+              onChange={(e) => setRight(e.target.value)}
+              placeholder="Paste the JSON that should win…"
+              ariaLabel="Right JSON"
+            />
           </Panel>
         </div>
 

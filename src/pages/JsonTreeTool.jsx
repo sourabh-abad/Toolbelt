@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
 import { ListTree, ChevronRight, Trash2 } from 'lucide-react'
-import { Panel, Button, TextArea, ErrorBanner, PageHeader } from '../components/ui'
+import { Panel, Button, ErrorBanner, PageHeader } from '../components/ui'
+import CodeEditor from '../components/CodeEditor'
 
 const SAMPLE = `{
   "order": {
@@ -149,7 +150,14 @@ export default function JsonTreeTool() {
               </>
             }
           >
-            <TextArea rows={18} value={input} onChange={(e) => setInput(e.target.value)} placeholder="Paste JSON here…" />
+            <CodeEditor
+              language="json"
+              rows={24}
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              placeholder="Paste JSON here…"
+              ariaLabel="JSON input"
+            />
             <div className="mt-3"><ErrorBanner>{error}</ErrorBanner></div>
           </Panel>
 
