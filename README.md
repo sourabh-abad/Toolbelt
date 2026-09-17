@@ -10,6 +10,7 @@ Everything runs client-side in your browser. Nothing you paste in is ever sent t
 - **JSON / XML** — beautify, minify, validate, and search across keys/attributes/values with JSON-path style results.
 - **JSON ⇄ YAML ⇄ CSV** — convert between the config and data formats you juggle daily.
 - **JSON → Code** — generate TypeScript, Go, Java, Python or C# models from an API payload (nested types included).
+- **YAML Formatter** — format, validate and tidy YAML, or strip every `#` comment without touching the hashes inside quoted strings, URLs and block scalars. Reports the line and column of a syntax error, and warns about tabs in the indentation.
 - **SQL Formatter** — pretty-print or minify queries across 11 dialects (Postgres, MySQL, T-SQL, BigQuery, Oracle…).
 
 **Text**

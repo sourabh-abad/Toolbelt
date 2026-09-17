@@ -262,6 +262,44 @@ export const SEO = {
       },
     ],
   },
+  '/yaml': {
+    title: 'YAML Formatter, Validator & Comment Remover \u2014 DevPocket',
+    description:
+      'Format and validate YAML online, strip every # comment, fix tab indentation and collapse to one line. Runs in your browser \u2014 nothing is uploaded.',
+    heading: 'YAML formatter, validator and comment remover',
+    blurb:
+      'Paste YAML to re-emit it with consistent indentation, quoting and wrapping, or to tidy the whitespace without touching a single comment. A separate action strips every # comment \u2014 correctly, leaving the hashes that live inside quoted strings, URLs and block scalars alone. Validation runs as you type and reports the exact line and column, plus a count of documents, keys, depth, comments, anchors and aliases, and a warning when tabs have crept into the indentation.',
+    howItWorks: [
+      'Paste a YAML file \u2014 a single document or several separated by ---.',
+      'Validation runs as you type: the line and column of any syntax error, or a summary of the document.',
+      'Format reparses and re-emits with your indent, wrap, quoting and sorting options. Tidy fixes whitespace and tabs without touching comments.',
+      'Remove comments strips every # comment and leaves the rest of the file byte for byte as it was. Copy the result, or send it back to the editor to run another action.',
+    ],
+    useCases: [
+      'Cleaning a hand-edited Kubernetes or Compose file before committing it',
+      'Stripping the commentary out of a config before pasting it into a ticket',
+      'Finding the line a "bad indentation" error is really talking about',
+      'Fixing an editor that inserted tabs into a YAML file',
+    ],
+    faq: [
+      {
+        q: 'Why does Format lose my comments?',
+        a: 'Because Format parses the document and writes it out again, and the YAML parser does not keep comments. Tidy is the comment-preserving option: it only touches whitespace, tabs and blank lines.',
+      },
+      {
+        q: 'Will Remove comments break a string containing a #?',
+        a: 'No. A # only starts a comment at the start of a line or after a space, and never inside quotes or a block scalar, so a URL fragment, a "50% # done" string and a shell script in a | block all survive intact.',
+      },
+      {
+        q: 'Does it handle multi-document files?',
+        a: 'Yes. Documents separated by --- are validated and re-emitted individually, which is what Kubernetes manifests usually look like.',
+      },
+      {
+        q: 'What happens to anchors and aliases?',
+        a: 'They are kept by default. Tick "Expand anchors" to resolve them and write the values out in full, which is useful when you want to see what a merge key actually produced.',
+      },
+    ],
+  },
   '/diff': {
     title: 'Text Diff Checker — Compare Two Files Online — DevPocket',
     description:

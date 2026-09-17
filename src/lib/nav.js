@@ -27,6 +27,7 @@ import {
   ShieldCheck,
   BookOpen,
   Container,
+  AlignLeft,
 } from 'lucide-react'
 
 export const navItems = [
@@ -39,6 +40,7 @@ export const navItems = [
   { to: '/json-xml', label: 'JSON / XML', icon: Braces, group: 'Data', accent: 'sky', description: 'Format, validate & search JSON or XML' },
   { to: '/convert', label: 'JSON ⇄ YAML ⇄ CSV', icon: Shuffle, group: 'Data', accent: 'teal', description: 'Convert between config & data formats' },
   { to: '/codegen', label: 'JSON → Code', icon: FileCode2, group: 'Data', accent: 'indigo', description: 'Generate typed models from a JSON payload' },
+  { to: '/yaml', label: 'YAML Formatter', icon: AlignLeft, group: 'Data', accent: 'violet', description: 'Format, tidy, strip comments & validate YAML' },
   { to: '/sql', label: 'SQL Formatter', icon: Database, group: 'Data', accent: 'orange', description: 'Pretty-print & minify SQL across dialects' },
 
   // --- JSON toolkit: one route per task so each ranks for its own query

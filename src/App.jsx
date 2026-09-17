@@ -19,6 +19,7 @@ const LOADERS = {
   '/convert': () => import('./pages/ConvertTool'),
   '/codegen': () => import('./pages/CodeGenTool'),
   '/sql': () => import('./pages/SqlTool'),
+  '/yaml': () => import('./pages/YamlTool'),
   '/sql-guide': () => import('./pages/SqlGuideTool'),
   '/docker-guide': () => import('./pages/DockerGuideTool'),
   '/diff': () => import('./pages/DiffTool'),
@@ -66,6 +67,7 @@ const MarkdownTool = lazy(LOADERS['/markdown'])
 const ConvertTool = lazy(LOADERS['/convert'])
 const CodeGenTool = lazy(LOADERS['/codegen'])
 const SqlTool = lazy(LOADERS['/sql'])
+const YamlTool = lazy(LOADERS['/yaml'])
 const SqlGuideTool = lazy(LOADERS['/sql-guide'])
 const DockerGuideTool = lazy(LOADERS['/docker-guide'])
 const CronTool = lazy(LOADERS['/cron'])
@@ -154,6 +156,7 @@ export default function App() {
                 <Route path="/convert" element={<ConvertTool />} />
                 <Route path="/codegen" element={<CodeGenTool />} />
                 <Route path="/sql" element={<SqlTool />} />
+                <Route path="/yaml" element={<YamlTool />} />
                 <Route path="/sql-guide" element={<SqlGuideTool />} />
                 <Route path="/docker-guide" element={<DockerGuideTool />} />
                 <Route path="/diff" element={<DiffTool />} />

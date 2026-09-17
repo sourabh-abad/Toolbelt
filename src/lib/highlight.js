@@ -22,10 +22,12 @@ const COMMENT = {
   csharp: '\\/\\/[^\\n]*',
   typescript: '\\/\\/[^\\n]*',
   python: '#[^\\n]*',
-  yaml: '#[^\\n]*',
+  // YAML and shell only start a comment at the beginning of a line or after
+  // whitespace, so a URL fragment or a #tag in a value is not one.
+  yaml: '(?<=^|\\s)#[^\\n]*',
   sql: '--[^\\n]*',
-  bash: '#[^\\n]*',
-  dockerfile: '#[^\\n]*',
+  bash: '(?<=^|\\s)#[^\\n]*',
+  dockerfile: '(?<=^|\\s)#[^\\n]*',
 }
 
 const cache = new Map()
