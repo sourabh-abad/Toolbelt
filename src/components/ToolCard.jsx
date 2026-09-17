@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import { Link } from './AppLink'
 import { ArrowRight } from 'lucide-react'
 import { ACCENTS } from '../lib/nav'
 import { FavoriteButton, PrivacyBadge } from './ui'

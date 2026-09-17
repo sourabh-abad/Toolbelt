@@ -79,6 +79,28 @@ export const navItems = [
   { to: '/lorem', label: 'Lorem Ipsum', icon: Type, group: 'Generators', accent: 'amber', description: 'Placeholder copy by word, sentence or paragraph' },
 ]
 
+/**
+ * The href form of an internal route.
+ *
+ * Every page advertises itself with a trailing slash — `/uuid/` is what GitHub
+ * Pages actually serves, and what the canonical tag and the sitemap both point
+ * at. Route keys stay slash-free (`/uuid`) because they index navItems, LOADERS
+ * and the SEO table, so the slash is added here, at the moment a link is
+ * rendered. Skip it and every in-app link 301-redirects: the server-rendered
+ * HTML is right, hydration replaces it with the slash-less form, and Googlebot
+ * — which renders the JS — crawls the redirecting URL instead of the real one.
+ *
+ * scripts/prerender.mjs keeps its own copy of this, because it reads nav.js as
+ * text rather than importing it. The two have to agree.
+ */
+export function hrefFor(to) {
+  if (typeof to !== 'string' || !to.startsWith('/')) return to
+  const cut = to.search(/[?#]/)
+  const path = cut === -1 ? to : to.slice(0, cut)
+  const rest = cut === -1 ? '' : to.slice(cut)
+  return path === '/' || path.endsWith('/') ? to : `${path}/${rest}`
+}
+
 export const NAV_GROUPS = ['JWT', 'Data', 'JSON Toolkit', 'Text', 'Time', 'Generators', 'Reference']
 
 // Groups that start collapsed — the JSON toolkit is long and most visits are

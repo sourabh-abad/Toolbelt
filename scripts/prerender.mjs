@@ -147,8 +147,72 @@ function replaceRoot(html, inner) {
   throw new Error('prerender: unbalanced <div id="root">')
 }
 
+// Mirrors the DeepDive component in ToolContentSections: the page-specific
+// copy — worked example, reference table, the traps — that stops a set of tool
+// pages reading as one template filled in 30 times.
+function deepDiveHtml(d) {
+  const bits = [`<h2 ${H2}>${esc(d.heading)}</h2>`]
+
+  if (d.body) bits.push(d.body.map((para) => `<p ${P}>${esc(para)}</p>`).join(''))
+
+  if (d.example) {
+    bits.push(
+      `<div class="mt-4 grid gap-3 sm:grid-cols-2">` +
+        `<div><h3 class="t-muted text-[11px] font-semibold tracking-wider uppercase">${esc(
+          d.example.inputLabel || 'Input'
+        )}</h3><pre class="field mono mt-1.5 overflow-x-auto rounded-lg border p-3 text-xs leading-relaxed">${esc(
+          d.example.input
+        )}</pre></div>` +
+        `<div><h3 class="t-muted text-[11px] font-semibold tracking-wider uppercase">${esc(
+          d.example.outputLabel || 'Output'
+        )}</h3><pre class="field mono mt-1.5 overflow-x-auto rounded-lg border p-3 text-xs leading-relaxed">${esc(
+          d.example.output
+        )}</pre></div>` +
+        `</div>`
+    )
+    if (d.example.note) bits.push(`<p class="t-faint mt-2 text-xs leading-relaxed">${esc(d.example.note)}</p>`)
+  }
+
+  if (d.table) {
+    bits.push(
+      `<div class="mt-4 overflow-x-auto"><table class="w-full text-left text-xs">${
+        d.table.caption ? `<caption class="t-muted mb-2 text-left text-xs">${esc(d.table.caption)}</caption>` : ''
+      }<thead><tr class="bd border-b">${d.table.columns
+        .map((c) => `<th class="t-muted py-1.5 pr-4 font-semibold">${esc(c)}</th>`)
+        .join('')}</tr></thead><tbody>${d.table.rows
+        .map(
+          (row) =>
+            `<tr class="bd border-b">${row
+              .map(
+                (cell, j) =>
+                  `<td class="t-muted py-1.5 pr-4 align-top${j === 0 ? ' mono t-main' : ''}">${esc(cell)}</td>`
+              )
+              .join('')}</tr>`
+        )
+        .join('')}</tbody></table></div>`
+    )
+  }
+
+  if (d.gotchas) {
+    bits.push(
+      `<div class="mt-4"><h3 class="t-main text-sm font-medium">Where people get caught</h3><div class="mt-2 space-y-3">${d.gotchas
+        .map(
+          ({ title, detail }) =>
+            `<div><p class="t-main text-sm font-medium">${esc(title)}</p><p class="t-muted mt-0.5 text-sm leading-relaxed">${esc(
+              detail
+            )}</p></div>`
+        )
+        .join('')}</div></div>`
+    )
+  }
+
+  return `<section class="mt-8">${bits.join('')}</section>`
+}
+
 function sectionsHtml(seo) {
   const parts = []
+
+  if (seo.deepDive) parts.push(deepDiveHtml(seo.deepDive))
 
   if (seo.howItWorks) {
     parts.push(
@@ -190,7 +254,7 @@ function sectionsHtml(seo) {
   }
 
   return `<div class="px-4 pb-6 sm:px-6"><details><summary class="bd t-muted inline-flex cursor-pointer items-center gap-1.5 rounded-lg border px-2.5 py-1.5 text-xs font-medium">About ${esc(
-    (seo.heading || 'this tool').toLowerCase()
+    seo.aboutLabel || 'this tool'
   )}</summary><div class="mt-3 space-y-4">${parts.join('')}</div></details></div>`
 }
 
@@ -216,7 +280,7 @@ function footerHtml(pathname, seo) {
   } tools</summary><nav aria-label="All tools" class="mt-4 grid grid-cols-2 gap-x-6 gap-y-5 sm:grid-cols-3 lg:grid-cols-4">${groups}</nav></details><p class="t-muted mt-6 text-xs">Free · no sign-up · nothing you paste leaves your browser · <a href="/" class="inline-flex min-h-[36px] items-center underline-offset-2">all tools</a> · <a href="/privacy/" class="inline-flex min-h-[36px] items-center underline-offset-2">privacy</a> · <a href="/about/" class="inline-flex min-h-[36px] items-center underline-offset-2">about this project</a></p></div></footer>`
 }
 
-function render(pathname, seo) {
+function render(pathname, seo, { noindex = false } = {}) {
   const url = canonicalUrl(pathname)
   let html = template
 
@@ -230,6 +294,17 @@ function render(pathname, seo) {
     `$1${url}$2`
   )
   html = html.replace(/(<meta property="og:url" content=")[^"]*(")/, `$1${url}$2`)
+
+  // GitHub Pages serves this file under every unknown path, so without a robots
+  // tag the same body is reachable at an unbounded number of URLs. The 404
+  // status already keeps them out of the index; this makes it explicit for any
+  // crawler that fetches the file directly.
+  if (noindex) {
+    html = html.replace(
+      /(<link rel="canonical" href=")[^"]*(" \/>)/,
+      '<meta name="robots" content="noindex, follow" />'
+    )
+  }
   html = html.replace(
     /(<meta property="og:title" content=")[^"]*(")/,
     `$1${esc(seo.title)}$2`
@@ -284,7 +359,10 @@ for (const pathname of routes) {
 
 // GitHub Pages serves 404.html for unknown paths; handing it the app lets
 // deep links work even before the per-route files are hit.
-writeFileSync(join(dist, '404.html'), render('/', SEO['/']))
+writeFileSync(
+  join(dist, '404.html'),
+  render('/', { ...SEO['/'], title: 'Page not found — DevPocket' }, { noindex: true })
+)
 
 // Retired URLs: a static page that redirects, plus a canonical pointing at the
 // new location so search engines transfer rather than index a duplicate.

@@ -10,6 +10,7 @@ export const SEO = {
     description:
       'Format JSON, decode JWTs, generate UUIDs, test regex and convert timestamps — free developer tools that run in your browser. No signup, no uploads.',
     heading: 'Developer tools that stay in your browser',
+    aboutLabel: 'DevPocket',
     blurb:
       'DevPocket is a toolbox of everyday developer utilities that run entirely in your browser — JSON, JWTs, UUIDs, regex, timestamps and more. Nothing you paste is uploaded to a server, so you can safely work with production payloads, tokens and customer data.',
     howItWorks: [
@@ -45,8 +46,9 @@ export const SEO = {
   '/json-xml': {
     title: 'JSON & XML Formatter, Validator and Search — DevPocket',
     description:
-      'Format, beautify, minify and validate JSON or XML online, then search keys, attributes and values by path. Runs locally in your browser — nothing is uploaded.',
+      'Format, beautify, minify and validate JSON or XML online, then search keys, attributes and values by path. Runs locally — nothing is uploaded.',
     heading: 'JSON and XML formatter, validator and search',
+    aboutLabel: 'the JSON and XML formatter',
     blurb:
       'Paste JSON or XML to pretty-print it with syntax highlighting, minify it back down, or validate it with the exact line and column of any syntax error. The search box walks the parsed document and returns every matching key, attribute, tag or value with its full path, so you can find a field buried deep in an API response without scrolling.',
     howItWorks: [
@@ -85,6 +87,7 @@ export const SEO = {
     description:
       'Convert JSON to YAML, YAML to JSON, JSON to CSV and back. Ideal for Kubernetes manifests, CI configs and data dumps. Free, browser-based, no upload.',
     heading: 'Convert between JSON, YAML and CSV',
+    aboutLabel: 'the JSON, YAML and CSV converter',
     blurb:
       'Switch between the three formats backend and DevOps work runs on. Turn a JSON payload into a YAML config for Kubernetes or GitHub Actions, flatten an array of records into CSV for a spreadsheet, or parse a CSV export back into structured JSON.',
     howItWorks: [
@@ -115,10 +118,73 @@ export const SEO = {
     ],
   },
   '/codegen': {
-    title: 'JSON to Java, TypeScript & Go Generator — DevPocket',
+    title: 'JSON to Java Object Generator — POJO, TS, Go — DevPocket',
     description:
-      'Paste a JSON response and generate typed models: Java POJOs with or without Lombok, TypeScript interfaces, Go structs, Python dataclasses or C# classes.',
-    heading: 'Generate typed models from JSON',
+      'Convert JSON to a Java object, TypeScript interface, Go struct, Python dataclass or C# class. Paste a payload, pick a language, copy the model.',
+    heading: 'JSON to Java, TypeScript and Go models',
+    aboutLabel: 'the JSON to code generator',
+    deepDive: {
+      heading: 'Generating a Java class, TypeScript interface or Go struct from a payload',
+      body: [
+        'Paste a JSON response and pick a target — Java with or without Lombok, TypeScript, Go, Python or C# — and the generator walks the payload, names a type for each nested object, and emits the model. It is the fastest way to stop hand-typing a DTO from an API you are integrating against.',
+        'Like any inference from a single sample, it is right about the shape and guessing about everything else. The list below is what to check before the generated class goes anywhere near production.',
+      ],
+      example: {
+        inputLabel: 'JSON',
+        input: `{
+  "order_id": 9007199254740993,
+  "placed_at": "2026-09-15T09:00:00Z",
+  "total": 12,
+  "items": [],
+  "customer": {
+    "id": 41,
+    "email": "ada@example.com"
+  }
+}`,
+        outputLabel: 'Java (Lombok)',
+        output: `@Data
+public class Order {
+    private Long orderId;
+    private String placedAt;
+    private Integer total;
+    private List<Object> items;
+    private Customer customer;
+}
+
+@Data
+public class Customer {
+    private Integer id;
+    private String email;
+}`,
+        note: 'Three fields in that class need a human: orderId needs @JsonProperty("order_id") because the name was rewritten, placedAt is really an Instant, and total is an Integer only because this sample had no decimal point.',
+      },
+      gotchas: [
+        {
+          title: 'Renamed fields stop deserialising',
+          detail: 'order_id is not a legal Java field name in the house style, so it becomes orderId — and Jackson then looks for a JSON key called orderId. Keep an @JsonProperty annotation, or configure a snake_case naming strategy globally.',
+        },
+        {
+          title: 'One sample cannot tell optional from required',
+          detail: 'A field absent from your sample does not exist in the generated class, and the first response that includes it is silently dropped. Generate from the fullest payload you have, not the tidiest one.',
+        },
+        {
+          title: 'Large integers do not fit a double',
+          detail: 'An ID above 2^53 loses precision the moment it passes through a JavaScript number or a float field. Type it as Long, or as a String if the API sends it as one.',
+        },
+        {
+          title: 'Whole numbers become integers',
+          detail: 'A total of 12 in the sample produces Integer; the first 12.50 then fails to parse. Money should be BigDecimal in Java and a string in TypeScript, never a float.',
+        },
+        {
+          title: 'Dates are strings until you say otherwise',
+          detail: 'Nothing in JSON marks a timestamp. Every generator emits String for an ISO-8601 value; swapping it for Instant, OffsetDateTime or Date is a manual step, and forgetting it is why timezone bugs surface weeks later.',
+        },
+        {
+          title: 'Empty and mixed arrays have no element type',
+          detail: '[] gives List<Object>, and [1, "a"] has no clean typed representation at all. Supply a sample with a populated, homogeneous array, or write that member by hand.',
+        },
+      ],
+    },
     blurb:
       'Turn an API response into the model classes for your service layer. Java is generated two ways — with Lombok’s @Getter/@Setter and constructor annotations, or as a plain POJO with explicit getters and setters. Nested objects become their own types, arrays are typed by their first element, and ISO date strings become Instant. Where a JSON key does not match Java naming (snake_case, kebab-case), a @JsonProperty annotation is added so Jackson still binds it correctly.',
     howItWorks: [
@@ -157,6 +223,7 @@ export const SEO = {
     description:
       'Format and beautify SQL online for PostgreSQL, MySQL, T-SQL, Oracle, BigQuery, Snowflake, SQLite and more. Also minifies queries. Free and browser-based.',
     heading: 'SQL formatter and beautifier',
+    aboutLabel: 'the SQL formatter',
     blurb:
       'Make an unreadable one-line query legible, with dialect-aware formatting for PostgreSQL, MySQL, MariaDB, SQLite, BigQuery, Snowflake, Spark, Redshift, SQL Server and Oracle. Keyword casing is configurable, and the minifier strips comments and collapses whitespace without touching string literals.',
     howItWorks: [
@@ -187,10 +254,11 @@ export const SEO = {
     ],
   },
   '/sql-guide': {
-    title: 'SQL Query Guide \u2014 Searchable Syntax, Recipes & Gotchas \u2014 DevPocket',
+    title: 'SQL Query Guide \u2014 Syntax, Recipes & Gotchas \u2014 DevPocket',
     description:
-      'Search 117 SQL queries with runnable examples: joins, window functions, CTEs, upserts, indexing and the traps that return wrong results. Free and browser-based.',
+      'Search 117 SQL queries with runnable examples: joins, window functions, CTEs, upserts, indexing and the traps that return wrong results. Free to use.',
     heading: 'SQL query guide and searchable reference',
+    aboutLabel: 'the SQL query guide',
     blurb:
       'A searchable catalogue of the SQL you actually write: the syntax reference (joins, GROUP BY, window functions, CTEs, DDL, transactions), the recipes that keep coming back (find duplicates, top N per group, running totals, keyset pagination, gaps and islands) and the pitfalls that return a plausible wrong answer rather than an error. Every entry carries a syntax skeleton, a runnable example against one small schema, the gotchas, and dialect notes for PostgreSQL, MySQL, SQL Server and Oracle wherever the syntax differs.',
     howItWorks: [
@@ -225,10 +293,11 @@ export const SEO = {
     ],
   },
   '/docker-guide': {
-    title: 'Docker & Swarm Command Guide \u2014 Searchable, With Examples \u2014 DevPocket',
+    title: 'Docker & Swarm Command Guide with Examples \u2014 DevPocket',
     description:
-      'Search 106 Docker and Docker Swarm commands with real examples: build, run, exec, volumes, networks, Compose, services, stacks, secrets and the traps. Free, no signup.',
+      'Search 106 Docker and Swarm commands with real examples: build, run, exec, volumes, networks, Compose, services, stacks and secrets. Free, no signup.',
     heading: 'Docker and Docker Swarm command guide',
+    aboutLabel: 'the Docker and Swarm guide',
     blurb:
       'A searchable catalogue of the Docker you actually type: building and shipping images, running and debugging containers, the Dockerfile instructions and what each one costs, volumes and networks, Compose, and the Swarm half \u2014 services, rolling updates, stacks, secrets, placement and the errors that come with them. Every entry carries the command, an example against one small sample system, what it does, the gotchas, and the related commands worth knowing next.',
     howItWorks: [
@@ -267,6 +336,7 @@ export const SEO = {
     description:
       'Format and validate YAML online, strip every # comment, fix tab indentation and collapse to one line. Runs in your browser \u2014 nothing is uploaded.',
     heading: 'YAML formatter, validator and comment remover',
+    aboutLabel: 'the YAML formatter',
     blurb:
       'Paste YAML to re-emit it with consistent indentation, quoting and wrapping, or to tidy the whitespace without touching a single comment. A separate action strips every # comment \u2014 correctly, leaving the hashes that live inside quoted strings, URLs and block scalars alone. Validation runs as you type and reports the exact line and column, plus a count of documents, keys, depth, comments, anchors and aliases, and a warning when tabs have crept into the indentation.',
     howItWorks: [
@@ -303,8 +373,65 @@ export const SEO = {
   '/diff': {
     title: 'Text Diff Checker — Compare Two Files Online — DevPocket',
     description:
-      'Compare two blocks of text or code line by line or word by word. Highlights additions and deletions with a change count. Free, private, runs in your browser.',
+      'Compare two blocks of text or code line by line or word by word. Highlights additions and deletions with a change count. Free and private.',
     heading: 'Text and code diff checker',
+    aboutLabel: 'the diff checker',
+    deepDive: {
+      heading: 'When a diff lies to you',
+      body: [
+        'A line diff finds the longest common subsequence of lines and calls everything else an addition or a deletion. That model is exactly right for source code and exactly wrong for several common situations, and knowing which is which saves a lot of time staring at a wall of red.',
+        'Word-level comparison helps for prose and for single-line changes; it does not help when the underlying problem is that the two files differ in ways you cannot see.',
+      ],
+      example: {
+        inputLabel: 'Symptom',
+        input: `Every single line shows as changed
+
+A formatter ran and the real change
+is invisible
+
+A block moved 200 lines down
+
+Two names look identical but differ`,
+        outputLabel: 'Usual cause',
+        output: `Line endings (CRLF vs LF) or trailing
+whitespace — not content
+
+Diff the parsed structure instead:
+sort the JSON keys, then compare
+
+LCS has no concept of a move; it is
+a delete plus an insert
+
+Unicode: e + combining accent versus
+the single precomposed character`,
+      },
+      gotchas: [
+        {
+          title: 'Line endings make everything look changed',
+          detail: 'A file saved on Windows and a file saved on macOS differ on every line by one invisible byte. If the whole file lights up after someone else edits it, check CRLF before you read a single line of the diff.',
+        },
+        {
+          title: 'Reformatting hides real changes',
+          detail: 'Run a formatter and a one-character logic change is buried in 400 reflowed lines. For JSON and YAML, normalise first — sort the keys, then diff — so the comparison is about content rather than layout.',
+        },
+        {
+          title: 'Moves are invisible to the algorithm',
+          detail: 'LCS produces a deletion here and an insertion there. A refactor that reorders functions therefore reads as a rewrite, which is why reviewers ask for moves and edits in separate commits.',
+        },
+        {
+          title: 'Word diff is right for prose, wrong for code',
+          detail: 'Word-level highlighting is much easier to read in a paragraph. In code it fragments — a renamed variable lights up every occurrence in the middle of lines and you lose the shape of the change.',
+        },
+        {
+          title: 'Equal-looking text can differ in bytes',
+          detail: 'Non-breaking spaces pasted from a document, smart quotes from a word processor, and two Unicode spellings of an accented character all render identically and compare as different. If a diff insists two identical lines differ, that is why.',
+        },
+        {
+          title: 'Whitespace-only noise buries the signal',
+          detail: 'Indentation changes, tabs converted to spaces and stripped trailing whitespace can account for most of a diff. Compare with whitespace ignored first to see whether anything real happened, then look properly.',
+        },
+      ],
+    },
     blurb:
       'Paste two versions of a config file, API response or block of code to see exactly what changed. Line mode suits code and structured data; word mode catches small edits inside long paragraphs. Whitespace-only differences can be ignored.',
     howItWorks: [
@@ -337,8 +464,9 @@ export const SEO = {
   '/encode-decode': {
     title: 'Base64, URL & Hash Encoder / Decoder — DevPocket',
     description:
-      'Encode and decode Base64 and URLs, and generate MD5, SHA-1, SHA-256, SHA-384 and SHA-512 hashes online. Full Unicode support, computed locally in your browser.',
+      'Encode and decode Base64 and URLs, and generate MD5, SHA-1, SHA-256 and SHA-512 hashes online. Full Unicode support, computed in your browser.',
     heading: 'Base64, URL encoding and hashing',
+    aboutLabel: 'Base64, URL encoding and hashing',
     blurb:
       'Base64 encode or decode any text with full Unicode support, switch between component and full-URI encoding, and generate MD5 and SHA-family digests. Hashes are computed with the browser’s native Web Crypto API, so the input never leaves your machine.',
     howItWorks: [
@@ -373,10 +501,113 @@ export const SEO = {
     ],
   },
   '/jwtvalidator': {
-    title: 'JWT Decoder & Validator — Check Token Expiry',
+    title: 'JWT Decoder & Validator — Check Token Expiry — DevPocket',
     description:
       'Decode a JSON Web Token and check its structure, algorithm and expiry. Runs entirely in your browser, so pasting a real token never sends it anywhere.',
     heading: 'JWT decoder and validator',
+    aboutLabel: 'the JWT decoder',
+    deepDive: {
+      heading: 'Why a token can decode cleanly and still be rejected',
+      body: [
+        'A JWT is three base64url segments joined by dots: header, payload, signature. The first two are encoded, not encrypted — anyone holding the token can read every claim in it. That is the single most misunderstood thing about JWTs, and the reason a token should never carry anything you would not be comfortable seeing in a log line.',
+        'Decoding therefore proves nothing about authenticity. A decoder shows you what the issuer claimed; only a server holding the signing key can tell you whether that claim is real. DevPocket decodes the header and payload and checks the time claims against your clock. It deliberately does not verify the signature, because doing that would mean pasting your signing secret into a web page.',
+      ],
+      example: {
+        inputLabel: 'Token',
+        input: `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IjIwMjYtMDYifQ
+.eyJpc3MiOiJodHRwczovL2F1dGguZXhhbXBsZS5jb20iLCJzdWIiOiJ1c2Vy
+XzhmMjEiLCJhdWQiOiJzaG9wLWFwaSIsImlhdCI6MTc4OTQ2MjgwMCwibmJmIjox
+Nzg5NDYyODAwLCJleHAiOjE3ODk0NjY0MDAsInNjb3BlIjoib3JkZXJzOnJlYWQg
+b3JkZXJzOndyaXRlIn0
+.<signature>`,
+        outputLabel: 'Decoded',
+        output: `{
+  "alg": "HS256",
+  "typ": "JWT",
+  "kid": "2026-06"
+}
+{
+  "iss": "https://auth.example.com",
+  "sub": "user_8f21",
+  "aud": "shop-api",
+  "iat": 1789462800,
+  "nbf": 1789462800,
+  "exp": 1789466400,
+  "scope": "orders:read orders:write"
+}
+
+iat  2026-09-15 09:00:00 UTC
+exp  2026-09-15 10:00:00 UTC  (1 hour life)`,
+        note: 'The line breaks above are for reading only — a real token is one unbroken string, and the signature segment is elided here because nothing in a browser can check it.',
+      },
+      table: {
+        caption: 'The registered claims, and the error each one produces when it is wrong',
+        columns: ['Claim', 'Means', 'Typical rejection'],
+        rows: [
+          [
+            'iss',
+            'Who issued the token',
+            'Issuer mismatch — usually a staging token sent at production',
+          ],
+          [
+            'sub',
+            'Who the token is about',
+            'Rarely validated; do not use it as a display name',
+          ],
+          [
+            'aud',
+            'Which API the token is for',
+            'Invalid audience — an access token used against the wrong service',
+          ],
+          [
+            'exp',
+            'Expiry, in seconds since the epoch',
+            'Token expired — the most common 401 in practice',
+          ],
+          [
+            'nbf',
+            'Not valid before this second',
+            'Token not yet valid — nearly always clock skew, not logic',
+          ],
+          [
+            'iat',
+            'When it was issued',
+            'Used for max-age policies and for spotting replayed tokens',
+          ],
+          [
+            'jti',
+            'Unique token id',
+            'Needed if you want revocation; a JWT is otherwise valid until it expires',
+          ],
+        ],
+      },
+      gotchas: [
+        {
+          title: 'exp and iat are seconds, not milliseconds',
+          detail: 'JavaScript hands you Date.now() in milliseconds, so a token minted with it appears to expire in the year 58000 and every expiry check silently passes. If a decoded exp is a 13-digit number, that is the bug.',
+        },
+        {
+          title: 'A minute of clock skew is enough to break nbf',
+          detail: 'nbf and exp are compared against whatever clock the verifier is running. A container whose clock drifts a minute ahead of the issuer rejects freshly minted tokens as "not yet valid". Most libraries allow 30–60 seconds of leeway; check the clock before you check the code.',
+        },
+        {
+          title: 'Never let the token choose its own algorithm',
+          detail: 'A forged token can set alg to none and ship an empty signature, or swap RS256 for HS256 so the public key gets used as an HMAC secret. Pin the expected algorithm on the server and reject anything else, rather than reading it out of the header.',
+        },
+        {
+          title: 'Decoding is not verification',
+          detail: 'Anyone can edit the payload and re-encode it; only the signature check tells you it came from the issuer. Until the signature has been verified against the key, treat every claim in the token as user input.',
+        },
+        {
+          title: 'A production token pasted into a website is a live session',
+          detail: 'A bearer token is a password with an expiry. Any online decoder that posts it to a server has just been handed an account. Everything here runs in your tab — you can confirm it with the Network tab open.',
+        },
+        {
+          title: 'Logging out does not invalidate a JWT',
+          detail: 'There is no server-side session to destroy. A token stays valid until exp, which is why short lifetimes plus a refresh token beat a 30-day access token, and why revocation needs a jti and a deny list.',
+        },
+      ],
+    },
     blurb:
       'Paste a JSON Web Token to read its header and payload as formatted JSON, with iat, exp and nbf rendered as readable dates. It checks that the three segments decode correctly, flags an "alg" of none, and tells you whether the token has expired or is not yet valid. Decoding happens locally and the token is never transmitted, so a real production token is safe to paste. The signature is shown but not verified — doing that would mean pasting your signing key into a web page, which this tool deliberately does not ask for.',
     howItWorks: [
@@ -415,6 +646,74 @@ export const SEO = {
     description:
       'Convert colours between HEX, RGB and HSL with a live picker, and convert CSS units between px, rem, em and pt using any root font size. Free and offline.',
     heading: 'Colour and CSS unit converter',
+    aboutLabel: 'the colour and CSS unit converter',
+    deepDive: {
+      heading: 'Why two colours with the same lightness look nothing alike',
+      body: [
+        'HEX, RGB and HSL are three spellings of the same sRGB colour — converting between them changes nothing but the notation. HSL is easier to reason about because hue, saturation and lightness map to words, but its lightness channel is a geometric construct, not a measure of how bright a colour looks.',
+        'Pure yellow and pure blue are both hsl(… 100% 50%). One is nearly unreadable on white and the other is nearly unreadable on black. That is why accessibility rules are written in contrast ratios, which are computed from relative luminance, rather than in anything you can read off an HSL value.',
+      ],
+      example: {
+        inputLabel: 'Same lightness',
+        input: `hsl(60 100% 50%)   yellow
+hsl(240 100% 50%)  blue`,
+        outputLabel: 'Contrast against white',
+        output: `yellow  1.07 : 1   fails everything
+blue    8.59 : 1   passes AAA
+
+WCAG needs 4.5:1 for body text,
+3:1 for large text and UI borders.`,
+      },
+      table: {
+        caption: 'CSS length units and what each one is relative to',
+        columns: ['Unit', 'Relative to', 'Use it for'],
+        rows: [
+          [
+            'px',
+            'Nothing — a fixed device pixel',
+            'Borders and shadows; not font sizes',
+          ],
+          [
+            'rem',
+            'The root font size',
+            'Almost everything: type, spacing, breakpoints',
+          ],
+          [
+            'em',
+            'The font size of the element itself',
+            'Padding that should scale with its own text',
+          ],
+          ['pt', '1/72 inch', 'Print stylesheets only'],
+          ['%', 'The parent value for that property', 'Widths and line heights'],
+        ],
+      },
+      gotchas: [
+        {
+          title: 'HSL lightness is not perceived brightness',
+          detail: 'Picking a palette by holding lightness constant gives you colours that look wildly uneven. OKLCH was designed to fix exactly this, and is worth reaching for when a palette has to look consistent.',
+        },
+        {
+          title: 'em compounds, rem does not',
+          detail: 'Nested elements each multiply their parent, so 0.9em three levels deep is 0.73 of the base. rem is always measured from the root, which is why it is the safer default for type scales.',
+        },
+        {
+          title: 'The 62.5% trick breaks user settings',
+          detail: 'Setting html { font-size: 62.5% } to make 1rem equal 10px overrides the font size the user chose in their browser. It makes the arithmetic nicer and the site less accessible.',
+        },
+        {
+          title: 'px ignores the reader entirely',
+          detail: 'A font size in px does not respond to the browser font-size setting, which is the main accessibility control people with low vision actually use. Use rem for anything textual.',
+        },
+        {
+          title: 'Round-tripping shifts values',
+          detail: 'HEX stores 8 bits per channel; HSL is computed in floats. HEX to HSL and back can land one step away from where it started, which is why a colour pasted between two tools sometimes stops matching the brand value exactly.',
+        },
+        {
+          title: 'A translucent colour is not one colour',
+          detail: '#00000080 over white and over a photo are two different results. If a value has to meet a contrast ratio, compute it against the actual background, not against the swatch.',
+        },
+      ],
+    },
     blurb:
       'Pick a colour or paste a value and read it back in HEX, RGB and HSL, with every field editable so you can nudge a hue or lightness and see the others follow. The CSS unit converter turns pixels into rem, em and pt against whatever root font size your project uses — handy when translating a design handoff into stylesheet values.',
     howItWorks: [
@@ -446,10 +745,71 @@ export const SEO = {
   },
   '/markdown': {
     // The editor wants the viewport; the copy below it renders collapsed.
-    title: 'Markdown Preview — Live GitHub-Flavoured Editor',
+    title: 'Markdown Preview — Live GitHub-Flavoured Editor — DevPocket',
     description:
-      'Live Markdown preview with GitHub-flavoured tables, task lists, highlighted code and Mermaid diagrams. Copy the HTML or download a file. Nothing is uploaded.',
+      'Live Markdown preview with GitHub-flavoured tables, task lists, highlighted code and Mermaid diagrams. Copy the HTML or download a file.',
     heading: 'Markdown live preview',
+    aboutLabel: 'the Markdown preview',
+    deepDive: {
+      heading: 'Which Markdown, exactly',
+      body: [
+        '"Markdown" is not one format. CommonMark is the specification that settled the ambiguities in the 2004 original; GitHub-flavoured Markdown adds tables, task lists, strikethrough and autolinks on top of it; and every renderer adds its own extras. This preview renders GitHub-flavoured Markdown, plus Mermaid diagrams and maths, which is the combination most developer documentation is written in.',
+        'Most "my Markdown looks wrong" problems are a mismatch between the flavour you wrote and the flavour that rendered it.',
+      ],
+      example: {
+        inputLabel: 'Source',
+        input: `A line
+and another line
+
+| Tool | Runs |
+| ---- | ---- |
+| JSON | yes  |
+
+- item
+    - nested?
+
+snake_case_name`,
+        outputLabel: 'What renders',
+        output: `One paragraph, not two lines — in
+CommonMark a single newline is a
+space, not a break
+
+A real table, because the ---- row
+is present
+
+Four spaces made a code block, not
+a nested list item: two is enough
+
+Stays literal in GFM; older parsers
+italicise the middle`,
+      },
+      gotchas: [
+        {
+          title: 'A single newline is not a line break',
+          detail: 'In CommonMark, consecutive lines join into one paragraph. You need two trailing spaces, a backslash, or a blank line. GitHub breaks on a single newline inside issues and comments but not in .md files, which is why the same text renders differently in two places on the same site.',
+        },
+        {
+          title: 'A table without the separator row is a paragraph',
+          detail: 'The | --- | --- | line is what makes it a table. Omit it and you get pipes on screen, which is the single most common broken table.',
+        },
+        {
+          title: 'Four spaces of indent means code',
+          detail: 'Indent a list item by four spaces and it becomes a code block instead of a nested item. Two or three spaces is the safe nesting indent, and this is why pasted, re-indented lists sometimes turn grey.',
+        },
+        {
+          title: 'Underscores inside identifiers',
+          detail: 'GFM leaves snake_case_name alone, but plenty of older renderers treat the inner underscores as emphasis. Wrap identifiers in backticks and the question never arises.',
+        },
+        {
+          title: 'Raw HTML is allowed and then stripped',
+          detail: 'The spec permits inline HTML, and most hosted renderers sanitise it away — GitHub removes style, script and most attributes. Anything that depends on raw HTML will render in your editor and vanish in production.',
+        },
+        {
+          title: 'Mermaid and maths are renderer features',
+          detail: 'A mermaid code fence is just a fenced code block to a parser that does not know about it, and $...$ maths is plain text. Both work here and on GitHub; neither is guaranteed anywhere else.',
+        },
+      ],
+    },
     blurb:
       'Type or paste Markdown on the left and read it rendered on the right, as GitHub would show it — tables, task lists, footnoted links, blockquotes and fenced code with syntax highlighting. Fenced blocks tagged mermaid become real diagrams. Raw HTML in the source is shown as text rather than executed, so pasting a README you did not write cannot run anything in your browser.',
     howItWorks: [
@@ -492,6 +852,7 @@ export const SEO = {
     description:
       'Convert Unix timestamps to dates across India (IST), South Africa (SAST), UTC and local time. Plus a UUID v4 generator and live regex tester.',
     heading: 'Timestamps, UUIDs and regular expressions',
+    aboutLabel: 'the timestamp, UUID and regex tools',
     blurb:
       'Convert a Unix timestamp in seconds or milliseconds into a readable date in every timezone at once — local, India (IST), South Africa (SAST) and UTC — or go the other way from a date to an epoch. Live clocks show the same instant across all four zones. Also generates UUID v4 identifiers in bulk and tests regular expressions with live match indexes and capture groups.',
     howItWorks: [
@@ -529,6 +890,81 @@ export const SEO = {
     description:
       'Decode any cron expression into plain English and preview the next 8 run times in IST, SAST, UTC or local time. Includes common presets. Free and online.',
     heading: 'Cron expression builder and parser',
+    aboutLabel: 'the cron expression parser',
+    deepDive: {
+      heading: 'The cron rule that catches almost everyone',
+      body: [
+        'Five fields: minute, hour, day-of-month, month, day-of-week. The trap is what happens when you restrict both day fields at once. When day-of-month and day-of-week are both something other than *, Vixie cron — and therefore Linux, and therefore most schedulers — runs the job when EITHER matches, not both.',
+        'So 0 0 13 * 5 does not mean "midnight on Friday the 13th". It means midnight on the 13th of every month, and also midnight every Friday. If you want Friday the 13th you need a day-of-week-only schedule plus a date check inside the job.',
+      ],
+      example: {
+        inputLabel: 'Expression',
+        input: `30 2 * * 1-5
+
+0 */4 * * *
+
+0 0 13 * 5
+
+15 9 1 * *`,
+        outputLabel: 'What it actually does',
+        output: `02:30, Monday to Friday
+
+Every 4 hours: 00:00, 04:00, 08:00,
+12:00, 16:00, 20:00
+
+Every 13th of the month AND every
+Friday — not Friday the 13th
+
+09:15 on the 1st of every month`,
+      },
+      table: {
+        caption: 'Field order and the values each one accepts',
+        columns: ['Position', 'Field', 'Range', 'Notes'],
+        rows: [
+          ['1', 'Minute', '0–59', '*/15 gives :00, :15, :30, :45'],
+          ['2', 'Hour', '0–23', '24-hour clock; no AM/PM, no 24'],
+          [
+            '3',
+            'Day of month',
+            '1–31',
+            'A job set for the 31st skips short months entirely',
+          ],
+          [
+            '4',
+            'Month',
+            '1–12 or JAN–DEC',
+            'Names are case-insensitive but not portable everywhere',
+          ],
+          ['5', 'Day of week', '0–7 or SUN–SAT', 'Both 0 and 7 mean Sunday'],
+        ],
+      },
+      gotchas: [
+        {
+          title: 'Daylight saving eats and duplicates jobs',
+          detail: 'A job scheduled at 02:30 local time runs twice on the day the clocks go back and not at all on the day they go forward. Anything in the 01:00–03:00 window should run in UTC, or be made idempotent.',
+        },
+        {
+          title: 'Steps do not wrap around the end of a field',
+          detail: '*/7 in the day-of-month field restarts at 1 each month, so the gap between the 29th and the next run is not seven days. Steps are only evenly spaced inside a single field cycle.',
+        },
+        {
+          title: 'Five fields or six is a different expression',
+          detail: 'Unix cron takes five fields; Quartz, Spring and several cloud schedulers put seconds first and take six or seven. A five-field expression pasted into Spring shifts every field by one and runs at a time you did not ask for.',
+        },
+        {
+          title: 'Cron does not read your shell profile',
+          detail: 'No PATH from .bashrc, no nvm, no locale, often no HOME. A script that works in your terminal and silently fails under cron is almost always an absolute-path problem. Log stdout and stderr somewhere you will look.',
+        },
+        {
+          title: 'An overrunning job gets a second copy, not a queue',
+          detail: 'If the run takes longer than the interval, cron simply starts another. Wrap the command in flock, or make the job take a lock itself, before you schedule anything every minute.',
+        },
+        {
+          title: 'The weekday abbreviations are not a schedule',
+          detail: '0 9 * * 1-5 is weekdays. 0 9 * * 1,5 is Mondays and Fridays. The comma and the dash are one character apart and produce very different on-call weeks.',
+        },
+      ],
+    },
     blurb:
       'Paste a cron expression to see what it actually means in plain English, along with the next eight times it will fire. Each of the five fields is broken out with its valid range, and run times can be viewed in India (IST), South Africa (SAST), UTC or your local timezone. Presets cover the usual schedules, from every five minutes to weekdays at 9am.',
     howItWorks: [
@@ -567,6 +1003,7 @@ export const SEO = {
     description:
       'Searchable reference for HTTP status codes (200, 301, 401, 404, 409, 422, 429, 500), request methods with safe and idempotent flags, and common headers.',
     heading: 'HTTP status code, method and header reference',
+    aboutLabel: 'the HTTP reference',
     blurb:
       'A searchable reference for the HTTP details worth checking rather than guessing: what 409 versus 422 actually mean, which methods are safe and idempotent, and what headers like Retry-After, ETag and Idempotency-Key are for. Grouped by class and filterable as you type.',
     howItWorks: [
@@ -599,8 +1036,9 @@ export const SEO = {
   '/mock': {
     title: 'Mock Data Generator — JSON, CSV & SQL Inserts — DevPocket',
     description:
-      'Generate realistic fake test data from 21 field types — names, emails, UUIDs, addresses, dates — and export as JSON, CSV or SQL INSERT statements. Free online.',
+      'Generate realistic fake test data from 21 field types — names, emails, UUIDs, addresses, dates — and export as JSON, CSV or SQL INSERT. Free online.',
     heading: 'Mock and test data generator',
+    aboutLabel: 'the mock data generator',
     blurb:
       'Build up to 500 realistic records from 21 field types including names, emails, phone numbers, addresses, prices, timestamps and IP addresses. Export as JSON to stub an API response, CSV to import into a spreadsheet, or ready-to-run SQL INSERT statements to seed a development database.',
     howItWorks: [
@@ -631,10 +1069,68 @@ export const SEO = {
     ],
   },
   '/jsonvalidator': {
-    title: 'JSON Validator Online — Tree View & Duplicate Keys',
+    title: 'JSON Validator Online — Tree View & Errors — DevPocket',
     description:
       'Validate JSON online with the exact error line and column, a collapsible tree view, duplicate-key detection and search. Free and browser-based.',
     heading: 'JSON validator and editor',
+    aboutLabel: 'the JSON validator',
+    deepDive: {
+      heading: 'The eight things that actually break JSON',
+      body: [
+        'Most JSON errors come from writing it the way JavaScript would accept it. JSON is a much smaller language than JavaScript object syntax, and the differences are exactly where people get caught. Below are the ones that account for nearly every parse failure in practice, and three that are worse — they parse cleanly and corrupt your data.',
+      ],
+      example: {
+        inputLabel: 'Looks fine, is not JSON',
+        input: `{
+  'name': 'shop-api',   // the service
+  "replicas": 3,
+  "ratio": .5,
+  "limit": Infinity,
+  "tags": ["a", "b",],
+}`,
+        outputLabel: 'Five separate errors',
+        output: `Line 2  single-quoted key and value
+Line 2  comments are not allowed
+Line 4  .5 must be written 0.5
+Line 5  Infinity is not a JSON value
+Line 6  trailing comma in the array
+Line 7  trailing comma in the object`,
+      },
+      gotchas: [
+        {
+          title: 'Trailing commas',
+          detail: 'Legal in modern JavaScript, illegal in JSON. This is the single most common cause of "Unexpected token }" and it is why a hand-edited config breaks after you delete the last entry.',
+        },
+        {
+          title: 'Single quotes and unquoted keys',
+          detail: 'JSON has exactly one string form: double quotes. {name: \'x\'} is a JavaScript object literal, not JSON — which is why copying an object out of your editor and pasting it into a JSON field so often fails.',
+        },
+        {
+          title: 'NaN, Infinity and undefined',
+          detail: 'None of them exist in JSON. A serialiser that emits them (some Python and older Java stacks do) produces output that most other parsers reject. JSON.stringify turns them into null, which is its own surprise.',
+        },
+        {
+          title: 'Comments',
+          detail: 'Not part of JSON at any version. JSONC and JSON5 are separate formats that some tools accept; a strict parser will not. Strip them before sending.',
+        },
+        {
+          title: 'Duplicate keys parse fine and lose data',
+          detail: 'The spec does not forbid them, and nearly every parser keeps the last one. {"id": 1, "id": 2} validates and quietly becomes 2 — a data bug wearing a green tick, not a syntax error.',
+        },
+        {
+          title: 'Large integers lose precision silently',
+          detail: 'JSON numbers have no size limit; JavaScript numbers do. An ID like 9007199254740993 parses without error and comes back as 9007199254740992. Send anything above 2^53 as a string.',
+        },
+        {
+          title: 'A byte-order mark at the start of the file',
+          detail: 'An invisible BOM makes JSON.parse throw "Unexpected token" pointing at position 0, which is baffling until you hexdump the file. Files written by Windows tools and some spreadsheet exports carry one.',
+        },
+        {
+          title: 'Literal control characters inside strings',
+          detail: 'A real newline or tab inside a quoted string is invalid — it has to be escaped as \\\\n or \\\\t. Pasting a multi-line snippet into a JSON string field is the usual cause.',
+        },
+      ],
+    },
     blurb:
       'Paste or upload JSON to validate it with the precise line and column of any syntax error, then switch between a formatted code view and a collapsible tree — the two views a full JSON editor gives you, without the upload. Object keys repeated within the same literal are flagged, since JSON.parse silently keeps only the last one. Sort keys, choose an indent width, search by key or value, and export the result as a file, all locally in your browser.',
     howItWorks: [
@@ -673,6 +1169,7 @@ export const SEO = {
     description:
       'Sort JSON object keys alphabetically at every nesting level, ascending or descending. Array order is preserved. Free, runs entirely in your browser.',
     heading: 'Sort JSON keys alphabetically',
+    aboutLabel: 'sorting JSON keys',
     blurb:
       'Reorders every object key alphabetically, recursively, so two payloads with the same data but different key order become directly comparable in a diff. Array order is left alone, because in an array the order is the data.',
     howItWorks: [
@@ -703,10 +1200,61 @@ export const SEO = {
     ],
   },
   '/json-flatten': {
-    title: 'JSON Flattener — Nested JSON to Dot Notation',
+    title: 'JSON Flattener — Nested JSON to Dot Notation — DevPocket',
     description:
       'Flatten nested JSON into single-level dot-notation keys like a.b[0].c. Useful for config files, feature flags and spreadsheet exports. Free and offline.',
     heading: 'Flatten nested JSON',
+    aboutLabel: 'flattening nested JSON',
+    deepDive: {
+      heading: 'Dot notation, and the two cases where it cannot round-trip',
+      body: [
+        'Flattening turns a nested document into a single level of key-value pairs, with the path to each leaf joined by dots. It is how you get a JSON config into environment variables, how you turn an API response into CSV columns, and how you make two payloads diffable line by line instead of block by block.',
+        'The operation is lossy in two specific ways, and both bite when you try to unflatten afterwards.',
+      ],
+      example: {
+        inputLabel: 'Nested',
+        input: `{
+  "service": {
+    "name": "shop-api",
+    "ports": [8080, 8443],
+    "limits": { "cpu": "500m" }
+  },
+  "tags": [],
+  "labels": { "app.kubernetes.io/name": "shop" }
+}`,
+        outputLabel: 'Flattened',
+        output: `{
+  "service.name": "shop-api",
+  "service.ports.0": 8080,
+  "service.ports.1": 8443,
+  "service.limits.cpu": "500m",
+  "labels.app.kubernetes.io/name": "shop"
+}`,
+        note: 'Note what happened to the last two keys: "tags": [] produced nothing at all, and the Kubernetes-style label key already contained dots, so its flattened form is indistinguishable from three levels of nesting.',
+      },
+      gotchas: [
+        {
+          title: 'A key that already contains a dot becomes ambiguous',
+          detail: '{"a.b": 1} and {"a": {"b": 1}} both flatten to "a.b". Nothing downstream can tell them apart, so unflattening picks one and silently changes your data. Kubernetes labels, DNS names and file names hit this constantly — use a separator your keys cannot contain.',
+        },
+        {
+          title: 'Empty arrays and empty objects disappear',
+          detail: 'There is no leaf under them, so there is no pair to emit. If the difference between "absent" and "present but empty" matters — and in a config diff it usually does — keep them as an explicit sentinel value.',
+        },
+        {
+          title: 'Array indices become plain keys',
+          detail: 'items.0, items.1 are strings, not positions. Delete the middle element of a flattened array and unflattening either leaves a hole or produces an object with numeric keys, depending on the implementation.',
+        },
+        {
+          title: 'Numeric object keys turn into array slots',
+          detail: 'A map keyed by year — {"2024": …, "2025": …} — unflattens into a sparse array in naive implementations, because the key looks like an index. Check the round-trip before you rely on it.',
+        },
+        {
+          title: 'Flatten then unflatten is not guaranteed to be the identity',
+          detail: 'Given the four points above, treat the round-trip as something to verify rather than assume. If you are using flattening as a transport format, compare the rebuilt document against the original once, on a real payload with real keys.',
+        },
+      ],
+    },
     blurb:
       'Collapses a nested document into one level of dot-notation keys, with array positions kept as [index]. Handy for turning a config tree into environment-variable style keys, or for diffing two deeply nested structures line by line.',
     howItWorks: [
@@ -737,10 +1285,11 @@ export const SEO = {
     ],
   },
   '/json-unflatten': {
-    title: 'JSON Unflattener — Dot Notation to Nested JSON',
+    title: 'JSON Unflattener — Dot Notation to Nested JSON — DevPocket',
     description:
       'Rebuild nested JSON objects and arrays from flat dot-notation keys such as user.address.city. The exact inverse of flattening. Free, browser-based.',
     heading: 'Rebuild nested JSON from flat keys',
+    aboutLabel: 'rebuilding nested JSON',
     blurb:
       'Takes flat keys like user.address.city or tags[0] and reconstructs the object and array structure they describe. It is the exact inverse of the flattener, so a flatten followed by an unflatten returns the original document.',
     howItWorks: [
@@ -775,6 +1324,7 @@ export const SEO = {
     description:
       'Escape text into a JSON string literal, or unescape one back to readable text. Handles quotes, backslashes, newlines and unicode. Free and private.',
     heading: 'Escape and unescape JSON strings',
+    aboutLabel: 'escaping JSON strings',
     blurb:
       'Turns raw text into the escaped form you can paste inside a JSON string — quotes, backslashes, newlines and control characters all handled — and reverses it when you need to read an escaped blob out of a log line.',
     howItWorks: [
@@ -809,6 +1359,53 @@ export const SEO = {
     description:
       'Strip every null value and null array entry from a JSON document, at any nesting depth. Free, instant, and nothing you paste is ever uploaded.',
     heading: 'Remove null values from JSON',
+    aboutLabel: 'removing null values',
+    deepDive: {
+      heading: 'null, missing and empty are three different things',
+      body: [
+        'Stripping nulls looks like tidying. In several common contexts it changes the meaning of the document rather than its size, because null is not a synonym for absent — it is a value that some protocols and schemas treat as significant.',
+        'Before removing them, it is worth knowing which of the three states your consumer actually distinguishes.',
+      ],
+      example: {
+        inputLabel: 'A PATCH body',
+        input: `{
+  "name": "shop-api",
+  "description": null,
+  "replicas": 3
+}`,
+        outputLabel: 'Two very different requests',
+        output: `With null kept (RFC 7386 merge patch):
+  set name, DELETE description,
+  set replicas
+
+With null stripped:
+  set name, LEAVE description
+  exactly as it was, set replicas`,
+        note: 'Same tidy-looking edit, opposite outcome for one field. This is the case where removing nulls is a bug rather than a clean-up.',
+      },
+      gotchas: [
+        {
+          title: 'In a JSON Merge Patch, null means delete',
+          detail: 'RFC 7386 defines null as the instruction to remove a member. Strip nulls from a PATCH body and every intended deletion silently becomes "leave unchanged" — the request still succeeds, which is what makes it hard to spot.',
+        },
+        {
+          title: 'JSON Schema treats null and absent separately',
+          detail: '{"type": "string"} rejects null, while required only checks whether the key exists. A document that validated with the key absent can fail once you add it back as null, and vice versa.',
+        },
+        {
+          title: 'Removing nulls from an array changes its length',
+          detail: 'Objects lose a key; arrays lose a position. If anything downstream indexes by position — a CSV column, a fixed-order tuple — compacting the array shifts every value after the hole.',
+        },
+        {
+          title: '"Empty" is a much bigger hammer than "null"',
+          detail: 'Null, "", [] and {} are four distinct values. Removing all of them turns "the user cleared this field" into "the user never touched it", which matters in forms and audit trails.',
+        },
+        {
+          title: 'Some stores index the difference',
+          detail: 'Databases and document stores frequently distinguish a missing attribute from a null one for queries and indexes. A record cleaned of its nulls can stop matching a filter that a record with explicit nulls matched.',
+        },
+      ],
+    },
     blurb:
       'Deletes keys whose value is null and drops null entries from arrays, recursively. Useful before sending a payload to an API that rejects explicit nulls, or when trimming a response down to the fields that actually carry data.',
     howItWorks: [
@@ -843,6 +1440,7 @@ export const SEO = {
     description:
       'Strip nulls, empty strings, empty arrays and empty objects from JSON at every level. More aggressive than a null-only clean. Free and browser-based.',
     heading: 'Remove empty values from JSON',
+    aboutLabel: 'removing empty values',
     blurb:
       'Goes further than removing nulls: empty strings, empty arrays and empty objects are dropped too, and the cleanup runs bottom-up so a branch that becomes empty after its children are removed also disappears.',
     howItWorks: [
@@ -877,6 +1475,7 @@ export const SEO = {
     description:
       'Merge two JSON documents with a deep or shallow strategy. Nested objects combine recursively; the second document wins on conflicts. Free and private.',
     heading: 'Merge two JSON documents',
+    aboutLabel: 'merging JSON documents',
     blurb:
       'Combines a base document with an overriding one. Deep merge walks nested objects and merges them key by key; shallow merge only touches the top level. Arrays are replaced rather than concatenated, which matches how config overrides usually behave.',
     howItWorks: [
@@ -911,6 +1510,7 @@ export const SEO = {
     description:
       'View any JSON payload as a collapsible tree with typed, colour-coded values. Far easier than scrolling a large raw response. Free, no upload.',
     heading: 'Browse JSON as a tree',
+    aboutLabel: 'the JSON tree viewer',
     blurb:
       'Renders a payload as an expandable tree, with each branch showing how many children it holds and every leaf colour-coded by type. Collapse the parts you do not care about to find the one field you do.',
     howItWorks: [
@@ -941,10 +1541,57 @@ export const SEO = {
     ],
   },
   '/json-stats': {
-    title: 'JSON Statistics — Node Count, Depth & Types',
+    title: 'JSON Statistics — Node Count, Depth & Types — DevPocket',
     description:
       'Analyse a JSON payload: total nodes, maximum nesting depth, unique key count, size in bytes and a breakdown by type. Free and runs in your browser.',
     heading: 'Analyse a JSON payload',
+    aboutLabel: 'JSON statistics',
+    deepDive: {
+      heading: 'Reading a payload by its numbers',
+      body: [
+        'Size, depth and node count answer different questions. Bytes tell you what the response costs on the wire; depth tells you whether a parser will refuse it; node count predicts parse time far better than bytes do, because the work is per value, not per character.',
+        'The most useful number is usually the ratio between them. A 2 MB payload with 40,000 nodes is a large collection and will parse in milliseconds. A 2 MB payload with 900,000 nodes is a pathological shape and will not.',
+      ],
+      example: {
+        inputLabel: 'Payload',
+        input: `An array of 5,000 order objects,
+each with 12 fields and one nested
+address object of 6 fields`,
+        outputLabel: 'What the numbers say',
+        output: `Nodes      ~95,000
+Keys       90,000 (18 x 5,000)
+Depth      4
+Bytes      ~3.1 MB
+Gzipped    ~280 KB
+
+The key names are 18 strings repeated
+5,000 times — which is why gzip takes
+roughly 90% off and why a columnar
+format would take more.`,
+      },
+      gotchas: [
+        {
+          title: 'Depth is a denial-of-service surface',
+          detail: 'Most parsers recurse. Jackson, Python json and many others fail somewhere around 1,000 levels, and a few blow the stack instead of raising. A few hundred bytes of nested brackets can take down an endpoint that never checks depth.',
+        },
+        {
+          title: 'Byte size is not transfer size',
+          detail: 'JSON compresses extremely well because the key names repeat on every record — 80 to 95% is normal. Judge a response budget on the gzipped or brotli size, not the raw one, or you will optimise the wrong thing.',
+        },
+        {
+          title: 'Repeated keys are most of a large payload',
+          detail: 'In an array of records, the field names are stored once per record. That is the real argument for shortening key names in high-volume APIs, and the reason a columnar or binary format wins so decisively at scale.',
+        },
+        {
+          title: 'Node count predicts parse cost, bytes do not',
+          detail: 'One 2 MB string is a single node and parses almost instantly. Two megabytes of small values is hundreds of thousands of allocations. If a payload parses slowly for its size, count the nodes.',
+        },
+        {
+          title: 'Deeply nested does not mean large',
+          detail: 'Depth and size are independent. A shallow million-element array and a 900-level nested object fail for completely different reasons, and a size limit catches only one of them.',
+        },
+      ],
+    },
     blurb:
       'Counts objects, arrays, strings, numbers, booleans and nulls, reports the deepest nesting level and the total number of distinct key names, and lists them. A quick way to size up an unfamiliar API response before writing code against it.',
     howItWorks: [
@@ -975,10 +1622,11 @@ export const SEO = {
     ],
   },
   '/jsonpath': {
-    title: 'JSONPath Evaluator Online — Test $.path Queries',
+    title: 'JSONPath Evaluator Online — Test $.path Queries — DevPocket',
     description:
       'Run JSONPath expressions against a document and see the matches instantly. Supports dot paths, array indexes, wildcards and recursive descent. Free.',
     heading: 'Evaluate JSONPath expressions',
+    aboutLabel: 'the JSONPath evaluator',
     blurb:
       'Test a JSONPath expression against a real document and see every match as you type. Supports dot notation, array indexes, [*] wildcards and .. recursive descent — enough for the lookups that come up when writing an extraction rule or a config selector.',
     howItWorks: [
@@ -1013,6 +1661,69 @@ export const SEO = {
     description:
       'Generate a draft 2020-12 JSON Schema from a sample payload, with types, required fields and detected date-time and email formats. Free and offline.',
     heading: 'Generate a JSON Schema from a sample',
+    aboutLabel: 'the JSON Schema generator',
+    deepDive: {
+      heading: 'What a generated schema gets right, and what you have to fix by hand',
+      body: [
+        'Inference reads one sample and describes exactly that sample. It gives you the skeleton — types, nesting, property names — in seconds, which is the tedious part. What it cannot know is the difference between a field that happened to be present and a field that is always present, or between a string and a date.',
+        'Treat the output as a first draft: generate, then prune the required list, widen the types that can be null, and add the formats and constraints that carry the real rules.',
+      ],
+      example: {
+        inputLabel: 'Sample payload',
+        input: `{
+  "id": 4021,
+  "email": "ada@example.com",
+  "createdAt": "2026-09-15T09:00:00Z",
+  "score": 4,
+  "tags": [],
+  "manager": null
+}`,
+        outputLabel: 'Inferred schema',
+        output: `{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "id":        { "type": "integer" },
+    "email":     { "type": "string" },
+    "createdAt": { "type": "string" },
+    "score":     { "type": "integer" },
+    "tags":      { "type": "array", "items": {} },
+    "manager":   { "type": "null" }
+  },
+  "required": [
+    "id", "email", "createdAt",
+    "score", "tags", "manager"
+  ]
+}`,
+        note: 'Four things in that output are wrong for real traffic: score is an integer only because this sample had no decimal, tags has no element type because the array was empty, createdAt is a plain string, and manager is typed null forever.',
+      },
+      gotchas: [
+        {
+          title: 'Every key in the sample lands in required',
+          detail: 'A field that is optional in real traffic will be marked required, and the first payload that legitimately omits it fails validation. Pruning required is the first edit to make, every time.',
+        },
+        {
+          title: 'An empty array tells the generator nothing',
+          detail: '"tags": [] produces items: {}, which accepts anything. Feed a sample with at least one element of every array, or write the item schema yourself.',
+        },
+        {
+          title: 'null becomes a type, not a possibility',
+          detail: 'A field that was null in the sample is typed "null". What you almost always want is ["string", "null"] — nullable, not always-null.',
+        },
+        {
+          title: 'Whole numbers become integers',
+          detail: 'A price that happened to be 4 in the sample is typed integer, and 4.5 then fails. If a field can be fractional, widen it to number by hand.',
+        },
+        {
+          title: 'Formats cannot be inferred safely',
+          detail: 'An ISO-8601 timestamp, a UUID and an email are all just strings. Adding "format": "date-time" / "uuid" / "email" is manual, and it is where most of the value of a schema actually lives.',
+        },
+        {
+          title: 'The draft you target changes the keywords',
+          detail: 'Tuple validation moved from items: [...] in draft-07 to prefixItems in 2020-12, and $id / definitions were renamed. A schema pasted into a validator running a different draft can silently stop enforcing what you meant.',
+        },
+      ],
+    },
     blurb:
       'Infers a draft 2020-12 schema from an example document: object properties with their types, required field lists, array item types, and format hints where a string looks like an ISO date-time or an email address. A starting point to refine rather than a finished contract.',
     howItWorks: [
@@ -1047,6 +1758,7 @@ export const SEO = {
     description:
       'Generate UUID v4 or Nano IDs in bulk, up to 100 at a time, with uppercase and hyphen options. Uses the browser crypto source. Free, no sign-up.',
     heading: 'Generate UUIDs and Nano IDs',
+    aboutLabel: 'the UUID and Nano ID generator',
     blurb:
       'Produces UUID v4 identifiers via the browser’s crypto.randomUUID, or shorter URL-friendly Nano IDs at whatever length you need. Generate up to a hundred at once and copy them individually or as a block.',
     howItWorks: [
@@ -1080,10 +1792,65 @@ export const SEO = {
     ],
   },
   '/password': {
-    title: 'Password Generator — Strong Random Passwords',
+    title: 'Password Generator — Strong Random Passwords — DevPocket',
     description:
       'Generate strong random passwords with configurable length and character sets, plus an entropy estimate. Uses browser crypto and never transmits them.',
     heading: 'Generate strong passwords',
+    aboutLabel: 'the password generator',
+    deepDive: {
+      heading: 'What actually makes a password hard to guess',
+      body: [
+        'Strength is a property of how a password was generated, not how it looks. A password picked uniformly at random from a known alphabet has entropy you can calculate: length multiplied by log2(alphabet size). A password a human invented to satisfy a strength meter has far less, because the ways humans substitute characters are few and well known to cracking tools.',
+        'That is why this generator does two things and no more: it draws from crypto.getRandomValues — the browser\'s cryptographic random source, not Math.random — and it tells you the resulting entropy in bits, so the number is something you can reason about rather than a coloured bar.',
+      ],
+      table: {
+        caption: 'Time to exhaust half the keyspace at one trillion guesses a second — an offline attack on a fast hash. A properly salted bcrypt or Argon2 hash is millions of times slower than this.',
+        columns: ['Password', 'Entropy', 'Offline guessing time'],
+        rows: [
+          ['12 chars, a–z and 0–9', '62 bits', 'About a month'],
+          ['12 chars, mixed case + digits', '71 bits', 'About 50 years'],
+          [
+            '16 chars, mixed case + digits',
+            '95 bits',
+            'Hundreds of millions of years',
+          ],
+          ['16 chars, + symbols', '105 bits', 'Beyond any practical attack'],
+          ['20 chars, + symbols', '131 bits', 'Beyond any practical attack'],
+          ['4-word passphrase (7776-word list)', '52 bits', 'Under an hour'],
+          [
+            '6-word passphrase (7776-word list)',
+            '78 bits',
+            'A few thousand years',
+          ],
+        ],
+      },
+      gotchas: [
+        {
+          title: 'Math.random() is not for secrets',
+          detail: 'It is a fast pseudo-random generator seeded from state an attacker can often recover, and a sequence of its outputs can be predicted from earlier ones. Anything that guards an account needs crypto.getRandomValues or a server-side CSPRNG.',
+        },
+        {
+          title: 'Strength meters measure the wrong thing',
+          detail: 'Tr0ub4dor&3 satisfies every composition rule and is weak, because leetspeak substitution is the first thing a cracking rule set tries. A meter scores the string; only the generation method decides the entropy.',
+        },
+        {
+          title: 'Composition rules shrink the space',
+          detail: '"Must contain exactly one symbol, at the end" narrows the keyspace instead of widening it, and pushes people to Password1!. Length with a full alphabet beats any rule about which characters must appear.',
+        },
+        {
+          title: 'Reuse cancels length',
+          detail: 'A 30-character password used on two sites is one breach away from compromising both. Uniqueness matters more than strength past about 80 bits, which is the argument for a password manager rather than a memorable scheme.',
+        },
+        {
+          title: 'The clipboard remembers',
+          detail: 'Clipboard managers keep history, and on some systems any application can read the clipboard. Paste it straight into the password manager, then copy something harmless over it.',
+        },
+        {
+          title: 'A four-word passphrase is weaker than it feels',
+          detail: 'Diceware-style passphrases are excellent for things you must type from memory, but the entropy comes from the word list size and the count, not the length in characters. Four words from a 7776-word list is 52 bits — use six for anything that matters.',
+        },
+      ],
+    },
     blurb:
       'Builds passwords from the character sets you choose using the browser’s cryptographic random source rather than Math.random, and reports the resulting entropy in bits so you can judge the strength rather than guess it. Look-alike characters can be excluded for passwords that get typed by hand. Nothing generated here is ever transmitted.',
     howItWorks: [
@@ -1118,10 +1885,11 @@ export const SEO = {
     ],
   },
   '/lorem': {
-    title: 'Lorem Ipsum Generator — Words & Paragraphs',
+    title: 'Lorem Ipsum Generator — Words & Paragraphs — DevPocket',
     description:
       'Generate placeholder Lorem Ipsum text by word, sentence or paragraph count, with the classic opening line optional. Free and instant.',
     heading: 'Generate placeholder text',
+    aboutLabel: 'the placeholder text generator',
     blurb:
       'Produces filler copy in whatever quantity a layout needs — a handful of words for a label, a few sentences for a card, or several paragraphs for an article mock-up — with the traditional "Lorem ipsum dolor sit amet" opening available as a toggle.',
     howItWorks: [
@@ -1157,6 +1925,7 @@ export const SEO = {
     description:
       'DevPocket runs entirely client-side: no backend, no analytics, no cookies, no error tracking. See what is stored locally and how to verify it yourself.',
     heading: 'How DevPocket actually handles your data',
+    aboutLabel: 'this privacy page',
     blurb:
       'A plain description of the architecture, not a marketing claim: what runs locally, what (if anything) leaves your browser, what is stored in localStorage, and how to check all of it yourself in the Network tab.',
     faq: [
@@ -1184,6 +1953,7 @@ export const SEO = {
     description:
       'DevPocket is a local-first developer toolbox built by Sourabh Kumar, a backend developer. No trackers, no ads, and nothing you paste leaves your browser.',
     heading: 'About DevPocket',
+    aboutLabel: 'this project',
     blurb:
       'DevPocket was built to replace a pile of browser tabs pointed at ad-heavy formatter sites. Every tool runs as JavaScript in your own browser, so there is no server to send your data to in the first place.',
     faq: [

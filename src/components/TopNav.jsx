@@ -1,7 +1,9 @@
 import { useEffect, useRef, useState } from 'react'
-import { NavLink, Link, useLocation } from 'react-router-dom'
+import { useLocation } from 'react-router-dom'
+import { NavLink, Link } from './AppLink'
 import { ChevronDown, Search, Command, Sun, Moon, Menu, X, Heart, Lock, Info } from 'lucide-react'
 import { navItems, NAV_GROUPS, ACCENTS } from '../lib/nav'
+import { normalizePath } from '../lib/seo'
 import { useTheme } from '../lib/theme'
 import Logo from './Logo'
 import { PROFILE } from '../lib/profile'
@@ -62,8 +64,9 @@ export default function TopNav({ onOpenPalette, onPrefetch }) {
     closeTimer.current = setTimeout(() => setOpenMenu(null), 160)
   }
 
-  const groupHasActive = (group) =>
-    navItems.some((n) => n.group === group && n.to === location.pathname)
+  // location.pathname carries the trailing slash the links now use; nav keys do not.
+  const current = normalizePath(location.pathname)
+  const groupHasActive = (group) => navItems.some((n) => n.group === group && n.to === current)
 
   return (
     <header className="bd sidebar-bg sticky top-0 z-40 border-b" ref={navRef}>

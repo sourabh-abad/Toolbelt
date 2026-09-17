@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import { Link } from '../components/AppLink'
 import { Compass, ArrowRight } from 'lucide-react'
 import { navItems, ACCENTS } from '../lib/nav'
 import { PageHeader } from '../components/ui'

@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useLocation } from 'react-router-dom'
+import { normalizePath } from '../lib/seo'
 import { Check, Copy, Lock, Globe, Star } from 'lucide-react'
 import { ACCENTS } from '../lib/nav'
 import { useFavorites } from '../lib/favorites'
@@ -226,7 +227,7 @@ export function PageHeader({ icon: Icon, title, subtitle, accent = 'emerald', pr
       </div>
       <div className="ml-auto flex shrink-0 items-center gap-1.5">
         {actions}
-        {isTool && <FavoriteButton path={pathname} />}
+        {isTool && <FavoriteButton path={normalizePath(pathname)} />}
       </div>
     </div>
   )

@@ -56,7 +56,7 @@ flowchart LR
   Worker --> DB[(Postgres)]
 \`\`\`
 
-See the [HTTP reference](/http) for the status codes involved.
+See the [HTTP reference](/http/) for the status codes involved.
 `
 
 const VIEWS = [

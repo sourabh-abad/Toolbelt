@@ -1,4 +1,5 @@
-import { Link, useLocation } from 'react-router-dom'
+import { useLocation } from 'react-router-dom'
+import { Link } from './AppLink'
 import { ChevronRight } from 'lucide-react'
 import { seoFor, normalizePath } from '../lib/seo'
 import { navItems, NAV_GROUPS } from '../lib/nav'

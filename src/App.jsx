@@ -1,8 +1,9 @@
 import { useEffect, useState, lazy, Suspense } from 'react'
 import { Routes, Route, useLocation, Navigate } from 'react-router-dom'
 import { Loader2 } from 'lucide-react'
-import { pushRecent } from './lib/nav'
+import { pushRecent, hrefFor } from './lib/nav'
 import { useSeo } from './lib/useSeo'
+import { normalizePath } from './lib/seo'
 import SeoFooter from './components/SeoFooter'
 import ToolContentSections from './components/ToolContentSections'
 import TopNav from './components/TopNav'
@@ -115,7 +116,7 @@ export default function App() {
   }, [location.pathname])
 
   useEffect(() => {
-    pushRecent(location.pathname)
+    pushRecent(normalizePath(location.pathname))
   }, [location.pathname])
 
 
@@ -165,7 +166,7 @@ export default function App() {
                 <Route path="/color" element={<ColorTool />} />
                 <Route path="/markdown" element={<MarkdownTool />} />
                 {/* The JWT tool used to live at /jwt-color; keep old links working. */}
-                <Route path="/jwt-color" element={<Navigate to="/jwtvalidator" replace />} />
+                <Route path="/jwt-color" element={<Navigate to={hrefFor('/jwtvalidator')} replace />} />
                 <Route path="/timestamp" element={<TimestampTool />} />
                 <Route path="/cron" element={<CronTool />} />
                 <Route path="/http" element={<HttpRefTool />} />

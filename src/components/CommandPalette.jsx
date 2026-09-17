@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Search, CornerDownLeft } from 'lucide-react'
-import { navItems, ACCENTS } from '../lib/nav'
+import { navItems, ACCENTS, hrefFor } from '../lib/nav'
 
 export default function CommandPalette({ open, onClose }) {
   const [query, setQuery] = useState('')
@@ -38,7 +38,7 @@ export default function CommandPalette({ open, onClose }) {
         setCursor((c) => Math.max(c - 1, 0))
       }
       if (e.key === 'Enter' && results[cursor]) {
-        navigate(results[cursor].to)
+        navigate(hrefFor(results[cursor].to))
         onClose()
       }
     }
@@ -79,7 +79,7 @@ export default function CommandPalette({ open, onClose }) {
                 key={to}
                 onMouseEnter={() => setCursor(i)}
                 onClick={() => {
-                  navigate(to)
+                  navigate(hrefFor(to))
                   onClose()
                 }}
                 className={`flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left transition-colors ${active ? 'sunken' : ''}`}
