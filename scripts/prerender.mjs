@@ -108,9 +108,19 @@ function buildLdJson(pathname, seo) {
 const navSrc = readFileSync(join(root, 'src/lib/nav.js'), 'utf8')
 const NAV = [
   ...navSrc.matchAll(
-    /\{ to: '([^']+)', label: '([^']*)',[^}]*?group: (?:'([^']*)'|null),[^}]*?description: '([^']*)' \}/g
+    /\{ to: '([^']+)', label: '([^']*)',[^}]*?group: (?:'([^']*)'|null), accent: '([^']*)', description: '([^']*)' \}/g
   ),
-].map(([, to, label, group, description]) => ({ to, label, group, description }))
+].map(([, to, label, group, accent, description]) => ({ to, label, group, accent, description }))
+// The accent class strings, one block per colour, read the same way. Tailwind
+// has already generated these classes from nav.js, so reusing the literal
+// strings here costs nothing.
+const ACCENTS = Object.fromEntries(
+  [...navSrc.matchAll(/^  (\w+): \{ [^}]*?bg: '([^']*)', text: '([^']*)', border: '([^']*)', grad: '([^']*)'/gm)].map(
+    ([, name, bg, text, border, grad]) => [name, { bg, text, border, grad }]
+  )
+)
+if (!ACCENTS.emerald) throw new Error('prerender: could not parse ACCENTS from nav.js')
+const accentFor = (pathname) => ACCENTS[NAV.find((n) => n.to === pathname)?.accent] || ACCENTS.emerald
 const NAV_GROUPS = JSON.parse(
   navSrc.match(/export const NAV_GROUPS = (\[[^\]]*\])/)[1].replace(/'/g, '"')
 )
@@ -119,9 +129,6 @@ if (NAV.length < 20) throw new Error(`prerender: parsed only ${NAV.length} nav i
 // Internal hrefs use the trailing-slash form the canonical tags advertise, so
 // the crawler follows links to exactly the URLs it is told to index.
 const hrefFor = (to) => (to === '/' ? '/' : `${to}/`)
-
-const H2 = 'class="t-main text-base font-semibold tracking-tight"'
-const P = 'class="t-muted mt-2 text-sm leading-relaxed"'
 
 // Everything below `render` writes the same copy React renders on mount —
 // ToolContentSections and SeoFooter read the same seo.js/nav.js fields. Static
@@ -147,46 +154,52 @@ function replaceRoot(html, inner) {
   throw new Error('prerender: unbalanced <div id="root">')
 }
 
-// Mirrors the DeepDive component in ToolContentSections: the page-specific
-// copy — worked example, reference table, the traps — that stops a set of tool
-// pages reading as one template filled in 30 times.
-function deepDiveHtml(d) {
-  const bits = [`<h2 ${H2}>${esc(d.heading)}</h2>`]
+// Mirrors ToolContentSections. Two parts: the guide (the route's deepDive —
+// open, titled, accent bar) and the "About …" card (how it works / use cases /
+// FAQ behind a disclosure with a real header). Same copy, same order, same
+// headings as the React tree; the class names match so the static page looks
+// like the hydrated one rather than flashing between two layouts.
+function guideHtml(d, a) {
+  const bits = [
+    `<span class="inline-flex items-center rounded-md px-2 py-0.5 text-[11px] font-semibold tracking-wider uppercase ${a.bg} ${a.text}">Guide</span>`,
+    `<h2 class="t-main mt-3 text-xl font-bold tracking-tight sm:text-2xl">${esc(d.heading)}</h2>`,
+  ]
 
-  if (d.body) bits.push(d.body.map((para) => `<p ${P}>${esc(para)}</p>`).join(''))
+  if (d.body) {
+    bits.push(
+      `<div class="mt-4 space-y-3">${d.body
+        .map((para) => `<p class="t-muted text-[15px] leading-relaxed">${esc(para)}</p>`)
+        .join('')}</div>`
+    )
+  }
 
   if (d.example) {
+    const pane = (label, text) =>
+      `<div><h3 class="t-faint text-[11px] font-semibold tracking-wider uppercase">${esc(
+        label
+      )}</h3><pre class="sunken bd mono mt-1.5 overflow-x-auto rounded-xl border p-3.5 text-[13px] leading-relaxed whitespace-pre-wrap [overflow-wrap:anywhere]">${esc(
+        text
+      )}</pre></div>`
     bits.push(
-      `<div class="mt-4 grid gap-3 sm:grid-cols-2">` +
-        `<div><h3 class="t-muted text-[11px] font-semibold tracking-wider uppercase">${esc(
-          d.example.inputLabel || 'Input'
-        )}</h3><pre class="field mono mt-1.5 overflow-x-auto rounded-lg border p-3 text-xs leading-relaxed">${esc(
-          d.example.input
-        )}</pre></div>` +
-        `<div><h3 class="t-muted text-[11px] font-semibold tracking-wider uppercase">${esc(
-          d.example.outputLabel || 'Output'
-        )}</h3><pre class="field mono mt-1.5 overflow-x-auto rounded-lg border p-3 text-xs leading-relaxed">${esc(
-          d.example.output
-        )}</pre></div>` +
-        `</div>`
+      `<div class="mt-6 grid items-start gap-3 sm:grid-cols-2">${pane(d.example.inputLabel || 'Input', d.example.input)}${pane(
+        d.example.outputLabel || 'Output',
+        d.example.output
+      )}</div>`
     )
-    if (d.example.note) bits.push(`<p class="t-faint mt-2 text-xs leading-relaxed">${esc(d.example.note)}</p>`)
+    if (d.example.note) bits.push(`<p class="t-faint mt-2.5 text-sm leading-relaxed">${esc(d.example.note)}</p>`)
   }
 
   if (d.table) {
     bits.push(
-      `<div class="mt-4 overflow-x-auto"><table class="w-full text-left text-xs">${
-        d.table.caption ? `<caption class="t-muted mb-2 text-left text-xs">${esc(d.table.caption)}</caption>` : ''
-      }<thead><tr class="bd border-b">${d.table.columns
-        .map((c) => `<th class="t-muted py-1.5 pr-4 font-semibold">${esc(c)}</th>`)
+      `<div class="mt-6 overflow-x-auto"><table class="w-full text-left text-sm">${
+        d.table.caption ? `<caption class="t-muted mb-2.5 text-left text-sm">${esc(d.table.caption)}</caption>` : ''
+      }<thead><tr class="bd-strong border-b">${d.table.columns
+        .map((c) => `<th class="t-main py-2 pr-4 font-semibold">${esc(c)}</th>`)
         .join('')}</tr></thead><tbody>${d.table.rows
         .map(
           (row) =>
-            `<tr class="bd border-b">${row
-              .map(
-                (cell, j) =>
-                  `<td class="t-muted py-1.5 pr-4 align-top${j === 0 ? ' mono t-main' : ''}">${esc(cell)}</td>`
-              )
+            `<tr class="bd border-b last:border-0">${row
+              .map((cell, j) => `<td class="py-2 pr-4 align-top ${j === 0 ? 'mono t-main' : 't-muted'}">${esc(cell)}</td>`)
               .join('')}</tr>`
         )
         .join('')}</tbody></table></div>`
@@ -195,31 +208,33 @@ function deepDiveHtml(d) {
 
   if (d.gotchas) {
     bits.push(
-      `<div class="mt-4"><h3 class="t-main text-sm font-medium">Where people get caught</h3><div class="mt-2 space-y-3">${d.gotchas
+      `<div class="mt-7"><h3 class="t-main text-base font-semibold">Where people get caught</h3><div class="mt-3 space-y-4">${d.gotchas
         .map(
           ({ title, detail }) =>
-            `<div><p class="t-main text-sm font-medium">${esc(title)}</p><p class="t-muted mt-0.5 text-sm leading-relaxed">${esc(
-              detail
-            )}</p></div>`
+            `<div class="border-l-2 pl-4 ${a.border}"><p class="t-main text-[15px] font-semibold">${esc(
+              title
+            )}</p><p class="t-muted mt-1 text-sm leading-relaxed">${esc(detail)}</p></div>`
         )
         .join('')}</div></div>`
     )
   }
 
-  return `<section class="mt-8">${bits.join('')}</section>`
+  return `<section class="panel overflow-hidden rounded-2xl border"><div class="h-1 bg-gradient-to-r ${a.grad}" aria-hidden="true"></div><div class="p-5 sm:p-7">${bits.join(
+    ''
+  )}</div></section>`
 }
 
-function sectionsHtml(seo) {
+function aboutHtml(seo, a) {
   const parts = []
-
-  if (seo.deepDive) parts.push(deepDiveHtml(seo.deepDive))
 
   if (seo.howItWorks) {
     parts.push(
-      `<section class="mt-8"><h2 ${H2}>How it works</h2><ol class="mt-3 space-y-2.5">${seo.howItWorks
+      `<section><h2 class="t-main text-sm font-semibold">How it works</h2><ol class="mt-3 space-y-2.5">${seo.howItWorks
         .map(
           (step, i) =>
-            `<li class="t-muted text-sm leading-relaxed"><span class="t-faint mono">${i + 1}.</span> ${esc(step)}</li>`
+            `<li class="flex gap-3 text-sm leading-relaxed"><span class="mono shrink-0 font-semibold ${a.text}">${
+              i + 1
+            }.</span><span class="t-muted">${esc(step)}</span></li>`
         )
         .join('')}</ol></section>`
     )
@@ -227,35 +242,63 @@ function sectionsHtml(seo) {
 
   if (seo.useCases) {
     parts.push(
-      `<section class="mt-8"><h2 ${H2}>Common use cases</h2><ul class="mt-3 space-y-1.5">${seo.useCases
-        .map((item) => `<li class="t-muted text-sm leading-relaxed">• ${esc(item)}</li>`)
+      `<section><h2 class="t-main text-sm font-semibold">Common use cases</h2><ul class="mt-3 space-y-1.5">${seo.useCases
+        .map(
+          (item) =>
+            `<li class="flex gap-2 text-sm leading-relaxed"><span class="t-faint shrink-0">•</span><span class="t-muted">${esc(
+              item
+            )}</span></li>`
+        )
         .join('')}</ul></section>`
     )
   }
 
   if (seo.faq) {
     parts.push(
-      `<section class="mt-8"><h2 ${H2}>FAQ</h2><div class="mt-3 space-y-4">${seo.faq
+      `<section><h2 class="t-main text-sm font-semibold">FAQ</h2><div class="mt-3 space-y-4">${seo.faq
         .map(
-          ({ q, a }) =>
-            `<div><h3 class="t-main text-sm font-medium">${esc(q)}</h3><p ${P}>${esc(a)}</p></div>`
+          ({ q, a: answer }) =>
+            `<div><h3 class="t-main text-sm font-medium">${esc(q)}</h3><p class="t-muted mt-1 text-sm leading-relaxed">${esc(
+              answer
+            )}</p></div>`
         )
         .join('')}</div></section>`
     )
   }
 
-  if (!parts.length) return ''
+  return parts.length ? `<div class="space-y-6">${parts.join('')}</div>` : ''
+}
 
-  // Mirrors ToolContentSections: closed <details> by default, open only where a
-  // route sets collapsedContent: false. Either way the copy is in the HTML, which
-  // is what a crawler reads, while the page stays given over to the tool.
-  if (seo.collapsedContent === false) {
-    return `<div class="space-y-4 px-4 pb-6 sm:px-6">${parts.join('')}</div>`
+// Same wording as teaserFor in ToolContentSections.
+function teaserFor({ howItWorks, useCases, faq }) {
+  const bits = []
+  if (howItWorks) bits.push(`How it works in ${howItWorks.length} steps`)
+  if (useCases) bits.push(`${useCases.length} common use cases`)
+  if (faq) bits.push(`${faq.length} question${faq.length === 1 ? '' : 's'} answered`)
+  return bits.join(' · ')
+}
+
+function sectionsHtml(pathname, seo) {
+  const a = accentFor(pathname)
+  const parts = []
+
+  if (seo.deepDive) parts.push(guideHtml(seo.deepDive, a))
+
+  const about = aboutHtml(seo, a)
+  if (about && seo.collapsedContent === false) {
+    parts.push(`<section class="panel rounded-2xl border p-5 sm:p-7">${about}</section>`)
+  } else if (about) {
+    parts.push(
+      `<details class="panel group rounded-2xl border"><summary class="flex cursor-pointer list-none items-center justify-between gap-4 px-5 py-4 select-none sm:px-6"><div class="min-w-0"><h2 class="t-main text-base font-semibold">About ${esc(
+        seo.aboutLabel || 'this tool'
+      )}</h2><p class="t-muted mt-0.5 text-sm">${esc(
+        teaserFor(seo)
+      )}</p></div><span class="bd t-muted flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span></summary><div class="bd border-t px-5 pt-5 pb-6 sm:px-6">${about}</div></details>`
+    )
   }
 
-  return `<div class="px-4 pb-6 sm:px-6"><details><summary class="bd t-muted inline-flex cursor-pointer items-center gap-1.5 rounded-lg border px-2.5 py-1.5 text-xs font-medium">About ${esc(
-    seo.aboutLabel || 'this tool'
-  )}</summary><div class="mt-3 space-y-4">${parts.join('')}</div></details></div>`
+  if (!parts.length) return ''
+  return `<div class="mx-auto w-full max-w-4xl space-y-4 px-4 pb-8 sm:px-6">${parts.join('')}</div>`
 }
 
 // Mirrors SeoFooter: every tool linked from every page (before this the static
@@ -336,7 +379,7 @@ function render(pathname, seo, { noindex = false } = {}) {
     `<div class="bd border-b px-5 pt-10 pb-8 sm:px-8 sm:pt-14 sm:pb-10">` +
     `<h1 class="t-main text-3xl font-bold tracking-tight sm:text-4xl lg:text-5xl">${esc(seo.heading || seo.title)}</h1>` +
     `<p class="t-muted mt-3 max-w-xl text-sm leading-relaxed">${esc(seo.blurb || seo.description)}</p></div>` +
-    sectionsHtml(seo) +
+    sectionsHtml(pathname, seo) +
     footerHtml(pathname, seo) +
     `</main></div>`
 
