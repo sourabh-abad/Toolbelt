@@ -370,6 +370,211 @@ public class Customer {
       },
     ],
   },
+  '/properties': {
+    title: 'Properties File Viewer, Key List & YAML Converter — DevPocket',
+    description:
+      'Read a .properties file, list every key, spot duplicate and empty values, and convert it to YAML or JSON. Runs in your browser — nothing is uploaded.',
+    heading: 'Properties file viewer, key list and converter',
+    aboutLabel: 'the .properties viewer',
+    blurb:
+      'Paste a Java or Spring .properties file to see it highlighted, tidied and explained. The viewer normalises separators and ordering without losing your comments, the key list shows every key with its value, line number and whether it is duplicated, empty, padded with invisible whitespace or pointing at a ${…} placeholder nothing defines, and the converter turns dotted keys into nested YAML or JSON and back again.',
+    deepDive: {
+      heading: 'The parts of a .properties file that bite',
+      body: [
+        'A .properties file looks like a list of key=value pairs and is parsed by rules most editors do not implement. Three characters separate a key from its value, two start a comment, a backslash at the end of a line joins the next one, and a key defined twice is not an error — the last one silently wins.',
+        'Every one of those rules is behind a bug someone has spent an afternoon on. Here is what the parser actually does with your file.',
+      ],
+      example: {
+        inputLabel: '.properties',
+        input: `# the sale override
+server.port=8080
+db.url:jdbc\\:mysql://db/shop
+timeout 30
+banner=  spaced out
+colour=#ff0000
+hosts=a,\\
+  b
+server.port=9090`,
+        outputLabel: 'What loads',
+        output: `server.port   = 9090
+db.url        = jdbc:mysql://db/shop
+timeout       = 30
+banner        = "  spaced out"
+colour        = #ff0000
+hosts         = a,b
+
+7 lines, 6 keys — server.port
+is defined twice and the first
+value never reaches the app.`,
+        note: 'Note what did NOT happen: the # in the colour value is not a comment, the escaped colon in the JDBC URL stayed in the value instead of splitting the key, and the leading spaces in banner survived because only a trailing space is stripped.',
+      },
+      table: {
+        caption: 'The syntax rules a .properties parser applies, in the order they surprise people',
+        columns: ['Written as', 'Parsed as', 'Why it matters'],
+        rows: [
+          ['a=1, a:1, a 1', 'The same entry', 'All three separate a key from a value. A space is a separator only when no = or : follows it.'],
+          ['# note and ! note', 'Comments', 'Only at the start of a line. A # anywhere else — a hex colour, a URL fragment — is part of the value.'],
+          ['key\\ with\\ spaces=1', 'One key containing spaces', 'A backslash escapes the character after it, which is the only way a key can hold a space, = or :.'],
+          ['url=jdbc\\:mysql://h/db', 'jdbc:mysql://h/db', 'Colons in a value need no escape; the one in the key does, and generated files often escape both.'],
+          ['value=a,\\ (newline) b', 'a,b', 'A trailing backslash continues the line and the next line’s leading whitespace is dropped.'],
+          ['a=1 then a=2', 'a is 2', 'Not an error, not a warning. The last definition wins and the earlier one is unreachable.'],
+          ['msg=caf\\u00e9', 'café', 'Properties files are ISO-8859-1 by default in older Java, so non-ASCII is escaped as \\uXXXX.'],
+        ],
+      },
+      gotchas: [
+        {
+          title: 'A duplicated key is the most common production surprise',
+          detail: 'Two definitions of server.port do not fail the build, and the one you edited may be the one that is ignored. The viewer flags every repeated key, marks which occurrence wins, and can rewrite the file keeping only that one.',
+        },
+        {
+          title: 'Trailing whitespace is part of the value',
+          detail: 'password=hunter2 followed by a space loads as "hunter2 ". No editor shows it and no diff makes it obvious. Values that end in whitespace are called out here.',
+        },
+        {
+          title: 'key= and a missing key are different things',
+          detail: 'An empty value is a defined empty string, so a @Value default or a getProperty fallback never fires. If you want the default, remove the line rather than clearing it.',
+        },
+        {
+          title: '${other.key} is resolved by Spring, not by the file',
+          detail: 'Plain java.util.Properties does no substitution at all, and Spring fails to start when a placeholder resolves to nothing. Every ${…} in the file is listed with whether this file defines it or supplies a ${key:default}.',
+        },
+        {
+          title: 'Converting to YAML has to guess at types',
+          detail: 'Everything in a .properties file is a string. 8080 becomes a number and true becomes a boolean in YAML, which is usually what you want and is occasionally wrong — a version like 1.20 becomes 1.2. Turn the inference off when the values must stay strings.',
+        },
+        {
+          title: 'A key cannot be both a value and a branch',
+          detail: 'a=1 and a.b=2 are fine side by side in properties and impossible in YAML, where a would have to be a scalar and a map at once. Those keys are kept flat and listed rather than one of them being dropped.',
+        },
+      ],
+    },
+    howItWorks: [
+      'Paste a .properties file into the editor. It is parsed as you type — separators, escapes, line continuations and all.',
+      'View and clean rewrites it with one separator style, in file or alphabetical order, optionally dropping duplicate keys and keeping every comment with the entry it belongs to.',
+      'Keys lists every key with its value and line, filtered by duplicated, empty, padded or placeholder-using, and copies the names on their own.',
+      'Convert turns dotted keys into nested YAML or JSON — and YAML or JSON back into properties — with array positions written as key[0].',
+    ],
+    useCases: [
+      'Finding why a setting is ignored, when the same key is defined twice in one file',
+      'Listing every key in a config to check against the documentation or a test',
+      'Migrating an application.properties to application.yml without hand-indenting it',
+      'Turning a YAML config back into properties for a service that only reads them',
+    ],
+    faq: [
+      {
+        q: 'Which key wins when the file defines one twice?',
+        a: 'The last one, which is what java.util.Properties does when it loads the file. Duplicates are flagged with the lines they are on, and "Keep the last" rewrites the file to contain only the values that actually load.',
+      },
+      {
+        q: 'Does it understand escapes and line continuations?',
+        a: 'Yes. \\n, \\t, \\uXXXX and escaped separators are decoded, and a line ending in an odd number of backslashes is joined with the next one before anything else looks at it.',
+      },
+      {
+        q: 'Are my comments lost when I reformat?',
+        a: 'No. A comment stays with the entry below it, so it follows that entry even when the file is sorted alphabetically. A comment followed by a blank line is treated as a section header and stays where it is. You can also drop all comments deliberately.',
+      },
+      {
+        q: 'How are dotted keys converted to YAML?',
+        a: 'server.port becomes a nested port under server, and indexed keys like hosts[0] become a YAML list. You can switch nesting off to get one flat YAML key per line, which is useful when the dots are part of the name rather than a hierarchy.',
+      },
+      {
+        q: 'Is anything uploaded?',
+        a: 'No. The file is parsed in your own tab, which is what makes it safe to paste a config containing connection strings or credentials.',
+      },
+    ],
+  },
+  '/properties-compare': {
+    title: 'Compare Two .properties Files — Key & Value Diff — DevPocket',
+    description:
+      'Diff two .properties files by key and value: missing keys, changed values, identical ones hidden. Ideal for dev vs prod configs. Nothing is uploaded.',
+    heading: 'Compare two .properties files',
+    aboutLabel: 'the .properties comparer',
+    blurb:
+      'A text diff of two config files tells you the lines differ; this tells you which settings differ. Both files are parsed into keys and values first, so a reordered file, a changed separator or a moved comment produces no noise at all — what is left is the keys only one side defines and the values that changed. Copy the missing entries straight out as properties to paste into the file that is short of them.',
+    deepDive: {
+      heading: 'Why a text diff is the wrong tool for two config files',
+      body: [
+        'Environment configs drift in two ways that matter — a key one file has and the other does not, and a key both have with different values — and in several that do not: order, separator style, comments, whitespace. A line diff cannot tell those apart, so the real differences arrive buried in false ones.',
+        'Comparing the parsed keys instead removes every difference that a properties loader would also ignore.',
+      ],
+      example: {
+        inputLabel: 'What a line diff reports',
+        input: `- logging.level.root=DEBUG
+- cache.ttl.seconds=60
+- spring.jpa.show-sql=true
+- dev.only.toggle=on
+- server.port = 8080
++ server.port=8080
++ spring.jpa.show-sql=false
++ cache.ttl.seconds=300
++ logging.level.root=WARN
++ prod.only.replicas=4
+
+9 changed lines`,
+        outputLabel: 'What actually differs',
+        output: `differs   logging.level.root
+          DEBUG → WARN
+differs   cache.ttl.seconds
+          60 → 300
+differs   spring.jpa.show-sql
+          true → false
+only in A dev.only.toggle
+only in B prod.only.replicas
+
+3 changed, 1 missing each way
+server.port is identical`,
+        note: 'server.port appears in the line diff only because one file writes it with spaces around the =. The key comparison drops it, and the reordering, on the floor.',
+      },
+      gotchas: [
+        {
+          title: 'Only-in-A is usually the interesting half',
+          detail: 'A key the production file is missing falls back to a default nobody chose. A key only production has is normally deliberate. The two directions are counted and copied separately for exactly that reason.',
+        },
+        {
+          title: 'A duplicated key is compared on the value that wins',
+          detail: 'If one file defines a key twice, the comparison uses the last definition — the one that loads — rather than reporting a difference against a value the application never sees.',
+        },
+        {
+          title: 'Invisible differences look like phantom changes',
+          detail: 'A value with a trailing space differs from one without, and so does True against true. Both are real to a properties loader, so they are reported by default — switch on "ignore surrounding spaces" or "ignore case" when you know they do not matter.',
+        },
+        {
+          title: 'Empty is not missing',
+          detail: 'password= in one file and no password line in the other are different states: the first defines an empty string, the second leaves the setting undefined. They are shown as "empty" and "—" rather than being treated as the same thing.',
+        },
+      ],
+    },
+    howItWorks: [
+      'Paste one file into each side — dev and prod, before and after, your file and a teammate’s.',
+      'Both are parsed into keys and values, so ordering, separator style and comments never show up as differences.',
+      'Every key is marked differs, only in A, only in B or identical, with the counts at the top and a filter for each.',
+      'Copy the entries one side is missing straight out as .properties text, or the changed values as a two-column report.',
+    ],
+    useCases: [
+      'Checking an application-prod.properties against application.properties before a release',
+      'Finding the setting that differs between a machine where it works and one where it does not',
+      'Reviewing a config change without reading a diff full of reordered lines',
+      'Auditing what a new environment file is still missing',
+    ],
+    faq: [
+      {
+        q: 'How is this different from the text diff checker?',
+        a: 'The diff checker compares lines. This parses both files first, so reordering, a = changed to a :, added comments and changed indentation produce no differences at all — only keys and values do.',
+      },
+      {
+        q: 'What happens if a key is defined twice in one file?',
+        a: 'The comparison uses the last definition, matching what java.util.Properties loads. The properties viewer is the page that flags duplicates themselves.',
+      },
+      {
+        q: 'Can I get the missing entries out as a file?',
+        a: 'Yes — "Copy A → B gaps" gives you every entry A has and B does not, already written as key=value lines ready to paste into B, and the other button does the reverse.',
+      },
+      {
+        q: 'Are the two files uploaded anywhere?',
+        a: 'No. Both are parsed in your browser, so comparing a production config with a local one does not send either to a server.',
+      },
+    ],
+  },
   '/diff': {
     title: 'Text Diff Checker — Compare Two Files Online — DevPocket',
     description:

@@ -12,6 +12,8 @@ Everything runs client-side in your browser. Nothing you paste in is ever sent t
 - **JSON → Code** — generate TypeScript, Go, Java, Python or C# models from an API payload (nested types included).
 - **YAML Formatter** — format, validate and tidy YAML, or strip every `#` comment without touching the hashes inside quoted strings, URLs and block scalars. Reports the line and column of a syntax error, and warns about tabs in the indentation.
 - **SQL Formatter** — pretty-print or minify queries across 11 dialects (Postgres, MySQL, T-SQL, BigQuery, Oracle…).
+- **Properties Viewer** — read a `.properties` file the way a parser does: three separator styles, escapes and line continuations decoded, duplicate keys and empty or whitespace-padded values flagged, every `${…}` placeholder checked against the file. Lists every key with its line, rewrites the file sorted or deduplicated without losing comments, and converts to nested YAML or JSON and back.
+- **Properties Compare** — diff two `.properties` files by key and value rather than by line, so reordering, separator style and comments never show up as changes. Marks each key differs / only in A / only in B / identical, and copies the entries one side is missing as ready-to-paste `key=value` lines.
 
 **Text**
 - **Diff Checker** — line or word-level diff with add/remove stats.

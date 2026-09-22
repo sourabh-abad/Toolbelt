@@ -130,6 +130,59 @@ export function highlightYaml(line) {
   return out + highlightYamlValue(rest)
 }
 
+/**
+ * .properties gets a positional highlighter for the same reason YAML does: the
+ * thing worth colouring is the key, and what makes it a key is where it sits,
+ * not what it is made of. `#` and `!` only start a comment at the beginning of
+ * a line here — mid-line they are ordinary characters, so `colour=#ff0000` is
+ * a value and not a comment.
+ */
+const PROPS_KEY = /^(\\.|[^\s:=])+/
+const PROPS_VALUE = new RegExp(
+  [
+    `(\\$\\{[^}]*\\})`, // 1 ${placeholder}
+    `(\\\\u[0-9a-fA-F]{4}|\\\\.)`, // 2 escape
+    `\\b(true|false|null|yes|no|on|off)\\b`, // 3 boolean-ish
+    `(-?\\b\\d[\\d_]*(?:\\.\\d+)?\\b)`, // 4 number
+  ].join('|'),
+  'g'
+)
+const PROPS_VALUE_CLASS = ['tok-type', 'tok-anno', 'tok-bool', 'tok-num']
+
+export function highlightProperties(line) {
+  const lead = line.match(/^[ \t\f]*/)[0]
+  const rest = line.slice(lead.length)
+
+  if (rest === '') return escapeHtml(line)
+  if (rest[0] === '#' || rest[0] === '!') {
+    return escapeHtml(lead) + `<span class="tok-comment">${escapeHtml(rest)}</span>`
+  }
+
+  const key = rest.match(PROPS_KEY)
+  if (!key) return escapeHtml(line)
+
+  let out = escapeHtml(lead) + `<span class="tok-key">${escapeHtml(key[0])}</span>`
+  let tail = rest.slice(key[0].length)
+
+  // Whitespace, then = or :, is all separator — colour it as one.
+  const sep = tail.match(/^[ \t\f]*[:=]?[ \t\f]*/)
+  if (sep && sep[0]) {
+    out += `<span class="tok-punc">${escapeHtml(sep[0])}</span>`
+    tail = tail.slice(sep[0].length)
+  }
+
+  PROPS_VALUE.lastIndex = 0
+  let last = 0
+  let m
+  while ((m = PROPS_VALUE.exec(tail)) !== null) {
+    out += escapeHtml(tail.slice(last, m.index))
+    const group = m.slice(1).findIndex((g) => g !== undefined)
+    out += `<span class="${PROPS_VALUE_CLASS[group] || 'tok-punc'}">${escapeHtml(m[0])}</span>`
+    last = m.index + m[0].length
+  }
+  return out + escapeHtml(tail.slice(last))
+}
+
 export const CODE_LANGUAGES = Object.keys(KEYWORDS)
 
 /**
@@ -141,6 +194,7 @@ export function lineHighlighter(language) {
   if (language === 'json') return syntaxHighlightJson
   if (language === 'xml') return syntaxHighlightXml
   if (language === 'yaml') return highlightYaml
+  if (language === 'properties') return highlightProperties
   if (CODE_LANGUAGES.includes(language)) return (line) => highlightCode(line, language)
   return escapeHtml
 }

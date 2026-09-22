@@ -28,6 +28,8 @@ import {
   BookOpen,
   Container,
   AlignLeft,
+  TableProperties,
+  FileDiff,
 } from 'lucide-react'
 
 export const navItems = [
@@ -41,6 +43,8 @@ export const navItems = [
   { to: '/convert', label: 'JSON ⇄ YAML ⇄ CSV', icon: Shuffle, group: 'Data', accent: 'teal', description: 'Convert between config & data formats' },
   { to: '/codegen', label: 'JSON → Code', icon: FileCode2, group: 'Data', accent: 'indigo', description: 'Generate typed models from a JSON payload' },
   { to: '/yaml', label: 'YAML Formatter', icon: AlignLeft, group: 'Data', accent: 'violet', description: 'Format, tidy, strip comments & validate YAML' },
+  { to: '/properties', label: 'Properties Viewer', icon: TableProperties, group: 'Data', accent: 'amber', description: 'Read, clean, list keys and convert .properties files' },
+  { to: '/properties-compare', label: 'Properties Compare', icon: FileDiff, group: 'Data', accent: 'rose', description: 'Diff two .properties files by key and value' },
   { to: '/sql', label: 'SQL Formatter', icon: Database, group: 'Data', accent: 'orange', description: 'Pretty-print & minify SQL across dialects' },
 
   // --- JSON toolkit: one route per task so each ranks for its own query

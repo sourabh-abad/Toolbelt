@@ -21,6 +21,8 @@ const LOADERS = {
   '/codegen': () => import('./pages/CodeGenTool'),
   '/sql': () => import('./pages/SqlTool'),
   '/yaml': () => import('./pages/YamlTool'),
+  '/properties': () => import('./pages/PropertiesTool'),
+  '/properties-compare': () => import('./pages/PropertiesCompareTool'),
   '/sql-guide': () => import('./pages/SqlGuideTool'),
   '/docker-guide': () => import('./pages/DockerGuideTool'),
   '/diff': () => import('./pages/DiffTool'),
@@ -69,6 +71,8 @@ const ConvertTool = lazy(LOADERS['/convert'])
 const CodeGenTool = lazy(LOADERS['/codegen'])
 const SqlTool = lazy(LOADERS['/sql'])
 const YamlTool = lazy(LOADERS['/yaml'])
+const PropertiesTool = lazy(LOADERS['/properties'])
+const PropertiesCompareTool = lazy(LOADERS['/properties-compare'])
 const SqlGuideTool = lazy(LOADERS['/sql-guide'])
 const DockerGuideTool = lazy(LOADERS['/docker-guide'])
 const CronTool = lazy(LOADERS['/cron'])
@@ -158,6 +162,8 @@ export default function App() {
                 <Route path="/codegen" element={<CodeGenTool />} />
                 <Route path="/sql" element={<SqlTool />} />
                 <Route path="/yaml" element={<YamlTool />} />
+                <Route path="/properties" element={<PropertiesTool />} />
+                <Route path="/properties-compare" element={<PropertiesCompareTool />} />
                 <Route path="/sql-guide" element={<SqlGuideTool />} />
                 <Route path="/docker-guide" element={<DockerGuideTool />} />
                 <Route path="/diff" element={<DiffTool />} />
