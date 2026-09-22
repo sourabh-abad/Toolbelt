@@ -371,7 +371,7 @@ public class Customer {
     ],
   },
   '/properties': {
-    title: 'Properties File Viewer, Key List & YAML Converter — DevPocket',
+    title: 'Properties File Viewer, Keys & YAML Converter — DevPocket',
     description:
       'Read a .properties file, list every key, spot duplicate and empty values, and convert it to YAML or JSON. Runs in your browser — nothing is uploaded.',
     heading: 'Properties file viewer, key list and converter',
@@ -476,6 +476,10 @@ value never reaches the app.`,
       {
         q: 'How are dotted keys converted to YAML?',
         a: 'server.port becomes a nested port under server, and indexed keys like hosts[0] become a YAML list. You can switch nesting off to get one flat YAML key per line, which is useful when the dots are part of the name rather than a hierarchy.',
+      },
+      {
+        q: 'Can I compare two properties files?',
+        a: 'Yes — that is the Properties Compare page. It parses both files and reports the keys only one side defines and the values that differ, instead of diffing them line by line.',
       },
       {
         q: 'Is anything uploaded?',
