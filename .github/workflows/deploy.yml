@@ -68,8 +68,9 @@ jobs:
         id: deployment
         uses: actions/deploy-pages@v4
 
-  # Cloudflare sits in front of Pages and would otherwise keep serving the old
-  # HTML and sw.js from its edge. Needs two repository secrets:
+  # Cloudflare sits in front of Pages and caches the HTML pages at its edge for
+  # a day (scripts/cloudflare-cache.mjs), so each deploy must purge them. Needs
+  # two repository secrets:
   #   CLOUDFLARE_ZONE_ID    — devpocket.in's Zone ID (Cloudflare dashboard, Overview)
   #   CLOUDFLARE_API_TOKEN  — a token with the Zone › Cache Purge permission
   # Without them this job logs a warning and does nothing.
@@ -89,6 +90,11 @@ jobs:
             echo "::warning::CLOUDFLARE_ZONE_ID / CLOUDFLARE_API_TOKEN not set; skipping cache purge"
             exit 0
           fi
+          node scripts/cloudflare-cache.mjs --purge
+          # Purge again once GitHub Pages' own CDN has surely picked up the new
+          # files: a page fetched in between could otherwise be cached at the
+          # edge as the old release for a day.
+          sleep 60
           node scripts/cloudflare-cache.mjs --purge
 
       # Reports (without failing the deploy) if the live Cache-Control headers

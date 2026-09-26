@@ -125,14 +125,21 @@ node scripts/cloudflare-cache.mjs --apply     # apply it, then purge everything
 node scripts/cloudflare-cache.mjs --verify    # check the live headers (no token needed)
 ```
 
-It sets Browser Cache TTL to *Respect Existing Headers* and adds Cache Rules
-and response-header rules so that:
+It sets Browser Cache TTL to *Respect Existing Headers*, turns on Smart Tiered
+Cache, and adds Cache Rules and response-header rules so that:
 
 | Response | Cache-Control | Cloudflare edge |
 |---|---|---|
-| HTML routes, `/sw.js`, manifests | `no-cache` | not cached |
+| HTML pages (`/`, `…/`, `*.html`) | `no-cache` | cached 1 day, purged on every deploy |
+| `/sw.js`, manifests | `no-cache` | not cached |
 | `/assets/*` (200) | `public, max-age=31536000, immutable` | cached 1 year |
-| any 404 | `no-store` | not cached |
+| any 404 (and HTML 5xx) | `no-store` | not cached |
+
+Caching the HTML at the edge is what keeps pages fast from every country: the
+nearest Cloudflare data center answers instead of forwarding each page view to
+GitHub Pages, and browsers revalidate their `no-cache` copy against that same
+edge. Smart Tiered Cache means a data center that doesn't have a page yet asks
+a nearby Cloudflare upper tier before going to GitHub.
 
 Its rules are tagged `devpocket:`; re-running replaces them and leaves any other
 rule alone. `public/_headers` holds the same policy for Cloudflare Pages, in
@@ -144,7 +151,9 @@ The deploy workflow then does the rest on every push:
   `assets-manifest.json` and copies the live release's files, plus anything it
   was still carrying from the last 7 days, into the new build. Two deploys in
   one afternoon still leave the first one's chunks in place.
-- **Purges Cloudflare** and then checks the live headers. Add two repository
+- **Purges Cloudflare** twice (right after the deploy, then again a minute
+  later, so a page fetched while GitHub's CDN was still switching over isn't
+  kept for a day) and then checks the live headers. Add two repository
   secrets (Settings → Secrets and variables → Actions): `CLOUDFLARE_ZONE_ID`
   and `CLOUDFLARE_API_TOKEN` (for CI, *Cache Purge* is the only permission it
   needs). Without them the job logs a warning and skips.
