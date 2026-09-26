@@ -7,9 +7,9 @@ import { useToast } from '../lib/toast'
 
 /**
  * A searchable reference: categorised list on the left, one entry's full detail
- * on the right, everything addressable by URL. The SQL and Docker guides are the
- * same page over different catalogues — the knowledge lives in src/lib/*ref.js,
- * this file only knows how to search and lay it out.
+ * on the right, the category and open entry addressable by URL. The SQL and
+ * Docker guides are the same page over different catalogues — the knowledge
+ * lives in src/lib/*ref.js, this file only knows how to search and lay it out.
  *
  * An entry is { id, title, category, kind, summary, syntax, example, explain,
  * notes[], variants[{ name, note, code?, lang? }], tags[], related[] }, and any
@@ -135,7 +135,10 @@ export default function GuidePage({
     }
   }, [entries, categories, kinds])
 
-  const q = params.get('q') || ''
+  // The search text lives in state, never in the URL: each URL change is a page
+  // view in Google Analytics, so a ?q= would send what someone typed. Category
+  // and entry are the catalogue's own ids, so those stay shareable.
+  const [q, setQ] = useState(() => params.get('q') || '')
   const category = params.get('cat') || 'all'
   const selectedId = params.get('id') || ''
   const needle = q.trim().toLowerCase()
@@ -151,6 +154,12 @@ export default function GuidePage({
     },
     [params, setParams]
   )
+
+  // Links shared before carried ?q=. Keep honouring them (it seeded `q` above),
+  // then drop it so later page views don't repeat it.
+  useEffect(() => {
+    if (params.has('q')) setParam({ q: '' })
+  }, [params, setParam])
 
   /** Title hits rank above tag hits, which rank above summary and body hits. */
   const score = useCallback(
@@ -244,7 +253,7 @@ export default function GuidePage({
               autoFocus
               className="pl-9"
               value={q}
-              onChange={(e) => setParam({ q: e.target.value })}
+              onChange={(e) => setQ(e.target.value)}
               onKeyDown={onSearchKey}
               placeholder={searchPlaceholder}
               aria-label={searchLabel}
@@ -252,7 +261,7 @@ export default function GuidePage({
             {q && (
               <button
                 type="button"
-                onClick={() => setParam({ q: '' })}
+                onClick={() => setQ('')}
                 aria-label="Clear search"
                 className="t-faint hover:t-main absolute top-1/2 right-3 -translate-y-1/2"
               >

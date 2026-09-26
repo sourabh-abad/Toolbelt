@@ -2314,19 +2314,15 @@ Decimal      4,294,967,294
     collapsedContent: false,
     title: 'Privacy — How Your Data Is Handled | DevPocket',
     description:
-      'DevPocket runs entirely client-side: no backend, no analytics, no cookies, no error tracking. See what is stored locally and how to verify it yourself.',
+      'DevPocket tools run entirely client-side, with no backend. See what runs locally, what is stored in your browser and how to verify it yourself.',
     heading: 'How DevPocket actually handles your data',
     aboutLabel: 'this privacy page',
     blurb:
       'A plain description of the architecture, not a marketing claim: what runs locally, what (if anything) leaves your browser, what is stored in localStorage, and how to check all of it yourself in the Network tab.',
     faq: [
       {
-        q: 'Do you use cookies?',
-        a: 'No. There are no cookies of any kind, so there is no cookie banner to dismiss.',
-      },
-      {
-        q: 'Is there analytics or error tracking?',
-        a: 'Neither. There is no analytics script, no error reporting service and no third-party tag. The only requests the site makes are for its own HTML, JavaScript, CSS and fonts — plus the feedback form, and only when you press its Send button.',
+        q: 'Is there error tracking?',
+        a: 'No. There is no error reporting service, so a JavaScript error in your browser is never reported anywhere — you would only see it in your own DevTools console.',
       },
       {
         q: 'What is stored in my browser?',
@@ -2334,7 +2330,7 @@ Decimal      4,294,967,294
       },
       {
         q: 'How can I verify any of this myself?',
-        a: 'Open DevTools, go to the Network tab, clear it, then use any tool on the site. If a payload were being uploaded, a request would appear. None does.',
+        a: 'Open DevTools, go to the Network tab, clear it, then type or paste into any tool. If your input were being uploaded, a request would appear as you type. None does.',
       },
     ],
   },

@@ -1,6 +1,18 @@
 <!doctype html>
 <html lang="en">
   <head>
+    <!-- Google tag (gtag.js). Page views, scrolls, outbound clicks and downloads
+         only: site search and form interactions are off in the GA stream, and no
+         URL on the site carries what a visitor typed (see GuidePage.jsx). Outbound
+         clicks do send a clicked link's URL, including links in the Markdown
+         preview. -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-8X0HWDC79H"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-8X0HWDC79H');
+    </script>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <!-- Google Search only reads raster favicons (ICO/PNG), so the .ico is the one
@@ -41,7 +53,7 @@
     <title>DevPocket — Developer Tools That Stay In Your Browser</title>
     <meta
       name="description"
-      content="Format JSON, decode JWTs, generate UUIDs, test regex and convert timestamps — 33 free developer tools that run entirely client-side. No signup, no uploads, no tracking."
+      content="Format JSON, decode JWTs, generate UUIDs, test regex and convert timestamps — free developer tools that run in your browser. No signup, no uploads."
     />
     <meta name="author" content="Sourabh" />
     <meta name="keywords" content="json formatter, jwt decoder, uuid generator, regex tester, base64 encoder, timestamp converter, xml formatter, sql formatter, yaml formatter, cron expression, sql query guide, docker commands, developer tools" />

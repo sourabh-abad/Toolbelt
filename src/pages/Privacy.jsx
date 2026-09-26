@@ -1,4 +1,4 @@
-import { ShieldCheck, Lock, Cookie, BarChart3, HardDrive, Radio, Wifi, Search, MessageSquarePlus } from 'lucide-react'
+import { ShieldCheck, Lock, HardDrive, Radio, Wifi, Search, MessageSquarePlus } from 'lucide-react'
 import { openFeedback, FEEDBACK_TO } from '../lib/feedback'
 import { PageHeader, Panel } from '../components/ui'
 
@@ -11,22 +11,12 @@ const ROWS = [
   {
     icon: Wifi,
     title: 'What is sent externally',
-    body: 'Nothing you type or paste into a tool. The only network requests DevPocket itself makes are for the page shell: the JavaScript/CSS bundles and the Inter font from Google Fonts (fonts.googleapis.com, fonts.gstatic.com), fetched once per visit regardless of what you do afterward. No tool currently calls an external API — if one ever needs to, its page will carry a "Needs network" badge instead of "Runs locally" and state exactly what is sent and why. The one exception is the feedback form below, and only when you press its Send button.',
+    body: 'Nothing you type or paste into a tool is sent while you work. The page shell — the JavaScript/CSS bundles and the Inter font from Google Fonts (fonts.googleapis.com, fonts.gstatic.com) — loads once per visit regardless of what you do afterward. No tool currently calls an external API — if one ever needs to, its page will carry a "Needs network" badge instead of "Runs locally" and state exactly what is sent and why. The feedback form below sends what you write in it, and only when you press its Send button.',
   },
   {
     icon: MessageSquarePlus,
     title: 'Feedback form',
-    body: `The feedback form (in the header and the footer) is the only part of DevPocket that sends text you typed, and it does so only when you press Send. What goes out is exactly its fields: the kind of feedback, your message, your email if you chose to give one, and the page address unless you untick it — never the input of the tool you were using. It is delivered to ${FEEDBACK_TO} through Web3Forms (web3forms.com), a form-to-email service, and is used only to read and answer your feedback.`,
-  },
-  {
-    icon: BarChart3,
-    title: 'Analytics',
-    body: 'None. DevPocket does not run Google Analytics, Plausible, PostHog or any other analytics script. There is no event tracking of any kind at this time.',
-  },
-  {
-    icon: Cookie,
-    title: 'Cookies',
-    body: 'DevPocket sets no cookies. It is a static site with no server-side session, so there is nothing to store a cookie for.',
+    body: `The feedback form (in the header and the footer) sends what you typed into it only when you press Send. What goes out is exactly its fields: the kind of feedback, your message, your email if you chose to give one, and the page address unless you untick it — never the input of the tool you were using. It is delivered to ${FEEDBACK_TO} through Web3Forms (web3forms.com), a form-to-email service, and is used only to read and answer your feedback.`,
   },
   {
     icon: ShieldCheck,
@@ -79,9 +69,9 @@ export default function Privacy() {
             <p className="t-muted text-sm leading-relaxed">
               Open your browser's DevTools (F12, or Cmd/Ctrl+Shift+I), switch to the <strong className="t-main">Network</strong> tab,
               and use any tool — paste a JSON payload, decode a JWT, generate a hash. Reload the tab list if it's
-              filtered. You will see the page's own assets and fonts load once, and nothing else fire while you
-              type, paste or click. No request will carry your input in its body, headers or URL. That is the claim,
-              and it is checkable in under a minute without trusting this page at all.
+              filtered. While you type or paste into a tool, nothing fires: no request carries your input in its
+              body, headers or URL. That is the claim, and it is checkable in under a minute without trusting this
+              page at all.
             </p>
           </div>
         </Panel>
