@@ -2359,8 +2359,8 @@ shippingAddressLine1`,
         a: 'A digit stays attached to the letters before it, so line1 and utf8 remain single words. A digit after a separator starts a new word.',
       },
       {
-        q: 'Does it keep non-English letters?',
-        a: 'Word boundaries are found on ASCII letters and digits. Other characters act as separators, so convert names that are already ASCII identifiers.',
+        q: 'Does it keep accented and non-Latin letters?',
+        a: 'Yes. Letters and digits in any script count as parts of a word, so "Ça va déjà" becomes çaVaDéjà. Turn on Strip accents to get ASCII-safe names instead (caVaDeja), for code or systems that only accept A–Z.',
       },
       {
         q: 'Can I convert a whole file?',

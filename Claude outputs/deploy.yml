@@ -77,16 +77,24 @@ jobs:
     needs: deploy
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
       - name: Purge Cloudflare cache
         env:
-          ZONE: ${{ secrets.CLOUDFLARE_ZONE_ID }}
-          TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ZONE_ID: ${{ secrets.CLOUDFLARE_ZONE_ID }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
         run: |
-          if [ -z "$ZONE" ] || [ -z "$TOKEN" ]; then
+          if [ -z "$CLOUDFLARE_ZONE_ID" ] || [ -z "$CLOUDFLARE_API_TOKEN" ]; then
             echo "::warning::CLOUDFLARE_ZONE_ID / CLOUDFLARE_API_TOKEN not set; skipping cache purge"
             exit 0
           fi
-          curl -fsS -X POST "https://api.cloudflare.com/client/v4/zones/$ZONE/purge_cache" \
-            -H "Authorization: Bearer $TOKEN" \
-            -H "Content-Type: application/json" \
-            --data '{"purge_everything":true}'
+          node scripts/cloudflare-cache.mjs --purge
+
+      # Reports (without failing the deploy) if the live Cache-Control headers
+      # drift from the policy in scripts/cloudflare-cache.mjs.
+      - name: Check cache headers
+        continue-on-error: true
+        run: |
+          sleep 20
+          node scripts/cloudflare-cache.mjs --verify || echo "::warning::Cache-Control headers do not match the policy; run node scripts/cloudflare-cache.mjs --apply"

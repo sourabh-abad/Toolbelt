@@ -2,7 +2,7 @@ import { useMemo, useRef, useState } from 'react'
 import { CaseSensitive, Trash2, Upload, Download } from 'lucide-react'
 import { CASES, convertAll, convertLines, detectCase } from '../lib/casing'
 import { useToast } from '../lib/toast'
-import { Panel, Button, CopyButton, TextArea, PageHeader, Select } from '../components/ui'
+import { Panel, Button, CopyButton, TextArea, PageHeader, Select, Checkbox } from '../components/ui'
 import CodeViewer from '../components/CodeViewer'
 
 const SAMPLE = `XMLHttpRequest
@@ -10,18 +10,21 @@ user_id
 first-name
 getV2Items
 SHIPPING_ADDRESS_LINE_1
-Order created at`
+Order created at
+Ça va déjà`
 
 export default function CaseConverterTool() {
   const [input, setInput] = useState(SAMPLE)
   const [target, setTarget] = useState('camel')
+  const [strip, setStrip] = useState(false)
   const fileRef = useRef(null)
   const toast = useToast()
 
   const lines = input.split('\n').filter((l) => l.trim())
   const first = lines[0] || ''
-  const all = useMemo(() => convertAll(first), [first])
-  const bulk = useMemo(() => convertLines(input, target), [input, target])
+  const opts = useMemo(() => ({ stripAccents: strip }), [strip])
+  const all = useMemo(() => convertAll(first, opts), [first, opts])
+  const bulk = useMemo(() => convertLines(input, target, opts), [input, target, opts])
   const detected = detectCase(first)
 
   function download() {
@@ -71,6 +74,9 @@ export default function CaseConverterTool() {
             }
           >
             <TextArea rows={10} value={input} onChange={(e) => setInput(e.target.value)} aria-label="Names to convert" placeholder="userId&#10;order_total&#10;Shipping address" />
+            <div className="mt-3">
+              <Checkbox checked={strip} onChange={(e) => setStrip(e.target.checked)} label="Strip accents (déjà → deja)" />
+            </div>
           </Panel>
 
           <Panel

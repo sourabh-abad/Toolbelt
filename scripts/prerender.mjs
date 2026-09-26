@@ -495,6 +495,9 @@ self.addEventListener('fetch', (event) => {
 // This build's own hashed files. scripts/keep-previous-assets.mjs reads the
 // live copy at deploy time to carry the previous release's chunks forward.
 const ownAssets = readdirSync(join(dist, 'assets')).sort()
-writeFileSync(join(dist, 'assets-manifest.json'), JSON.stringify({ version, files: ownAssets }) + '\n')
+writeFileSync(
+  join(dist, 'assets-manifest.json'),
+  JSON.stringify({ version, builtAt: new Date().toISOString(), files: ownAssets, carried: [] }) + '\n'
+)
 
 console.log(`✓ prerendered ${routes.length} routes + sitemap.xml, robots.txt, 404.html, sw.js (${precache.length} files precached)`)

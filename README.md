@@ -82,37 +82,47 @@ Indexing typically takes a few days to a few weeks; ranking for competitive term
 ## Caching (Cloudflare in front of GitHub Pages)
 
 Every build renames its chunks (`JsonValidatorTool-<hash>.js`). If a browser or
-Cloudflare keeps serving an old `index.html` or `sw.js`, that page asks for
-chunks the new deploy no longer has, and you get a blank page. Cloudflare's
-default Browser Cache TTL (4 hours, `max-age=14400`) overrides GitHub Pages'
-own headers, which is exactly what went wrong. Set these once in the Cloudflare
-dashboard for devpocket.in:
+Cloudflare keeps an old `index.html` or `sw.js`, that page asks for chunks the
+new deploy no longer has and the tool never loads. Cloudflare's default Browser
+Cache TTL (4 hours) overrides GitHub Pages' headers with `max-age=14400`, which
+is what caused it.
 
-1. **Caching → Configuration → Browser Cache TTL:** *Respect Existing Headers*.
-2. **Rules → Cache Rules → Create rule** "HTML and service worker":
-   - When: `(http.request.uri.path eq "/") or ends_with(http.request.uri.path, "/") or ends_with(http.request.uri.path, ".html") or http.request.uri.path in {"/sw.js" "/assets-manifest.json" "/site.webmanifest"}`
-   - Then: Cache eligibility *Bypass cache*.
-3. **Rules → Cache Rules → Create rule** "Hashed assets":
-   - When: `starts_with(http.request.uri.path, "/assets/")`
-   - Then: *Eligible for cache*. Edge TTL: *Ignore cache-control header and use this TTL*, 1 year. Under *Status code TTL*, add 404 → *No cache* (a chunk that 404s during a deploy must not stay cached). Browser TTL: *Respect origin* (rule 4 sets the header).
-4. **Rules → Transform Rules → Modify Response Header**, two rules (these set the header the browser sees):
-   - Same match as rule 2 → *Set* `Cache-Control` = `no-cache`.
-   - `starts_with(http.request.uri.path, "/assets/") and http.response.code eq 200` → *Set* `Cache-Control` = `public, max-age=31536000, immutable`.
+The policy lives in `scripts/cloudflare-cache.mjs` and is applied through the
+Cloudflare API — run it once from your machine:
 
-`public/_headers` holds the same policy in the format Cloudflare Pages reads,
-in case the site moves there. GitHub Pages ignores it.
+```sh
+export CLOUDFLARE_ZONE_ID=…      # devpocket.in → Overview → API → Zone ID
+export CLOUDFLARE_API_TOKEN=…    # My Profile → API Tokens, limited to devpocket.in:
+                                 # Zone Settings Edit, Cache Rules Edit,
+                                 # Transform Rules Edit, Cache Purge Purge
+node scripts/cloudflare-cache.mjs --dry-run   # see exactly what will be sent
+node scripts/cloudflare-cache.mjs --apply     # apply it, then purge everything
+node scripts/cloudflare-cache.mjs --verify    # check the live headers (no token needed)
+```
+
+It sets Browser Cache TTL to *Respect Existing Headers* and adds Cache Rules
+and response-header rules so that:
+
+| Response | Cache-Control | Cloudflare edge |
+|---|---|---|
+| HTML routes, `/sw.js`, manifests | `no-cache` | not cached |
+| `/assets/*` (200) | `public, max-age=31536000, immutable` | cached 1 year |
+| any 404 | `no-store` | not cached |
+
+Its rules are tagged `devpocket:`; re-running replaces them and leaves any other
+rule alone. `public/_headers` holds the same policy for Cloudflare Pages, in
+case the site moves there (GitHub Pages ignores it).
 
 The deploy workflow then does the rest on every push:
 
-- **Keeps the previous release's chunks.** `scripts/keep-previous-assets.mjs`
-  reads the live site's `assets-manifest.json` and copies its files into the
-  new build, so a tab opened before the deploy still finds its chunks.
-- **Purges Cloudflare.** The `purge-cloudflare` job calls the purge API. Add two
-  repository secrets (Settings → Secrets and variables → Actions):
-  `CLOUDFLARE_ZONE_ID` (on the zone's Overview page) and
-  `CLOUDFLARE_API_TOKEN` (My Profile → API Tokens, permission *Zone → Cache
-  Purge → Purge*, limited to devpocket.in). Without them the job only logs a
-  warning.
+- **Keeps older chunks.** `scripts/keep-previous-assets.mjs` reads the live
+  `assets-manifest.json` and copies the live release's files, plus anything it
+  was still carrying from the last 7 days, into the new build. Two deploys in
+  one afternoon still leave the first one's chunks in place.
+- **Purges Cloudflare** and then checks the live headers. Add two repository
+  secrets (Settings → Secrets and variables → Actions): `CLOUDFLARE_ZONE_ID`
+  and `CLOUDFLARE_API_TOKEN` (for CI, *Cache Purge* is the only permission it
+  needs). Without them the job logs a warning and skips.
 
 In the app, a chunk that still fails to load triggers one automatic reload.
 If that has already happened in the last minute, the page shows "A new version

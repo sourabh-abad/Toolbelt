@@ -1,6 +1,6 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { splitWords, convertAll, convertLines, detectCase } from './casing.js'
+import { splitWords, convertAll, convertLines, detectCase, stripAccents } from './casing.js'
 
 const as = (input) => Object.fromEntries(convertAll(input).map((c) => [c.id, c.value]))
 
@@ -42,4 +42,31 @@ test('detects the convention in use', () => {
   assert.equal(detectCase('USER_ID'), 'screaming')
   assert.equal(detectCase('user-id'), 'kebab')
   assert.equal(detectCase('user id'), null)
+})
+
+test('keeps non-ASCII letters (acceptance)', () => {
+  assert.equal(as('Ça va déjà').camel, 'çaVaDéjà')
+  assert.equal(as('Ça va déjà').snake, 'ça_va_déjà')
+  const stripped = Object.fromEntries(convertAll('Ça va déjà', { stripAccents: true }).map((c) => [c.id, c.value]))
+  assert.equal(stripped.camel, 'caVaDeja')
+  assert.equal(stripped.snake, 'ca_va_deja')
+})
+
+test('splits other scripts and cases', () => {
+  assert.deepEqual(splitWords('größeÄnderung'), ['größe', 'Änderung'])
+  assert.deepEqual(splitWords('ΑθήναΠόλη'), ['Αθήνα', 'Πόλη'])
+  assert.deepEqual(splitWords('имя_пользователя'), ['имя', 'пользователя'])
+  assert.equal(as('straße nummer').screaming, 'STRASSE_NUMMER')
+  assert.equal(convertLines('Crème brûlée\nnaïve café', 'kebab', { stripAccents: true }), 'creme-brulee\nnaive-cafe')
+})
+
+test('decomposed input keeps its accents together', () => {
+  const decomposed = 'de\u0301ja\u0300 vu' // é and à written as letter + combining mark
+  assert.equal(as(decomposed).camel.normalize('NFC'), 'déjàVu')
+  assert.equal(stripAccents(decomposed), 'deja vu')
+})
+
+test('detects conventions in other scripts', () => {
+  assert.equal(detectCase('größeÄnderung'), 'camel')
+  assert.equal(detectCase('ça_va'), 'snake')
 })
