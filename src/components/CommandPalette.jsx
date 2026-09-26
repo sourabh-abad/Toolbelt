@@ -1,12 +1,14 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Search, CornerDownLeft } from 'lucide-react'
 import { navItems, ACCENTS, hrefFor } from '../lib/nav'
+import { searchTools } from '../lib/search'
 
 export default function CommandPalette({ open, onClose }) {
   const [query, setQuery] = useState('')
   const [cursor, setCursor] = useState(0)
   const navigate = useNavigate()
+  const listRef = useRef(null)
 
   useEffect(() => {
     if (!open) {
@@ -15,15 +17,16 @@ export default function CommandPalette({ open, onClose }) {
     }
   }, [open])
 
-  const results = useMemo(() => {
-    const q = query.trim().toLowerCase()
-    if (!q) return navItems
-    return navItems.filter(
-      (n) => n.label.toLowerCase().includes(q) || n.description.toLowerCase().includes(q) || (n.group || '').toLowerCase().includes(q)
-    )
-  }, [query])
+  // Name, keywords (sha256, epoch, prettify…) and description, every word
+  // required, dedicated tools ranked first. See lib/search.js.
+  const results = useMemo(() => searchTools(navItems, query), [query])
 
   useEffect(() => setCursor(0), [query])
+
+  // Keep the highlighted row visible while arrowing through a long list.
+  useEffect(() => {
+    listRef.current?.querySelector('[aria-selected="true"]')?.scrollIntoView({ block: 'nearest' })
+  }, [cursor])
 
   useEffect(() => {
     if (!open) return
@@ -63,12 +66,17 @@ export default function CommandPalette({ open, onClose }) {
             autoFocus
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Jump to a tool…"
+            placeholder="Jump to a tool… try sha256, epoch or prettify"
+            aria-label="Search tools"
+            role="combobox"
+            aria-expanded="true"
+            aria-controls="palette-results"
+            aria-activedescendant={results[cursor] ? `palette-opt-${cursor}` : undefined}
             className="t-main flex-1 bg-transparent text-sm outline-none placeholder:opacity-60"
           />
           <kbd className="bd t-faint rounded border px-1.5 py-0.5 text-[10px]">Esc</kbd>
         </div>
-        <div className="max-h-80 overflow-y-auto p-2">
+        <div className="max-h-80 overflow-y-auto p-2" ref={listRef} id="palette-results" role="listbox" aria-label="Tools">
           {results.length === 0 && <div className="t-faint px-3 py-6 text-center text-sm">No tools match &ldquo;{query}&rdquo;.</div>}
           {results.map((item, i) => {
             const { to, label, icon: Icon, description, accent, group } = item
@@ -77,6 +85,9 @@ export default function CommandPalette({ open, onClose }) {
             return (
               <button
                 key={to}
+                id={`palette-opt-${i}`}
+                role="option"
+                aria-selected={active}
                 onMouseEnter={() => setCursor(i)}
                 onClick={() => {
                   navigate(hrefFor(to))

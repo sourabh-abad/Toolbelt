@@ -428,3 +428,16 @@ textarea, pre {
   font-size: 0.8125rem;
   color: #f43f5e;
 }
+
+/* ---- Code editor ------------------------------------------------------ */
+.code-editor { min-height: var(--editor-rows); }
+/* Stacked layout (below lg): a 36rem editor pushes the output below the fold,
+   so cap it at half the viewport. The box scrolls past that as usual. */
+@media (max-width: 1023.98px) {
+  .code-editor { min-height: 0; height: min(var(--editor-rows), max(50vh, 12rem)); }
+}
+/* Error marks in the paint layer. Colour and background only — anything that
+   changes glyph metrics would knock the textarea out of register. */
+.code-err-line { background: rgb(244 63 94 / 0.10); color: inherit; border-radius: 2px; }
+.code-err-char { background: rgb(244 63 94 / 0.35); color: inherit; border-radius: 2px; text-decoration: underline wavy rgb(244 63 94); text-underline-offset: 3px; }
+.code-err-caret { display: inline-block; width: 0; height: 1.2em; vertical-align: text-bottom; box-shadow: 0 0 0 1px rgb(244 63 94); }

@@ -8,6 +8,10 @@ export default defineConfig({
   plugins: [react(), tailwindcss()],
   base: '/',
   build: {
+    // dist/.vite/manifest.json maps each page module to its chunk and imports.
+    // scripts/prerender.mjs reads it to add <link rel="modulepreload"> for the
+    // route's own code, and to build the service worker's precache list.
+    manifest: true,
     rollupOptions: {
       output: {
         manualChunks(id) {

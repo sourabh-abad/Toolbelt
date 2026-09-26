@@ -27,7 +27,7 @@ const DEFAULT_LABELS = {
 
 const KIND_TONES = {
   sky: 'border-sky-500/30 bg-sky-500/10 text-sky-600 dark:text-sky-400',
-  emerald: 'border-emerald-500/30 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400',
+  emerald: 'border-emerald-500/30 bg-emerald-500/10 text-emerald-700 dark:text-emerald-400',
   amber: 'border-amber-500/30 bg-amber-500/10 text-amber-600 dark:text-amber-400',
   violet: 'border-violet-500/30 bg-violet-500/10 text-violet-600 dark:text-violet-400',
 }
@@ -36,7 +36,7 @@ const CHIP_TONES = {
   cyan: 'border-cyan-500/40 bg-cyan-500/10 text-cyan-600 dark:text-cyan-400',
   sky: 'border-sky-500/40 bg-sky-500/10 text-sky-600 dark:text-sky-400',
   blue: 'border-blue-500/40 bg-blue-500/10 text-blue-600 dark:text-blue-400',
-  emerald: 'border-emerald-500/40 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400',
+  emerald: 'border-emerald-500/40 bg-emerald-500/10 text-emerald-700 dark:text-emerald-400',
 }
 
 function Badge({ children, className = '' }) {
@@ -233,7 +233,8 @@ export default function GuidePage({
 
   return (
     <div>
-      <PageHeader icon={icon} title={title} subtitle={subtitle} accent={accent} />
+      {/* Reference pages take no input, so a "Runs locally" badge says nothing. */}
+      <PageHeader icon={icon} title={title} subtitle={subtitle} accent={accent} privacy={null} />
 
       <div className="space-y-4 p-4 sm:p-6">
         <Panel>

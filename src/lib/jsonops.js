@@ -2,10 +2,12 @@
 // Each is deliberately small and side-effect free so it can be unit-reasoned
 // about and reused across routes.
 
+import { LosslessNumber } from './jsonparse.js'
+
 /** Recursively sorts object keys. Arrays keep their order — order is data. */
 export function sortKeys(value, direction = 'asc') {
   if (Array.isArray(value)) return value.map((v) => sortKeys(v, direction))
-  if (value && typeof value === 'object') {
+  if (value && typeof value === 'object' && !(value instanceof LosslessNumber)) {
     const keys = Object.keys(value).sort((a, b) =>
       direction === 'desc' ? b.localeCompare(a) : a.localeCompare(b)
     )
@@ -140,6 +142,8 @@ export function analyse(value) {
       val.forEach((v) => walk(v, depth + 1))
     } else if (val === null) {
       stats.nulls++
+    } else if (val instanceof LosslessNumber) {
+      stats.numbers++
     } else if (typeof val === 'object') {
       stats.objects++
       for (const [k, v] of Object.entries(val)) {
@@ -229,10 +233,22 @@ export function findDuplicateKeys(text) {
   const duplicates = []
   let i = 0
 
+  // Line starts, built on first use and binary-searched: slicing the text for
+  // every duplicate is quadratic on a large document with many of them.
+  let lineStarts = null
   const posAt = (idx) => {
-    const upto = text.slice(0, idx)
-    const line = upto.split('\n').length
-    return { line, col: idx - upto.lastIndexOf('\n') }
+    if (!lineStarts) {
+      lineStarts = [0]
+      for (let k = 0; k < len; k++) if (text.charCodeAt(k) === 10) lineStarts.push(k + 1)
+    }
+    let lo = 0
+    let hi = lineStarts.length - 1
+    while (lo < hi) {
+      const mid = (lo + hi + 1) >> 1
+      if (lineStarts[mid] <= idx) lo = mid
+      else hi = mid - 1
+    }
+    return { line: lo + 1, col: idx - lineStarts[lo] + 1 }
   }
   const skipWs = () => {
     while (i < len && /\s/.test(text[i])) i++

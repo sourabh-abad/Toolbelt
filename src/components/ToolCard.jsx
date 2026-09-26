@@ -20,7 +20,7 @@ export default function ToolCard({ item }) {
       <div
         className={`pointer-events-none absolute -top-8 -right-8 h-28 w-28 rounded-full bg-gradient-to-br ${a.grad} opacity-0 blur-2xl transition-opacity duration-300 group-hover:opacity-25`}
       />
-      <FavoriteButton path={to} size="sm" className="absolute top-3 right-3 z-10" />
+      <FavoriteButton path={to} size="sm" className="absolute top-3 right-3 z-10 max-sm:top-1.5 max-sm:right-1.5 pointer-coarse:top-1.5 pointer-coarse:right-1.5" />
       <Link to={to} className="relative flex flex-col justify-between p-5">
         <div className="pr-8">
           <div className={`mb-4 flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br ${a.grad} text-white shadow-md ${a.glow}`}>

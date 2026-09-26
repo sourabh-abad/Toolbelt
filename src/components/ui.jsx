@@ -9,12 +9,14 @@ export function Panel({ title, description, actions, children, className = '' })
   return (
     <div className={`panel rounded-2xl border ${className}`}>
       {(title || actions) && (
-        <div className="bd flex items-center justify-between gap-3 border-b px-4 py-3.5">
-          <div>
+        // Wraps on narrow screens: the actions drop under the title rather
+        // than pushing the page wider than a 320px viewport.
+        <div className="bd flex flex-wrap items-center justify-between gap-x-3 gap-y-2 border-b px-4 py-3.5">
+          <div className="min-w-0">
             {title && <h2 className="t-main text-sm font-semibold">{title}</h2>}
             {description && <p className="t-muted mt-0.5 text-xs">{description}</p>}
           </div>
-          {actions && <div className="flex shrink-0 items-center gap-2">{actions}</div>}
+          {actions && <div className="flex flex-wrap items-center gap-2">{actions}</div>}
         </div>
       )}
       <div className="p-4">{children}</div>
@@ -26,7 +28,7 @@ export function Button({ children, variant = 'default', className = '', ...props
   const base =
     'inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors disabled:opacity-40 disabled:cursor-not-allowed'
   const variants = {
-    default: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/20 border border-emerald-500/30',
+    default: 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-500/20 border border-emerald-500/30',
     subtle: 'field hover-surface t-muted border',
     ghost: 't-muted hover-surface hover:t-main',
     danger: 'bg-rose-500/10 text-rose-600 dark:text-rose-400 hover:bg-rose-500/20 border border-rose-500/30',
@@ -101,7 +103,7 @@ export function Checkbox({ checked, onChange, label }) {
 
 export function Tabs({ options, value, onChange }) {
   return (
-    <div className="sunken bd inline-flex gap-1 rounded-xl border p-1">
+    <div className="sunken bd inline-flex max-w-full flex-wrap gap-1 rounded-xl border p-1">
       {options.map((opt) => {
         const val = typeof opt === 'string' ? opt : opt.value
         const label = typeof opt === 'string' ? opt.toUpperCase() : opt.label
@@ -176,7 +178,7 @@ export function PrivacyBadge({ privacy = 'local', className = '' }) {
   return (
     <span
       title="Your input is processed locally and is not sent to DevPocket."
-      className={`inline-flex items-center gap-1 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2 py-0.5 text-[11px] font-medium text-emerald-600 dark:text-emerald-400 ${className}`}
+      className={`inline-flex items-center gap-1 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2 py-0.5 text-[11px] font-medium text-emerald-800 dark:text-emerald-400 ${className}`}
     >
       <Lock className="h-3 w-3" aria-hidden="true" />
       Runs locally
@@ -188,7 +190,9 @@ export function PrivacyBadge({ privacy = 'local', className = '' }) {
 export function FavoriteButton({ path, size = 'md', className = '' }) {
   const { isFavorite, toggle } = useFavorites()
   const active = isFavorite(path)
-  const dim = size === 'sm' ? 'h-7 w-7' : 'h-8 w-8'
+  // 44×44 on touch screens and small viewports (the icon stays 16px); the
+  // compact size is for a mouse, where precision is not the problem.
+  const dim = `${size === 'sm' ? 'h-7 w-7' : 'h-8 w-8'} max-sm:h-11 max-sm:w-11 pointer-coarse:h-11 pointer-coarse:w-11`
   return (
     <button
       type="button"
@@ -221,7 +225,7 @@ export function PageHeader({ icon: Icon, title, subtitle, accent = 'emerald', pr
       <div className="min-w-0">
         <div className="flex flex-wrap items-center gap-2">
           <h1 className="t-main text-base font-semibold">{title}</h1>
-          {isTool && <PrivacyBadge privacy={privacy} />}
+          {isTool && privacy && <PrivacyBadge privacy={privacy} />}
         </div>
         {subtitle && <p className="t-muted truncate text-xs">{subtitle}</p>}
       </div>

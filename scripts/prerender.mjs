@@ -8,7 +8,8 @@
  * sitemap.xml, robots.txt and the 404.html fallback GitHub Pages needs for
  * client-side routing.
  */
-import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'node:fs'
+import { readFileSync, writeFileSync, mkdirSync, existsSync, readdirSync } from 'node:fs'
+import { createHash } from 'node:crypto'
 import { execFileSync } from 'node:child_process'
 import { join, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -23,6 +24,52 @@ const { SEO, SITE_ORIGIN, canonicalUrl } = await import(
 )
 
 const template = readFileSync(join(dist, 'index.html'), 'utf8')
+
+// Route -> page module, parsed out of App.jsx's LOADERS table so adding a tool
+// there can't leave a stale mapping here.
+const appSrc = readFileSync(join(root, 'src/App.jsx'), 'utf8')
+const ROUTE_SOURCE = { '/': 'src/pages/Home.jsx' }
+for (const [, route, mod] of appSrc.matchAll(
+  /'(\/[^']*)':\s*\(\)\s*=>\s*import\('\.\/([^']+)'\)/g
+)) {
+  ROUTE_SOURCE[route] = `src/${mod}.jsx`
+}
+
+// --- Route chunk preloads ----------------------------------------------
+// The static HTML loads the app shell, and the shell then discovers it needs,
+// say, JsonValidatorTool-*.js plus its helpers: a second round trip spent
+// looking at a spinner. Listing the route's own chunks as modulepreload lets
+// the browser fetch them in parallel with the shell.
+const manifestPath = join(dist, '.vite/manifest.json')
+const manifest = existsSync(manifestPath) ? JSON.parse(readFileSync(manifestPath, 'utf8')) : null
+if (!manifest) console.warn('prerender: no .vite/manifest.json — skipping route modulepreload and service worker precache')
+
+function chunkClosure(key, into = new Set()) {
+  const entry = manifest?.[key]
+  if (!entry || into.has(entry.file)) return into
+  into.add(entry.file)
+  for (const dep of entry.imports || []) chunkClosure(dep, into)
+  return into
+}
+const entryKey = manifest && Object.keys(manifest).find((k) => manifest[k].isEntry)
+const shellChunks = entryKey ? chunkClosure(entryKey) : new Set()
+
+function routeAssets(pathname) {
+  const src = ROUTE_SOURCE[pathname]
+  if (!manifest || !src || !manifest[src]) return { js: [], css: [] }
+  const js = [...chunkClosure(src)].filter((f) => !shellChunks.has(f))
+  const css = (manifest[src].css || []).filter((f) => !(manifest[entryKey]?.css || []).includes(f))
+  return { js, css }
+}
+
+function preloadTags(pathname) {
+  const { js, css } = routeAssets(pathname)
+  return [
+    ...css.map((f) => `<link rel="stylesheet" crossorigin href="/${f}">`),
+    ...js.map((f) => `<link rel="modulepreload" crossorigin href="/${f}">`),
+  ].join('\n    ')
+}
+
 const esc = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;')
 
 function buildLdJson(pathname, seo) {
@@ -56,12 +103,16 @@ function buildLdJson(pathname, seo) {
     '@context': 'https://schema.org',
     '@graph': [
       {
-        '@type': 'WebApplication',
+        // WebApplication is schema.org's subtype of SoftwareApplication; both
+        // are listed so parsers that only know the parent still match.
+        '@type': ['WebApplication', 'SoftwareApplication'],
         name: seo.heading || seo.title,
         url,
         description: seo.description,
         applicationCategory: 'DeveloperApplication',
         operatingSystem: 'Any',
+        browserRequirements: 'Requires JavaScript. Runs entirely in the browser.',
+        isAccessibleForFree: true,
         offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
         author: { '@type': 'Person', name: 'Sourabh Kumar', url: `${SITE_ORIGIN}/about/` },
       },
@@ -318,7 +369,7 @@ function footerHtml(pathname, seo) {
       .join('')}</ul></div>`
   }).join('')
 
-  return `<footer class="bd mt-2 border-t px-4 py-8 sm:px-6"><div class="mx-auto max-w-4xl"><h2 class="t-main text-sm font-semibold">${esc(seo.heading || seo.title)}</h2><p class="t-muted mt-2 max-w-3xl text-sm leading-relaxed">${esc(seo.blurb || seo.description)}</p><details class="mt-5"><summary class="bd t-muted inline-flex cursor-pointer items-center gap-1.5 rounded-lg border px-2.5 py-1.5 text-xs font-medium">All ${
+  return `<footer class="bd mt-2 border-t px-4 py-8 sm:px-6"><div class="mx-auto max-w-4xl"><h2 class="t-main text-sm font-semibold">${esc(seo.footerHeading || seo.heading || seo.title)}</h2><p class="t-muted mt-2 max-w-3xl text-sm leading-relaxed">${esc(seo.blurb || seo.description)}</p><details class="mt-5"><summary class="bd t-muted inline-flex cursor-pointer items-center gap-1.5 rounded-lg border px-2.5 py-1.5 text-xs font-medium">All ${
     NAV.length - 1
   } tools</summary><nav aria-label="All tools" class="mt-4 grid grid-cols-2 gap-x-6 gap-y-5 sm:grid-cols-3 lg:grid-cols-4">${groups}</nav></details><p class="t-muted mt-6 text-xs">Free · no sign-up · nothing you paste leaves your browser · <a href="/" class="inline-flex min-h-[36px] items-center underline-offset-2">all tools</a> · <a href="/privacy/" class="inline-flex min-h-[36px] items-center underline-offset-2">privacy</a> · <a href="/about/" class="inline-flex min-h-[36px] items-center underline-offset-2">about this project</a> · <a href="mailto:hello@devpocket.in?subject=DevPocket%20feedback" class="inline-flex min-h-[36px] items-center underline-offset-2">contact</a></p></div></footer>`
 }
@@ -385,6 +436,10 @@ function render(pathname, seo, { noindex = false } = {}) {
 
   html = replaceRoot(html, body)
 
+  const preloads = preloadTags(pathname)
+  if (preloads) html = html.replace('</head>', `    ${preloads}
+  </head>`)
+
   return html
 }
 
@@ -442,16 +497,6 @@ for (const [from, to] of Object.entries(REDIRECTS)) {
 // SEO copy printed above the fold, whichever is newer.
 const buildDate = new Date().toISOString().slice(0, 10)
 
-// Route -> page module, parsed out of App.jsx's LOADERS table so adding a tool
-// there can't leave a stale mapping here.
-const appSrc = readFileSync(join(root, 'src/App.jsx'), 'utf8')
-const ROUTE_SOURCE = { '/': 'src/pages/Home.jsx' }
-for (const [, route, mod] of appSrc.matchAll(
-  /'(\/[^']*)':\s*\(\)\s*=>\s*import\('\.\/([^']+)'\)/g
-)) {
-  ROUTE_SOURCE[route] = `src/${mod}.jsx`
-}
-
 // Returns a YYYY-MM-DD date, or null when git can't answer — an unbuilt
 // checkout, a tarball, or a shallow CI clone that doesn't reach the commit.
 function gitDate(args) {
@@ -508,4 +553,107 @@ writeFileSync(
   `User-agent: *\nAllow: /\n\nSitemap: ${SITE_ORIGIN}/sitemap.xml\n`
 )
 
-console.log(`✓ prerendered ${routes.length} routes + sitemap.xml, robots.txt, 404.html`)
+
+// --- Service worker -----------------------------------------------------
+// Offline support without a plugin: every page's HTML, the app shell and each
+// tool's own chunks are precached on install, so once a tool has been opened
+// with a connection it keeps working without one. Lazily loaded extras (the
+// Mermaid renderer and its diagram types) are cached the first time they are
+// used. The cache name is a hash of the precached files, so a deploy installs
+// a fresh cache and drops the old one.
+const precacheFiles = new Set(['/', '/404.html', '/site.webmanifest', '/favicon.svg', '/favicon.ico', '/icon-192.png', '/icon-512.png', '/apple-touch-icon.png'])
+for (const p of routes) if (p !== '/') precacheFiles.add(hrefFor(p))
+for (const f of shellChunks) precacheFiles.add(`/${f}`)
+for (const f of manifest?.[entryKey]?.css || []) precacheFiles.add(`/${f}`)
+for (const p of routes) {
+  const { js, css } = routeAssets(p)
+  for (const f of [...js, ...css]) precacheFiles.add(`/${f}`)
+}
+// Workers are chunks too, referenced by URL rather than import.
+for (const f of readdirSync(join(dist, 'assets'))) if (/Worker-[\w-]+\.js$/.test(f)) precacheFiles.add(`/assets/${f}`)
+
+const fileFor = (url) => join(dist, url === '/' ? 'index.html' : url.endsWith('/') ? `${url.slice(1)}index.html` : url.slice(1))
+const hash = createHash('sha256')
+const precache = [...precacheFiles].filter((u) => existsSync(fileFor(u))).sort()
+for (const u of precache) hash.update(u).update(readFileSync(fileFor(u)))
+const version = hash.digest('hex').slice(0, 12)
+
+writeFileSync(
+  join(dist, 'sw.js'),
+  `/* DevPocket service worker — generated by scripts/prerender.mjs. */
+const CACHE = 'devpocket-${version}'
+const PRECACHE = ${JSON.stringify(precache)}
+
+self.addEventListener('install', (event) => {
+  event.waitUntil(caches.open(CACHE).then((cache) => cache.addAll(PRECACHE)).then(() => self.skipWaiting()))
+})
+
+self.addEventListener('activate', (event) => {
+  event.waitUntil(
+    caches
+      .keys()
+      .then((keys) => Promise.all(keys.filter((k) => k.startsWith('devpocket-') && k !== CACHE).map((k) => caches.delete(k))))
+      .then(() => self.clients.claim())
+  )
+})
+
+// Pages: network first so a deploy shows up straight away, cache when offline.
+async function page(request) {
+  const cache = await caches.open(CACHE)
+  try {
+    const response = await fetch(request)
+    if (response.ok) cache.put(request, response.clone())
+    return response
+  } catch {
+    const url = new URL(request.url)
+    const withSlash = url.pathname.endsWith('/') ? url.pathname : url.pathname + '/'
+    return (
+      (await cache.match(request, { ignoreSearch: true })) ||
+      (await cache.match(withSlash)) ||
+      (await cache.match('/404.html')) ||
+      Response.error()
+    )
+  }
+}
+
+// Hashed assets never change under the same name: cache first, forever.
+async function asset(request) {
+  const cache = await caches.open(CACHE)
+  const hit = await cache.match(request)
+  if (hit) return hit
+  const response = await fetch(request)
+  if (response.ok) cache.put(request, response.clone())
+  return response
+}
+
+// Everything else from this origin (icons, manifest): serve cached, refresh behind.
+async function staleWhileRevalidate(request, cacheName = CACHE) {
+  const cache = await caches.open(cacheName)
+  const hit = await cache.match(request)
+  const refresh = fetch(request)
+    .then((response) => {
+      if (response.ok || response.type === 'opaque') cache.put(request, response.clone())
+      return response
+    })
+    .catch(() => hit)
+  return hit || refresh
+}
+
+self.addEventListener('fetch', (event) => {
+  const { request } = event
+  if (request.method !== 'GET') return
+  const url = new URL(request.url)
+  if (url.origin === self.location.origin) {
+    if (request.mode === 'navigate') return event.respondWith(page(request))
+    if (url.pathname.startsWith('/assets/')) return event.respondWith(asset(request))
+    return event.respondWith(staleWhileRevalidate(request))
+  }
+  // The Inter webfont, so the offline app looks like the online one.
+  if (url.hostname === 'fonts.googleapis.com' || url.hostname === 'fonts.gstatic.com') {
+    return event.respondWith(staleWhileRevalidate(request, 'devpocket-fonts'))
+  }
+})
+`
+)
+
+console.log(`✓ prerendered ${routes.length} routes + sitemap.xml, robots.txt, 404.html, sw.js (${precache.length} files precached)`)

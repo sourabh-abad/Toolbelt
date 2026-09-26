@@ -4,6 +4,7 @@ import { base64UrlDecode } from '../lib/utils'
 import { useToast } from '../lib/toast'
 import { Panel, CopyButton, TextArea, ErrorBanner, OutputBlock, PageHeader, StatRow, Button } from '../components/ui'
 import CodeViewer from '../components/CodeViewer'
+import { formatInstant } from '../lib/format'
 
 const SAMPLE_JWT =
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkFkYSBMb3ZlbGFjZSIsImlhdCI6MTcwMDAwMDAwMCwiZXhwIjoxNzk5OTk5OTk5fQ.dQw4w9WgXcQ-dummySignature'
@@ -179,7 +180,7 @@ export default function JwtValidatorTool() {
                   {Object.entries(DATE_CLAIMS)
                     .filter(([f]) => result.payload?.[f])
                     .map(([f, label]) => (
-                      <StatRow key={f} label={`${label} (${f})`} value={new Date(result.payload[f] * 1000).toLocaleString()} />
+                      <StatRow key={f} label={`${label} (${f})`} value={formatInstant(new Date(result.payload[f] * 1000))} />
                     ))}
                 </div>
               )}

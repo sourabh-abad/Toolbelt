@@ -5,6 +5,7 @@ import { useToast } from '../lib/toast'
 import CodeViewer from '../components/CodeViewer'
 import CodeEditor from '../components/CodeEditor'
 import { Panel, Button, CopyButton, ErrorBanner, PageHeader, Checkbox } from '../components/ui'
+import { plural } from '../lib/format'
 
 const A = `{
   "name": "service-a",
@@ -91,7 +92,7 @@ export default function JsonMerge() {
 
         <Panel
           title="Merged"
-          description={output ? `${output.split('\n').length} lines` : undefined}
+          description={output ? plural(output.split('\n').length, 'line') : undefined}
           actions={<CopyButton text={output} onCopied={() => toast('Copied to clipboard')} />}
         >
           <CodeViewer code={output} language="json" placeholder="Paste two documents above to see the merged result." />

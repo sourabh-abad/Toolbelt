@@ -6,6 +6,7 @@ import SplitPane from '../components/SplitPane'
 import CodeViewer from '../components/CodeViewer'
 import CodeEditor from './CodeEditor'
 import { Panel, Button, CopyButton, ErrorBanner, PageHeader } from '../components/ui'
+import { plural } from '../lib/format'
 
 const SAMPLE = `{
   "id": 1042,
@@ -99,7 +100,7 @@ export default function JsonToolPage({
                 busy
                   ? 'Processing a large payload…'
                   : output
-                  ? `${output.split('\n').length} lines · updates as you type`
+                  ? `${plural(output.split('\n').length, 'line')} · updates as you type`
                   : undefined
               }
               actions={<CopyButton text={output} onCopied={() => toast('Copied to clipboard')} />}

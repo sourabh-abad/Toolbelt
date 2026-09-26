@@ -10,6 +10,8 @@ export const SEO = {
     description:
       'Format JSON, decode JWTs, generate UUIDs, test regex and convert timestamps — free developer tools that run in your browser. No signup, no uploads.',
     heading: 'Developer tools that stay in your browser',
+    // The homepage h1 already says `heading`; the footer needs its own line.
+    footerHeading: 'What DevPocket is',
     aboutLabel: 'DevPocket',
     blurb:
       'DevPocket is a toolbox of everyday developer utilities that run entirely in your browser — JSON, JWTs, UUIDs, regex, timestamps and more. Nothing you paste is uploaded to a server, so you can safely work with production payloads, tokens and customer data.',
@@ -31,7 +33,7 @@ export const SEO = {
       },
       {
         q: 'Does it work offline?',
-        a: 'Once a page has loaded, yes — the tools need no network. Navigating to a tool you have not opened before will fetch its code chunk, so open it once while online if you want it available later.',
+        a: 'Yes. After your first visit a service worker keeps a copy of every tool\u2019s code in your browser, so DevPocket opens and works with no connection at all. You can also install it as an app from your browser\u2019s address bar. The cache holds the site\u2019s own files only, never anything you type.',
       },
       {
         q: 'Is there a sign-up, a paid tier or a usage limit?',

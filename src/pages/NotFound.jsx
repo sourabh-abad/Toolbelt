@@ -2,6 +2,7 @@ import { Link } from '../components/AppLink'
 import { Compass, ArrowRight } from 'lucide-react'
 import { navItems, ACCENTS } from '../lib/nav'
 import { PageHeader } from '../components/ui'
+import { shortcutLabel } from '../lib/platform'
 
 export default function NotFound() {
   const tools = navItems.filter((n) => n.to !== '/').slice(0, 6)
@@ -14,7 +15,7 @@ export default function NotFound() {
         <p className="t-main text-5xl font-bold tracking-tight">404</p>
         <p className="t-muted mx-auto mt-3 max-w-md text-sm leading-relaxed">
           The page you were looking for either moved or never existed. Everything DevPocket can do is one
-          click away below — or press <kbd className="bd rounded border px-1.5 py-0.5 text-[11px]">⌘K</kbd> to search.
+          click away below — or press <kbd className="bd rounded border px-1.5 py-0.5 text-[11px]">{shortcutLabel('K')}</kbd> to search.
         </p>
 
         <Link

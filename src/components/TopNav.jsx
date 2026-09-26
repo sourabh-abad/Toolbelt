@@ -7,6 +7,7 @@ import { normalizePath } from '../lib/seo'
 import { useTheme } from '../lib/theme'
 import Logo from './Logo'
 import { PROFILE } from '../lib/profile'
+import { isApplePlatform } from '../lib/platform'
 
 /**
  * Horizontal menu bar with one dropdown per group. Replaces the sidebar,
@@ -18,6 +19,7 @@ export default function TopNav({ onOpenPalette, onPrefetch }) {
   const { theme, toggle } = useTheme()
   const location = useLocation()
   const navRef = useRef(null)
+  const apple = isApplePlatform()
   const closeTimer = useRef(null)
 
   useEffect(() => {
@@ -77,7 +79,7 @@ export default function TopNav({ onOpenPalette, onPrefetch }) {
         </Link>
 
         {/* Desktop menu bar */}
-        <nav aria-label="Tools" className="ml-3 hidden items-center gap-0.5 lg:flex">
+        <nav aria-label="Tools" className="ml-1 hidden items-center gap-0.5 lg:flex xl:ml-3">
           {NAV_GROUPS.map((group) => {
             const items = navItems.filter((n) => n.group === group)
             const isOpen = openMenu === group
@@ -88,7 +90,7 @@ export default function TopNav({ onOpenPalette, onPrefetch }) {
                   onClick={() => setOpenMenu(isOpen ? null : group)}
                   aria-expanded={isOpen}
                   aria-haspopup="true"
-                  className={`flex items-center gap-1 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
+                  className={`flex items-center gap-1 rounded-lg px-2 py-2 text-sm font-medium whitespace-nowrap transition-colors xl:px-3 ${
                     isOpen || groupHasActive(group) ? 'sunken t-main' : 't-muted hover:t-main'
                   }`}
                 >
@@ -138,13 +140,21 @@ export default function TopNav({ onOpenPalette, onPrefetch }) {
           <button
             onClick={onOpenPalette}
             type="button"
-            aria-label="Search tools (Command K)"
+            aria-label={`Search tools (${apple ? 'Command' : 'Control'} K)`}
+            aria-keyshortcuts={apple ? 'Meta+K' : 'Control+K'}
             className="field hover-surface t-muted flex items-center gap-2 rounded-lg border px-2.5 py-1.5 text-sm transition-colors"
           >
             <Search className="h-3.5 w-3.5" aria-hidden="true" />
-            <span className="hidden sm:inline">Search tools…</span>
-            <kbd className="bd hidden items-center gap-0.5 rounded border px-1.5 py-0.5 text-[10px] sm:flex">
-              <Command className="h-2.5 w-2.5" aria-hidden="true" />K
+            {/* Between lg and xl the menu bar needs the room: icon only. */}
+            <span className="hidden whitespace-nowrap sm:inline lg:hidden xl:inline">Search tools…</span>
+            <kbd className="bd hidden items-center gap-0.5 rounded border px-1.5 py-0.5 text-[10px] whitespace-nowrap sm:flex lg:hidden xl:flex">
+              {apple ? (
+                <>
+                  <Command className="h-2.5 w-2.5" aria-hidden="true" />K
+                </>
+              ) : (
+                'Ctrl K'
+              )}
             </kbd>
           </button>
 
@@ -159,7 +169,7 @@ export default function TopNav({ onOpenPalette, onPrefetch }) {
 
           <Link
             to="/privacy"
-            className="t-muted hover:t-main hidden shrink-0 text-sm font-medium lg:block"
+            className="t-muted hover:t-main hidden shrink-0 text-sm font-medium xl:block"
           >
             Privacy
           </Link>

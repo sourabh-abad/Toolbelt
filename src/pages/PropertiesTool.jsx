@@ -265,9 +265,9 @@ export default function PropertiesTool() {
                     <option value="desc">Keys Z → A</option>
                   </Select>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex min-w-0 max-w-full items-center gap-2">
                   <label className="t-muted text-xs">Duplicates</label>
-                  <Select value={dedupe} onChange={(e) => setDedupe(e.target.value)}>
+                  <Select value={dedupe} onChange={(e) => setDedupe(e.target.value)} className="min-w-0 max-w-full">
                     <option value="keep">Keep all</option>
                     <option value="last">Keep the last (what loads)</option>
                     <option value="first">Keep the first</option>

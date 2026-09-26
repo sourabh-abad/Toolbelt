@@ -39,7 +39,7 @@ const VIEWS = [
 const STATUS = {
   different: { label: 'differs', cell: 'bg-amber-500/5', tag: 'bg-amber-500/10 text-amber-600 dark:text-amber-400' },
   'only-a': { label: 'only in A', cell: 'bg-rose-500/5', tag: 'bg-rose-500/10 text-rose-600 dark:text-rose-400' },
-  'only-b': { label: 'only in B', cell: 'bg-emerald-500/5', tag: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400' },
+  'only-b': { label: 'only in B', cell: 'bg-emerald-500/5', tag: 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-400' },
   same: { label: 'same', cell: '', tag: 'sunken t-faint' },
 }
 

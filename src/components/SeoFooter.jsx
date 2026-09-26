@@ -28,7 +28,7 @@ export default function SeoFooter() {
   return (
     <footer className="bd mt-2 border-t px-4 py-8 sm:px-6">
       <div className="mx-auto max-w-4xl">
-        <h2 className="t-main text-sm font-semibold">{seo.heading}</h2>
+        <h2 className="t-main text-sm font-semibold">{seo.footerHeading || seo.heading}</h2>
         <p className="t-muted mt-2 max-w-3xl text-sm leading-relaxed">{seo.blurb}</p>
 
         <details className="group mt-5">

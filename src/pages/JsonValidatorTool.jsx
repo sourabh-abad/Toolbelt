@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from 'react'
+import { useEffect, useId, useMemo, useRef, useState } from 'react'
 import {
   ShieldCheck,
   Wand2,
@@ -14,9 +14,14 @@ import {
   ChevronsUp,
   Search as SearchIcon,
   ArrowUpDown,
+  Info,
+  Loader2,
+  LocateFixed,
 } from 'lucide-react'
-import { jsonParseErrorLocation, searchJsonValue } from '../lib/utils'
-import { sortKeys, analyse, findDuplicateKeys } from '../lib/jsonops'
+import { searchJsonValue } from '../lib/utils'
+import { isLossless } from '../lib/jsonparse'
+import { useJsonAnalysis } from '../lib/useJsonAnalysis'
+import { plural } from '../lib/format'
 import { useToast } from '../lib/toast'
 import { useDebounced } from '../lib/useDebounced'
 import SplitPane from '../components/SplitPane'
@@ -33,31 +38,39 @@ const SAMPLE = `{
   "signedUpAt": "2024-01-15T09:30:00Z"
 }`
 
-const typeOf = (v) => (v === null ? 'null' : Array.isArray(v) ? 'array' : typeof v)
+const typeOf = (v) => (v === null ? 'null' : Array.isArray(v) ? 'array' : isLossless(v) ? 'number' : typeof v)
+// Documents bigger than this open with only the top level expanded, so the
+// tree is built for what is on screen rather than for every node up front.
+const AUTO_COLLAPSE_NODES = 5000
+// Past this size the input is shown in a virtualised read-only view instead of
+// the textarea. A browser textarea lays out every line of its value, and for a
+// couple of megabytes that alone blocks the page for a second or more.
+const LARGE_VIEW = 300_000
 const TYPE_TONE = { string: 'tok-str', number: 'tok-num', boolean: 'tok-bool', null: 'tok-null' }
 const ROW_HEIGHT = 24
 const OVERSCAN = 12
 
-// Flattens the visible part of the tree into a linear row list, honouring
-// which branches are collapsed — the same windowing trick as the standalone
-// tree viewer, kept local so this page has no cross-tool coupling.
-function buildRows(value, collapsed) {
+// Flattens the visible part of the tree into a linear row list, descending
+// only into open branches — a collapsed subtree costs nothing to build.
+function buildRows(value, isOpen) {
   const rows = []
   const walk = (name, val, depth, path) => {
     const type = typeOf(val)
     const branch = type === 'object' || type === 'array'
-    const entries = branch ? (type === 'array' ? val.map((v, i) => [i, v]) : Object.entries(val)) : null
-    rows.push({ path, name, type, value: val, depth, branch, childCount: entries?.length ?? 0 })
-    if (branch && !collapsed.has(path)) {
-      for (const [k, v] of entries) walk(String(k), v, depth + 1, `${path}.${k}`)
+    const childCount = branch ? (type === 'array' ? val.length : Object.keys(val).length) : 0
+    const open = branch && isOpen(path, depth)
+    rows.push({ path, name, type, value: val, depth, branch, childCount, open })
+    if (open) {
+      if (type === 'array') val.forEach((v, i) => walk(String(i), v, depth + 1, `${path}.${i}`))
+      else for (const k of Object.keys(val)) walk(k, val[k], depth + 1, `${path}.${k}`)
     }
   }
   walk('$', value, 0, '$')
   return rows
 }
 
-function TreeRow({ row, collapsed, onToggle }) {
-  const isOpen = !collapsed.has(row.path)
+function TreeRow({ row, onToggle }) {
+  const isOpen = row.open
   const indent = row.depth * 16 + 6
 
   if (!row.branch) {
@@ -87,7 +100,7 @@ function TreeRow({ row, collapsed, onToggle }) {
   )
 }
 
-function VirtualTree({ rows, collapsed, onToggle, height = 380 }) {
+function VirtualTree({ rows, onToggle, height = 380 }) {
   const [scrollTop, setScrollTop] = useState(0)
   const first = Math.max(0, Math.floor(scrollTop / ROW_HEIGHT) - OVERSCAN)
   const visibleCount = Math.ceil(height / ROW_HEIGHT) + OVERSCAN * 2
@@ -98,7 +111,7 @@ function VirtualTree({ rows, collapsed, onToggle, height = 380 }) {
       <div style={{ height: rows.length * ROW_HEIGHT, position: 'relative' }}>
         <div style={{ position: 'absolute', top: first * ROW_HEIGHT, left: 0, right: 0 }}>
           {slice.map((row) => (
-            <TreeRow key={row.path} row={row} collapsed={collapsed} onToggle={onToggle} />
+            <TreeRow key={row.path} row={row} onToggle={onToggle} />
           ))}
         </div>
       </div>
@@ -112,65 +125,112 @@ export default function JsonValidatorTool() {
   const [outputMode, setOutputMode] = useState('pretty') // 'pretty' | 'minified'
   const [indent, setIndent] = useState('2')
   const [sortOn, setSortOn] = useState(false)
-  const [collapsed, setCollapsed] = useState(() => new Set())
+  // Tree state: a base mode plus the branches the user flipped from it.
+  const [tree, setTree] = useState(() => ({ mode: 'auto', toggled: new Set() }))
   const [search, setSearch] = useState('')
   const [matchCase, setMatchCase] = useState(false)
   const [inKeys, setInKeys] = useState(true)
   const [inValues, setInValues] = useState(true)
+  // Opt-in: put a large document in the textarea anyway, to edit it by hand.
+  const [editLarge, setEditLarge] = useState(false)
   const fileInputRef = useRef(null)
+  const editorRef = useRef(null)
+  // How the input last changed. Pasting, uploading or loading jumps the editor
+  // to the error; typing does not, because the error is usually at the caret.
+  const changeKind = useRef('load')
+  const pasted = useRef(false)
   const toast = useToast()
   const debouncedSearch = useDebounced(search, 180)
+  const errorId = useId()
 
-  // `ok` distinguishes "no input yet" from "parsed successfully to the value
-  // `null`" — a top-level JSON document can legitimately just be `null`.
-  const { ok, parsed, error, errLoc, duplicates } = useMemo(() => {
-    if (!input.trim()) return { ok: false, parsed: undefined, error: '', errLoc: null, duplicates: [] }
-    try {
-      const value = JSON.parse(input)
-      return { ok: true, parsed: value, error: '', errLoc: null, duplicates: findDuplicateKeys(input) }
-    } catch (e) {
-      return { ok: false, parsed: undefined, error: e.message, errLoc: jsonParseErrorLocation(input, e.message), duplicates: [] }
-    }
+  const analysis = useJsonAnalysis(input, { sort: sortOn, mode: outputMode, indent })
+  const { ok, value: shaped, error, bomRemoved, bigNumbers, duplicates, output: outputRaw, stats, busy } = analysis
+
+  // The parser works on the text with any BOM removed; the editor still holds
+  // it, so positions on line 1 are one character further along there.
+  const shift = bomRemoved ? 1 : 0
+  const editorErr = useMemo(
+    () => (error ? { line: error.line, col: error.col + (error.line === 1 ? shift : 0), pos: error.pos + shift } : null),
+    [error, shift]
+  )
+
+  const { bytes, lineCount } = useMemo(() => {
+    if (!input.trim()) return { bytes: 0, lineCount: 0 }
+    let lines = 1
+    for (let k = input.indexOf('\n'); k !== -1; k = input.indexOf('\n', k + 1)) lines++
+    return { bytes: new TextEncoder().encode(input).length, lineCount: lines }
   }, [input])
 
-  const shaped = useMemo(() => (ok && sortOn ? sortKeys(parsed) : parsed), [ok, parsed, sortOn])
-
-  const outputRaw = useMemo(() => {
-    if (!ok) return ''
-    if (outputMode === 'minified') return JSON.stringify(shaped)
-    return JSON.stringify(shaped, null, indent === 'tab' ? '\t' : Number(indent))
-  }, [ok, shaped, outputMode, indent])
-
-  const stats = useMemo(() => (ok ? analyse(shaped) : null), [ok, shaped])
-  const bytes = useMemo(() => (input.trim() ? new TextEncoder().encode(input).length : 0), [input])
-
-  const rows = useMemo(() => (ok ? buildRows(shaped, collapsed) : []), [ok, shaped, collapsed])
+  const autoDepth = stats && stats.totalNodes > AUTO_COLLAPSE_NODES ? 1 : Infinity
+  const rows = useMemo(() => {
+    if (!ok || view !== 'tree') return []
+    const isOpen = (path, depth) => {
+      const base = tree.mode === 'all' ? true : tree.mode === 'none' ? depth === 0 : depth < autoDepth
+      return base !== tree.toggled.has(path)
+    }
+    return buildRows(shaped, isOpen)
+  }, [ok, view, shaped, tree, autoDepth])
 
   const searchResults = useMemo(() => {
     if (!debouncedSearch || !ok) return []
     return searchJsonValue(shaped, debouncedSearch, { matchCase, inKeys, inValues })
   }, [debouncedSearch, ok, shaped, matchCase, inKeys, inValues])
 
+  // Jump to a new error after a paste, upload or sample load. Not while
+  // typing: the error is then almost always right at the caret.
+  useEffect(() => {
+    if (!editorErr || changeKind.current === 'type') return
+    editorRef.current?.reveal(editorErr.pos, editorErr.line)
+  }, [editorErr])
+
   const toggleRow = (path) =>
-    setCollapsed((prev) => {
-      const next = new Set(prev)
-      if (next.has(path)) next.delete(path)
-      else next.add(path)
-      return next
+    setTree((prev) => {
+      const toggled = new Set(prev.toggled)
+      if (toggled.has(path)) toggled.delete(path)
+      else toggled.add(path)
+      return { ...prev, toggled }
     })
 
-  const expandAll = () => setCollapsed(new Set())
-  const collapseAll = () => {
-    if (!ok) return
-    setCollapsed(new Set(buildRows(shaped, new Set()).filter((r) => r.branch && r.depth > 0).map((r) => r.path)))
+  const expandAll = () => setTree({ mode: 'all', toggled: new Set() })
+  const collapseAll = () => setTree({ mode: 'none', toggled: new Set() })
+
+  function replaceInput(text) {
+    changeKind.current = 'load'
+    setEditLarge(false)
+    setInput(text)
+  }
+
+  const largeView = input.length > LARGE_VIEW && !editLarge
+
+  // Intercept a paste that would make the input large, so the browser never
+  // lays the text out inside the textarea.
+  function handlePaste(e) {
+    const text = e.clipboardData?.getData('text')
+    const ta = e.currentTarget
+    if (text && input.length - (ta.selectionEnd - ta.selectionStart) + text.length > LARGE_VIEW) {
+      e.preventDefault()
+      replaceInput(input.slice(0, ta.selectionStart) + text + input.slice(ta.selectionEnd))
+      return
+    }
+    pasted.current = true
+  }
+
+  function handleEditorChange(e) {
+    changeKind.current = pasted.current ? 'paste' : 'type'
+    pasted.current = false
+    setInput(e.target.value)
+  }
+
+  function goToError() {
+    if (editorErr) editorRef.current?.reveal(editorErr.pos, editorErr.line, { focus: true })
   }
 
   function loadSample() {
-    setInput(SAMPLE)
+    replaceInput(SAMPLE)
   }
 
   function clearAll() {
-    setInput('')
+    replaceInput('')
   }
 
   function handleFormat() {
@@ -211,13 +271,15 @@ export default function JsonValidatorTool() {
     if (!file) return
     const reader = new FileReader()
     reader.onload = () => {
-      setInput(String(reader.result ?? ''))
+      replaceInput(String(reader.result ?? ''))
       toast(`Loaded ${file.name}`)
     }
     reader.onerror = () => toast('Could not read file', 'error')
     reader.readAsText(file)
     e.target.value = ''
   }
+
+  const sizeLabel = bytes < 1024 ? `${bytes} B` : bytes < 1024 * 1024 ? `${(bytes / 1024).toFixed(1)} KB` : `${(bytes / 1024 / 1024).toFixed(2)} MB`
 
   return (
     <div>
@@ -233,7 +295,7 @@ export default function JsonValidatorTool() {
           left={
             <Panel
               title="Input"
-              description={input.trim() ? `${bytes < 1024 ? `${bytes} B` : `${(bytes / 1024).toFixed(1)} KB`} · ${input.split('\n').length} lines` : undefined}
+              description={input.trim() ? `${sizeLabel} · ${plural(lineCount, 'line')}` : undefined}
               actions={
                 <>
                   <input ref={fileInputRef} type="file" accept=".json,application/json,text/plain" onChange={handleFileChange} className="hidden" />
@@ -245,14 +307,42 @@ export default function JsonValidatorTool() {
                 </>
               }
             >
+              {largeView ? (
+                <div>
+                  <CodeViewer
+                    code={input}
+                    language="json"
+                    maxHeight="560px"
+                    animate={false}
+                    handleRef={editorRef}
+                    markLine={busy ? null : editorErr?.line}
+                    markCol={busy ? null : editorErr?.col}
+                    ariaLabel="JSON input (read-only preview of a large document)"
+                  />
+                  <div className="t-muted mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs">
+                    <span>Large document — shown read-only so the page stays responsive.</span>
+                    <button type="button" onClick={() => setEditLarge(true)} className="font-medium text-emerald-600 underline-offset-2 hover:underline dark:text-emerald-400">
+                      Edit as text (may be slow)
+                    </button>
+                  </div>
+                </div>
+              ) : (
               <CodeEditor
-              language="json"
-              rows={24}
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              placeholder="Paste or type JSON here…"
-              ariaLabel="JSON input"
-            />
+                language="json"
+                rows={24}
+                value={input}
+                onChange={handleEditorChange}
+                onPaste={handlePaste}
+                placeholder="Paste or type JSON here…"
+                ariaLabel="JSON input"
+                handleRef={editorRef}
+                errorLine={busy ? null : editorErr?.line}
+                errorCol={busy ? null : editorErr?.col}
+                aria-invalid={error && !busy ? true : undefined}
+                aria-describedby={error && !busy ? errorId : undefined}
+                aria-errormessage={error && !busy ? errorId : undefined}
+              />
+              )}
 
               <div className="mt-3 flex flex-wrap items-center gap-2">
                 <Button onClick={handleFormat} type="button"><Wand2 className="h-3.5 w-3.5" />Format</Button>
@@ -262,36 +352,77 @@ export default function JsonValidatorTool() {
                   onClick={() => setSortOn((v) => !v)}
                   aria-pressed={sortOn}
                   className={`inline-flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-sm font-medium transition-colors ${
-                    sortOn ? 'border-emerald-500/30 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400' : 'field hover-surface t-muted'
+                    sortOn ? 'border-emerald-500/30 bg-emerald-500/10 text-emerald-700 dark:text-emerald-400' : 'field hover-surface t-muted'
                   }`}
                   title="Sort object keys alphabetically in the output"
                 >
                   <ArrowUpDown className="h-3.5 w-3.5" />Sort keys
                 </button>
-                <Select value={indent} onChange={(e) => setIndent(e.target.value)} className="w-auto" title="Indent size">
+                <Select value={indent} onChange={(e) => setIndent(e.target.value)} className="w-auto" title="Indent size" aria-label="Indent size">
                   <option value="2">2 spaces</option>
                   <option value="4">4 spaces</option>
                   <option value="tab">Tabs</option>
                 </Select>
               </div>
 
-              <div className="mt-3 space-y-2">
-                {error ? (
-                  <ErrorBanner>
-                    Invalid JSON — {error}
-                    {errLoc ? ` (line ${errLoc.line}, column ${errLoc.col})` : ''}
-                  </ErrorBanner>
+              {/* Announced politely once parsing settles, not on every keystroke. */}
+              <div className="mt-3 space-y-2" aria-live="polite">
+                {busy ? (
+                  <div className="bd sunken t-muted mono flex items-center gap-2 rounded-xl border px-3 py-2 text-sm">
+                    <Loader2 className="h-4 w-4 shrink-0 animate-spin" aria-hidden="true" />Processing…
+                  </div>
+                ) : error ? (
+                  <div id={errorId} className="mono rounded-xl border border-rose-500/30 bg-rose-500/10 px-3 py-2 text-sm text-rose-600 dark:text-rose-300">
+                    <div className="flex flex-wrap items-start justify-between gap-2">
+                      <span className="min-w-0">Invalid JSON — {error.message}</span>
+                      <button
+                        type="button"
+                        onClick={goToError}
+                        className="inline-flex shrink-0 items-center gap-1 rounded-md px-1.5 py-0.5 text-xs font-medium underline-offset-2 hover:underline"
+                      >
+                        <LocateFixed className="h-3.5 w-3.5" aria-hidden="true" />Go to line {error.line}
+                      </button>
+                    </div>
+                    {error.tip && <p className="mt-1 text-xs opacity-80">{error.tip}</p>}
+                  </div>
                 ) : ok ? (
-                  <div className="mono flex items-center gap-2 rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-3 py-2 text-sm text-emerald-600 dark:text-emerald-400">
+                  <div className="mono flex items-center gap-2 rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-3 py-2 text-sm text-emerald-700 dark:text-emerald-400">
                     <CheckCircle2 className="h-4 w-4 shrink-0" />Valid JSON
                   </div>
                 ) : null}
 
-                {duplicates.length > 0 && (
+                {!busy && bomRemoved && (
+                  <div className="bd sunken t-muted flex items-center gap-2 rounded-xl border px-3 py-2 text-xs">
+                    <Info className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+                    BOM removed — the input started with an invisible byte-order mark (U+FEFF), which is not valid JSON. It was ignored.
+                  </div>
+                )}
+
+                {!busy && bigNumbers.length > 0 && (
                   <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-sm text-amber-700 dark:text-amber-400">
                     <div className="flex items-center gap-2 font-medium">
                       <AlertTriangle className="h-4 w-4 shrink-0" />
-                      {duplicates.length} duplicate key{duplicates.length === 1 ? '' : 's'} — the last value silently wins
+                      {plural(bigNumbers.length, 'number')} too large or precise for a JavaScript number
+                    </div>
+                    <p className="mt-1 text-xs opacity-90">
+                      The original digits are kept in the output here, but JSON.parse and many other parsers will round {bigNumbers.length === 1 ? 'it' : 'them'} (IDs above 9007199254740991 are the usual culprit). Consider sending such IDs as strings.
+                    </p>
+                    <ul className="mono mt-1.5 space-y-0.5 text-xs opacity-90">
+                      {bigNumbers.slice(0, 5).map((b, i) => (
+                        <li key={i}>
+                          <span className="tok-key">{b.label}</span> = {b.raw}
+                        </li>
+                      ))}
+                      {bigNumbers.length > 5 && <li className="t-faint">…and {bigNumbers.length - 5} more</li>}
+                    </ul>
+                  </div>
+                )}
+
+                {!busy && duplicates.length > 0 && (
+                  <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-sm text-amber-700 dark:text-amber-400">
+                    <div className="flex items-center gap-2 font-medium">
+                      <AlertTriangle className="h-4 w-4 shrink-0" />
+                      {plural(duplicates.length, 'duplicate key')} — the last value silently wins
                     </div>
                     <ul className="mono mt-1.5 space-y-0.5 text-xs opacity-90">
                       {duplicates.slice(0, 8).map((d, i) => (
@@ -310,9 +441,11 @@ export default function JsonValidatorTool() {
             <Panel
               title="Output"
               description={
-                stats
-                  ? `${stats.totalNodes} nodes · depth ${stats.maxDepth} · ${stats.uniqueKeys} unique keys`
-                  : undefined
+                busy
+                  ? 'Processing…'
+                  : stats
+                    ? `${plural(stats.totalNodes, 'node')} · depth ${stats.maxDepth} · ${plural(stats.uniqueKeys, 'unique key')}`
+                    : undefined
               }
               actions={
                 <>
@@ -331,20 +464,20 @@ export default function JsonValidatorTool() {
                 options={[{ value: 'code', label: 'Code' }, { value: 'tree', label: 'Tree' }]}
               />
 
-              <div className="mt-3">
+              <div className={`mt-3 transition-opacity ${busy ? 'opacity-60' : ''}`} aria-busy={busy || undefined}>
                 {view === 'code' ? (
-                  <CodeViewer code={outputRaw} language="json" placeholder="Paste valid JSON on the left — it formats here automatically." />
+                  <CodeViewer code={outputRaw} language="json" placeholder="Valid JSON will appear here, formatted." />
                 ) : rows.length ? (
                   <>
                     <div className="mb-2 flex justify-end gap-2">
                       <Button variant="ghost" type="button" onClick={expandAll}><ChevronsDown className="h-3.5 w-3.5" />Expand all</Button>
                       <Button variant="ghost" type="button" onClick={collapseAll}><ChevronsUp className="h-3.5 w-3.5" />Collapse all</Button>
                     </div>
-                    <VirtualTree rows={rows} collapsed={collapsed} onToggle={toggleRow} />
+                    <VirtualTree rows={rows} onToggle={toggleRow} />
                   </>
                 ) : (
                   <div className="bd sunken t-faint mono rounded-xl border border-dashed px-3 py-2.5 text-sm">
-                    Paste valid JSON on the left to explore it here.
+                    Valid JSON will appear here as a tree.
                   </div>
                 )}
               </div>
@@ -376,7 +509,7 @@ export default function JsonValidatorTool() {
             </div>
           </div>
 
-          {search && !ok && (
+          {search && !ok && !busy && (
             <div className="mt-3">
               <ErrorBanner>Fix the JSON above to enable search.</ErrorBanner>
             </div>

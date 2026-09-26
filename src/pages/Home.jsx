@@ -3,11 +3,12 @@ import { Keyboard, Lock, UserX, UploadCloud, Zap, Star, History } from 'lucide-r
 import { navItems, NAV_GROUPS, getRecent } from '../lib/nav'
 import { useFavorites } from '../lib/favorites'
 import ToolCard from '../components/ToolCard'
+import { shortcutLabel } from '../lib/platform'
 
 const BADGES = [
   { icon: Lock, label: '100% client-side' },
   { icon: UserX, label: 'No signup' },
-  { icon: UploadCloud, label: 'No unnecessary uploads' },
+  { icon: UploadCloud, label: 'No uploads' },
   { icon: Zap, label: 'Fast & private' },
 ]
 
@@ -52,7 +53,7 @@ export default function Home() {
 
         <div className="t-muted mt-4 hidden items-center gap-1.5 text-xs sm:flex">
           <Keyboard className="h-3.5 w-3.5" />
-          <kbd className="bd rounded border px-1.5 py-0.5">⌘K</kbd> to jump straight to a tool
+          <kbd className="bd rounded border px-1.5 py-0.5">{shortcutLabel('K')}</kbd> to jump straight to a tool
         </div>
       </div>
 

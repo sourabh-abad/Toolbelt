@@ -58,6 +58,8 @@ The build step (`scripts/prerender.mjs`) runs after Vite and emits:
 - **`sitemap.xml`** listing all 13 URLs.
 - **`robots.txt`** pointing at the sitemap.
 - **`404.html`** so deep links resolve on GitHub Pages.
+- **`<link rel="modulepreload">` tags** for each route's own chunks (read from `dist/.vite/manifest.json`), so a tool's code downloads alongside the app shell instead of after it.
+- **`sw.js`**, the service worker: every page's HTML, the shell and each tool's chunks are precached, so the site works offline and is installable. It caches the site's own files only. Its cache name is a hash of the precached files, so each deploy replaces the old cache.
 
 Copy for each route lives in one place: `src/lib/seo.js`. Edit a title or description there and both the static HTML and the in-app `<SeoFooter>` copy update together.
 

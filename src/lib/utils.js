@@ -1,3 +1,5 @@
+import { LosslessNumber } from './jsonparse.js'
+
 // Shared helpers used across the utility tool pages.
 
 export function escapeHtml(str) {
@@ -107,7 +109,7 @@ export function searchJsonValue(value, term, { matchCase = false, inKeys = true,
     return hay.includes(needle)
   }
   const walk = (val, path) => {
-    if (val !== null && typeof val === 'object') {
+    if (val !== null && typeof val === 'object' && !(val instanceof LosslessNumber)) {
       const entries = Array.isArray(val) ? val.map((v, i) => [i, v]) : Object.entries(val)
       for (const [key, child] of entries) {
         const childPath = Array.isArray(val) ? `${path}[${key}]` : path ? `${path}.${key}` : String(key)

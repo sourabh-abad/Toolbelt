@@ -13,6 +13,7 @@ import SplitPane from '../components/SplitPane'
 import CodeViewer from '../components/CodeViewer'
 import CodeEditor from '../components/CodeEditor'
 import { Panel, Button, CopyButton, Input, ErrorBanner, PageHeader, Checkbox, Tabs } from '../components/ui'
+import { plural } from '../lib/format'
 
 const SAMPLE_JSON = `{
   "id": 42,
@@ -175,7 +176,7 @@ export default function JsonXmlTool() {
           right={
             <Panel
               title="Output"
-              description={outputRaw ? `${outputRaw.split('\n').length} lines · formats as you paste` : undefined}
+              description={outputRaw ? `${plural(outputRaw.split('\n').length, 'line')} · formats as you paste` : undefined}
               actions={<CopyButton text={outputRaw} onCopied={() => toast('Copied to clipboard')} />}
             >
               <CodeViewer code={outputRaw} language={mode} placeholder={`Paste ${mode.toUpperCase()} on the left — it formats here automatically.`} />

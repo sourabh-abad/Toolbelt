@@ -295,7 +295,7 @@ function statusLine(check, summary) {
   if (!summary) return 'Valid YAML'
   const bits = [
     summary.documents === 1 ? '1 document' : `${summary.documents} documents`,
-    `${summary.keys} keys`,
+    `${summary.keys} key${summary.keys === 1 ? '' : 's'}`,
     `depth ${summary.depth}`,
   ]
   if (summary.comments) bits.push(`${summary.comments} comment${summary.comments === 1 ? '' : 's'}`)

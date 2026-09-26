@@ -1,6 +1,5 @@
 import { useEffect, useState, lazy, Suspense } from 'react'
 import { Routes, Route, useLocation, Navigate } from 'react-router-dom'
-import { Loader2 } from 'lucide-react'
 import { pushRecent, hrefFor } from './lib/nav'
 import { useSeo } from './lib/useSeo'
 import { normalizePath } from './lib/seo'
@@ -8,8 +7,11 @@ import SeoFooter from './components/SeoFooter'
 import ToolContentSections from './components/ToolContentSections'
 import TopNav from './components/TopNav'
 import Home from './pages/Home'
+// Imported eagerly: it is small, and a lazy chunk meant the first click on the
+// search button could land while the chunk was still downloading (or fail on a
+// stale chunk after a deploy), so the button just took focus and nothing opened.
+import CommandPalette from './components/CommandPalette'
 
-const CommandPalette = lazy(() => import('./components/CommandPalette'))
 
 // Route-level code splitting: heavy tools (sql-formatter, js-yaml, cronstrue)
 // load on demand instead of inflating the initial bundle.
@@ -96,11 +98,34 @@ const PasswordTool = lazy(LOADERS['/password'])
 const LoremTool = lazy(LOADERS['/lorem'])
 const NotFound = lazy(() => import('./pages/NotFound'))
 
+// Shown while a tool's chunk loads (the static HTML preloads it, so this is
+// usually a single frame). It has the page header and two panels in the
+// places the tool will draw them, so the page does not flash blank and then
+// jump when the tool arrives.
 function RouteFallback() {
+  const bar = 'sunken rounded-md animate-pulse'
   return (
-    <div className="flex h-full items-center justify-center" role="status" aria-live="polite">
-      <Loader2 className="t-faint h-5 w-5 animate-spin" aria-hidden="true" />
+    <div role="status" aria-live="polite">
       <span className="sr-only">Loading tool…</span>
+      <div className="bd flex items-center gap-3 border-b px-4 py-4 sm:px-6 sm:py-5" aria-hidden="true">
+        <div className={`h-10 w-10 shrink-0 rounded-xl ${bar}`} />
+        <div className="min-w-0 flex-1 space-y-2">
+          <div className={`h-4 w-48 max-w-full ${bar}`} />
+          <div className={`h-3 w-80 max-w-full ${bar}`} />
+        </div>
+      </div>
+      <div className="grid gap-4 p-4 sm:p-6 lg:grid-cols-2" aria-hidden="true">
+        {[0, 1].map((k) => (
+          <div key={k} className="panel rounded-2xl border">
+            <div className="bd border-b px-4 py-3.5">
+              <div className={`h-4 w-24 ${bar}`} />
+            </div>
+            <div className="p-4">
+              <div className={`h-72 w-full rounded-xl ${bar}`} />
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   )
 }
@@ -129,10 +154,6 @@ export default function App() {
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
         e.preventDefault()
         setPaletteOpen(true)
-      }
-      if ((e.metaKey || e.ctrlKey) && e.key === '\\') {
-        e.preventDefault()
-        setCollapsed((c) => !c)
       }
     }
     window.addEventListener('keydown', onKey)
@@ -204,11 +225,7 @@ export default function App() {
         </main>
       </div>
 
-      {paletteOpen && (
-        <Suspense fallback={null}>
-          <CommandPalette open={paletteOpen} onClose={() => setPaletteOpen(false)} />
-        </Suspense>
-      )}
+      {paletteOpen && <CommandPalette open={paletteOpen} onClose={() => setPaletteOpen(false)} />}
     </div>
   )
 }

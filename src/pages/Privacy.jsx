@@ -35,7 +35,7 @@ const ROWS = [
   {
     icon: Radio,
     title: 'Service worker / offline',
-    body: 'DevPocket does not currently register a service worker, so it is not yet installable or usable offline. This is on the roadmap — when added, it will cache application code only, never anything you type.',
+    body: 'DevPocket registers a service worker so it works offline and can be installed as an app. It caches the site\'s own files only — the HTML, JavaScript, CSS, icons and the Inter font — so tools open without a connection. It never sees or stores anything you type or paste, and it sends nothing anywhere. You can inspect or remove it under Application → Service workers and Cache storage in DevTools.',
   },
 ]
 

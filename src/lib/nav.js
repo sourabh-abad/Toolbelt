@@ -38,14 +38,16 @@ export const navItems = [
   // --- JWT
   { to: '/jwtvalidator', label: 'JWT Validator', icon: KeyRound, group: 'JWT', accent: 'cyan', description: 'Decode and check JSON Web Tokens' },
 
+  // --- Formatters
+  { to: '/json-xml', label: 'JSON / XML', icon: Braces, group: 'Formatters', accent: 'sky', description: 'Format, validate & search JSON or XML' },
+  { to: '/yaml', label: 'YAML Formatter', icon: AlignLeft, group: 'Formatters', accent: 'violet', description: 'Format, tidy, strip comments & validate YAML' },
+  { to: '/sql', label: 'SQL Formatter', icon: Database, group: 'Formatters', accent: 'orange', description: 'Pretty-print & minify SQL across dialects' },
+
   // --- Data & formats
-  { to: '/json-xml', label: 'JSON / XML', icon: Braces, group: 'Data', accent: 'sky', description: 'Format, validate & search JSON or XML' },
   { to: '/convert', label: 'JSON ⇄ YAML ⇄ CSV', icon: Shuffle, group: 'Data', accent: 'teal', description: 'Convert between config & data formats' },
   { to: '/codegen', label: 'JSON → Code', icon: FileCode2, group: 'Data', accent: 'indigo', description: 'Generate typed models from a JSON payload' },
-  { to: '/yaml', label: 'YAML Formatter', icon: AlignLeft, group: 'Data', accent: 'violet', description: 'Format, tidy, strip comments & validate YAML' },
   { to: '/properties', label: 'Properties Viewer', icon: TableProperties, group: 'Data', accent: 'amber', description: 'Read, clean, list keys and convert .properties files' },
   { to: '/properties-compare', label: 'Properties Compare', icon: FileDiff, group: 'Data', accent: 'rose', description: 'Diff two .properties files by key and value' },
-  { to: '/sql', label: 'SQL Formatter', icon: Database, group: 'Data', accent: 'orange', description: 'Pretty-print & minify SQL across dialects' },
 
   // --- JSON toolkit: one route per task so each ranks for its own query
   { to: '/jsonvalidator', label: 'JSON Validator', icon: ShieldCheck, group: 'JSON Toolkit', accent: 'emerald', description: 'Validate, format & explore JSON in a live tree view' },
@@ -75,13 +77,56 @@ export const navItems = [
   { to: '/sql-guide', label: 'SQL Query Guide', icon: BookOpen, group: 'Reference', accent: 'cyan', description: 'Searchable SQL syntax, recipes and gotchas' },
   { to: '/docker-guide', label: 'Docker & Swarm Guide', icon: Container, group: 'Reference', accent: 'sky', description: 'Searchable Docker and Swarm commands with examples' },
   { to: '/http', label: 'HTTP Reference', icon: Globe, group: 'Reference', accent: 'blue', description: 'Status codes, methods & headers' },
-  { to: '/mock', label: 'Mock Data', icon: Boxes, group: 'Reference', accent: 'fuchsia', description: 'Generate fake records as JSON, CSV or SQL' },
 
   // --- Generators
+  { to: '/mock', label: 'Mock Data', icon: Boxes, group: 'Generators', accent: 'fuchsia', description: 'Generate fake records as JSON, CSV or SQL' },
   { to: '/uuid', label: 'UUID & Nano ID', icon: Fingerprint, group: 'Generators', accent: 'violet', description: 'Bulk UUID v4 and Nano ID generation' },
   { to: '/password', label: 'Password Generator', icon: KeyRound, group: 'Generators', accent: 'rose', description: 'Cryptographically random passwords' },
   { to: '/lorem', label: 'Lorem Ipsum', icon: Type, group: 'Generators', accent: 'amber', description: 'Placeholder copy by word, sentence or paragraph' },
 ]
+
+/**
+ * Words people type into ⌘K that are not in a tool's name or description —
+ * the algorithm, the format, the thing they are trying to do. Matched by
+ * src/lib/search.js. Kept out of the one-line nav entries above because
+ * scripts/prerender.mjs parses those lines as text.
+ */
+const KEYWORDS = {
+  '/jwtvalidator': ['jwt', 'jwt decode', 'jwt decoder', 'token', 'bearer', 'jws', 'claims', 'exp', 'oauth', 'id token', 'access token'],
+  '/json-xml': ['json formatter', 'xml formatter', 'pretty print', 'format', 'xml validator', 'xpath', 'minify'],
+  '/yaml': ['yml', 'yaml lint', 'yaml validator', 'format', 'pretty print', 'remove comments', 'kubernetes', 'k8s', 'helm', 'docker compose'],
+  '/sql': ['sql beautifier', 'pretty print', 'format', 'minify', 'postgres', 'postgresql', 'mysql', 'sqlite', 'oracle', 'sql server', 'tsql', 'bigquery', 'snowflake'],
+  '/convert': ['json to yaml', 'yaml to json', 'json to csv', 'csv to json', 'convert', 'converter', 'yml', 'csv', 'tsv'],
+  '/codegen': ['json to typescript', 'typescript', 'java', 'pojo', 'go struct', 'golang', 'python', 'pydantic', 'dataclass', 'c#', 'csharp', 'kotlin', 'interface', 'types', 'model'],
+  '/properties': ['.properties', 'spring', 'spring boot', 'java properties', 'application.properties', 'properties to yaml', 'config', 'keys'],
+  '/properties-compare': ['diff', 'compare', 'properties diff', 'config diff', 'spring', 'missing keys'],
+  '/jsonvalidator': ['prettify', 'beautify', 'lint', 'linter', 'json lint', 'json format', 'json formatter', 'format', 'validate', 'check', 'syntax error', 'pretty print', 'json viewer', 'minify'],
+  '/json-sort-keys': ['sort', 'alphabetical', 'order', 'normalize', 'canonical'],
+  '/json-flatten': ['flatten', 'dot notation', 'dotted keys', 'flat'],
+  '/json-unflatten': ['unflatten', 'nest', 'dot notation', 'expand'],
+  '/json-escape': ['escape', 'unescape', 'stringify', 'string literal', 'quotes', 'backslash'],
+  '/json-remove-nulls': ['null', 'remove null', 'clean', 'strip'],
+  '/json-remove-empty': ['empty', 'blank', 'clean', 'strip', 'compact'],
+  '/json-merge': ['merge', 'combine', 'deep merge', 'patch', 'overlay'],
+  '/json-tree': ['tree', 'viewer', 'explorer', 'collapsible', 'browse'],
+  '/json-stats': ['statistics', 'count', 'depth', 'analyze', 'analyse', 'size'],
+  '/jsonpath': ['json path', 'jsonpath', 'query', 'jq', 'select', 'filter', 'xpath'],
+  '/json-schema': ['schema', 'json schema', 'infer', 'validate', 'draft 2020-12', 'openapi'],
+  '/diff': ['diff', 'compare', 'difference', 'text compare', 'changes'],
+  '/encode-decode': ['sha', 'sha1', 'sha256', 'sha-256', 'sha384', 'sha512', 'md5', 'hash', 'checksum', 'digest', 'base64', 'base64 encode', 'base64 decode', 'url encode', 'url decode', 'percent encoding', 'encodeuricomponent'],
+  '/color': ['hex', 'rgb', 'hsl', 'color picker', 'colour', 'color', 'rem', 'px', 'em', 'css units', 'converter'],
+  '/markdown': ['md', 'readme', 'preview', 'gfm', 'github markdown', 'mermaid', 'diagram'],
+  '/timestamp': ['epoch', 'unix', 'unix time', 'timestamp', 'epoch converter', 'date', 'time zone', 'timezone', 'utc', 'iso 8601', 'milliseconds', 'regex', 'regular expression', 'uuid'],
+  '/cron': ['cron', 'crontab', 'schedule', 'cron expression', 'quartz', 'next run', 'job'],
+  '/sql-guide': ['sql', 'query', 'join', 'group by', 'window function', 'cte', 'cheat sheet', 'examples', 'postgres', 'mysql'],
+  '/docker-guide': ['docker', 'swarm', 'compose', 'container', 'image', 'dockerfile', 'cheat sheet', 'commands'],
+  '/http': ['status code', 'http status', '404', '500', 'headers', 'methods', 'rest', 'cors', 'cache-control'],
+  '/mock': ['fake', 'faker', 'fake data', 'dummy', 'dummy data', 'seed', 'test data', 'sample data', 'random', 'generate'],
+  '/uuid': ['uuid', 'guid', 'uuid v4', 'nanoid', 'nano id', 'unique id', 'random id', 'generate'],
+  '/password': ['password', 'passphrase', 'random', 'secure', 'secret', 'strong password', 'generate'],
+  '/lorem': ['lorem ipsum', 'placeholder', 'dummy text', 'filler', 'generate'],
+}
+for (const item of navItems) item.keywords = KEYWORDS[item.to] || []
 
 /**
  * The href form of an internal route.
@@ -105,7 +150,7 @@ export function hrefFor(to) {
   return path === '/' || path.endsWith('/') ? to : `${path}/${rest}`
 }
 
-export const NAV_GROUPS = ['JWT', 'Data', 'JSON Toolkit', 'Text', 'Time', 'Generators', 'Reference']
+export const NAV_GROUPS = ['JWT', 'Formatters', 'Data', 'JSON Toolkit', 'Text', 'Time', 'Generators', 'Reference']
 
 // Groups that start collapsed — the JSON toolkit is long and most visits are
 // to one specific tool rather than a browse.
