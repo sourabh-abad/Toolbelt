@@ -1,11 +1,11 @@
-import { Globe, ShieldCheck, Zap, Code2, Heart } from 'lucide-react'
+import { Globe, ShieldCheck, Zap, Code2, Heart, Mail } from 'lucide-react'
 import { LinkedinIcon, MediumIcon, InstagramIcon } from '../components/BrandIcons'
-import { PROFILE, activeLinks } from '../lib/profile'
+import { PROFILE, activeLinks, mailto } from '../lib/profile'
 import { navItems } from '../lib/nav'
 import { PageHeader, Panel } from '../components/ui'
 import Avatar from '../components/Avatar'
 
-const ICONS = { linkedin: LinkedinIcon, medium: MediumIcon, instagram: InstagramIcon, website: Globe }
+const ICONS = { linkedin: LinkedinIcon, medium: MediumIcon, instagram: InstagramIcon, website: Globe, email: Mail }
 
 const PRINCIPLES = [
   {
@@ -51,12 +51,14 @@ export default function About() {
                 <div className="mt-4 flex flex-wrap gap-2">
                   {links.map((l) => {
                     const Icon = ICONS[l.id] || Globe
+                    // mailto: opens the mail app — a new tab would just be left blank.
+                    const external = !l.url.startsWith('mailto:')
                     return (
                       <a
                         key={l.id}
                         href={l.url}
-                        target="_blank"
-                        rel="noreferrer noopener"
+                        target={external ? '_blank' : undefined}
+                        rel={external ? 'noreferrer noopener' : undefined}
                         aria-label={`${l.label}: ${l.handle}`}
                         className="field hover-surface t-muted group inline-flex items-center gap-2 rounded-xl border px-3 py-2 text-xs font-medium transition-all hover:-translate-y-0.5 hover:text-emerald-500"
                       >
@@ -87,6 +89,21 @@ export default function About() {
             </div>
           ))}
         </div>
+
+        <Panel title="Get in touch" className="animate-fade-up">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <p className="t-muted text-sm leading-relaxed">
+              Found a bug, want a tool added, or have feedback? Mail me — I read everything.
+            </p>
+            <a
+              href={mailto()}
+              className="inline-flex shrink-0 items-center justify-center gap-2 rounded-xl bg-emerald-500 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-emerald-500/25 transition-all hover:-translate-y-0.5 hover:bg-emerald-600"
+            >
+              <Mail className="h-4 w-4" aria-hidden="true" />
+              {PROFILE.email}
+            </a>
+          </div>
+        </Panel>
 
         <Panel title="Built with" className="animate-fade-up">
           <div className="flex flex-wrap gap-2">

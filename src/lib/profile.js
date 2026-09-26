@@ -15,13 +15,20 @@ your browser. No backend, no analytics, no network calls. Your data never leaves
   // Root-absolute: a relative path would resolve against the current route
   // (/cron/sourabh.webp) and 404 on every page except the homepage.
   avatar: { webp: '/sourabh.webp', jpg: '/sourabh.jpg' },
+  // Forwarded by Cloudflare Email Routing to the personal inbox.
+  email: 'hello@devpocket.in',
   links: [
+    { id: 'email', label: 'Email', handle: 'hello@devpocket.in', url: 'mailto:hello@devpocket.in' },
     { id: 'linkedin', label: 'LinkedIn', handle: 'Sourabh Kumar', url: 'https://www.linkedin.com/in/sourabh-kumar-12859374/' },
     { id: 'medium', label: 'Medium', handle: '@sourabhh', url: 'https://medium.com/@sourabhh' },
     // Add your Instagram handle and URL here and it appears automatically.
     { id: 'instagram', label: 'Instagram', handle: '', url: '' },
   ],
 }
+
+// Pre-filled subject so feedback mail is easy to spot in the inbox.
+export const mailto = (subject = 'DevPocket feedback') =>
+  `mailto:${PROFILE.email}?subject=${encodeURIComponent(subject)}`
 
 export const SITE_URL = 'https://devpocket.in'
 
