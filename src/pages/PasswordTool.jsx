@@ -101,7 +101,10 @@ export default function PasswordTool() {
         </Panel>
 
         <Panel
-          title={`Generated (${list.length})`}
+          title="Generated"
+          // The count arrives after mount; keeping it out of the heading keeps
+          // the prerendered and hydrated headings identical.
+          description={list.length ? `${list.length} password${list.length === 1 ? '' : 's'}` : undefined}
           actions={<Button variant="ghost" type="button" onClick={() => { navigator.clipboard.writeText(list.join('\n')); toast('All passwords copied') }}>Copy all</Button>}
         >
           {list.length ? (

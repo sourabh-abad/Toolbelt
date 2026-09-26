@@ -1,3 +1,9 @@
+import springPages from '../content/spring.js'
+import jwtPages from '../content/jwt.js'
+import idPages from '../content/ids.js'
+import timePages from '../content/time.js'
+import formatPages from '../content/formats.js'
+import encodingPages from '../content/encoding.js'
 export const SITE_NAME = 'DevPocket'
 export const SITE_ORIGIN = 'https://devpocket.in'
 
@@ -6,7 +12,7 @@ export const SITE_ORIGIN = 'https://devpocket.in'
 // `blurb` is real copy rendered on the page — crawlers rank text, not widgets.
 export const SEO = {
   '/': {
-    title: 'DevPocket — Developer Tools That Stay In Your Browser',
+    title: 'DevPocket — Free Private Developer Tools: JSON, JWT, Base64, Regex',
     description:
       'Format JSON, decode JWTs, generate UUIDs, test regex and convert timestamps — free developer tools that run in your browser. No signup, no uploads.',
     heading: 'Developer tools that stay in your browser',
@@ -45,91 +51,24 @@ export const SEO = {
       },
     ],
   },
-  '/json-xml': {
-    title: 'JSON & XML Formatter, Validator and Search — DevPocket',
-    description:
-      'Format, beautify, minify and validate JSON or XML online, then search keys, attributes and values by path. Runs locally — nothing is uploaded.',
-    heading: 'JSON and XML formatter, validator and search',
-    aboutLabel: 'the JSON and XML formatter',
-    blurb:
-      'Paste JSON or XML to pretty-print it with syntax highlighting, minify it back down, or validate it with the exact line and column of any syntax error. The search box walks the parsed document and returns every matching key, attribute, tag or value with its full path, so you can find a field buried deep in an API response without scrolling.',
-    howItWorks: [
-      'Paste or type JSON or XML into the input pane.',
-      'DevPocket parses it immediately and shows the formatted, syntax-highlighted result — or the exact line and column of the first syntax error.',
-      'Use Minify to collapse it to one line, or Search to walk the parsed document by key, attribute or value.',
-      'Copy the result or export it as a file — nothing is sent anywhere in between.',
-    ],
-    useCases: [
-      'Pretty-printing a minified API response before reading it',
-      'Validating a config file before committing it',
-      'Finding a value buried in a large XML/JSON payload without scrolling',
-      'Minifying JSON before pasting it into a URL or config field',
-    ],
-    faq: [
-      {
-        q: 'Why does it show a line and column for errors instead of just "Invalid JSON"?',
-        a: 'DevPocket runs the parser far enough to report exactly where it stopped, matching the position your editor’s cursor should move to. Most other formatters just report a boolean.',
-      },
-      {
-        q: 'Does it handle JSON5 or JSONC (comments, trailing commas)?',
-        a: 'No — it validates strict JSON per the spec. Comments or trailing commas will be reported as syntax errors.',
-      },
-      {
-        q: 'Is there a file size limit?',
-        a: 'No hard limit, but very large payloads (tens of MB) will be slower to parse and render in a browser tab than a dedicated CLI tool like jq.',
-      },
-      {
-        q: 'What’s the difference between this and the JSON Validator tool?',
-        a: 'This page also handles XML and includes a path-based search; the JSON Validator page adds a collapsible tree view and duplicate-key detection specifically for JSON.',
-      },
-    ],
-  },
-  '/convert': {
-    title: 'JSON to YAML to CSV Converter Online — DevPocket',
-    description:
-      'Convert JSON to YAML, YAML to JSON, JSON to CSV and back. Ideal for Kubernetes manifests, CI configs and data dumps. Free, browser-based, no upload.',
-    heading: 'Convert between JSON, YAML and CSV',
-    aboutLabel: 'the JSON, YAML and CSV converter',
-    blurb:
-      'Switch between the three formats backend and DevOps work runs on. Turn a JSON payload into a YAML config for Kubernetes or GitHub Actions, flatten an array of records into CSV for a spreadsheet, or parse a CSV export back into structured JSON.',
-    howItWorks: [
-      'Choose the direction you want — JSON to YAML, YAML to JSON, JSON to CSV or CSV to JSON.',
-      'Paste the source document on the left. It is parsed as you type and converted immediately.',
-      'Errors report what failed to parse rather than silently producing empty output.',
-      'Copy the converted result or download it as a file.',
-    ],
-    useCases: [
-      'Turning a JSON payload into a YAML manifest for Kubernetes or GitHub Actions',
-      'Converting a YAML config into JSON so a script can read it with a standard parser',
-      'Flattening an array of records into CSV to open in Excel or Google Sheets',
-      'Parsing a CSV export back into JSON to feed an API or a test fixture',
-    ],
-    faq: [
-      {
-        q: 'How are nested objects handled when converting to CSV?',
-        a: 'CSV is a flat format, so nested values are serialised into the cell rather than invented as extra columns. If you want one column per leaf, run the payload through the JSON Flattener first and convert the flat result.',
-      },
-      {
-        q: 'Does YAML output preserve comments?',
-        a: 'No — comments are not part of the parsed data, so a JSON to YAML conversion cannot reproduce them. Converting YAML to JSON drops them for the same reason.',
-      },
-      {
-        q: 'Which YAML version is supported?',
-        a: 'YAML 1.2 via js-yaml, which covers anchors, multi-line scalars and the block styles used by Kubernetes, Docker Compose and CI configs.',
-      },
-    ],
-  },
   '/codegen': {
-    title: 'JSON to Java Object Generator — POJO, TS, Go — DevPocket',
+    related: [
+      ['/json-schema-generator', 'Describe the same payload as a JSON Schema instead'],
+      ['/json-formatter', 'Tidy the sample JSON before generating types'],
+      ['/case-converter', 'Rename fields to your language’s naming convention'],
+      ['/mock', 'Generate sample payloads to test the models'],
+      ['/csv-to-json', 'Turn a CSV export into JSON to generate types from'],
+    ],
+    title: 'JSON to TypeScript, Go, Java, C# & Python Types | DevPocket',
     description:
       'Convert JSON to a Java object, TypeScript interface, Go struct, Python dataclass or C# class. Paste a payload, pick a language, copy the model.',
-    heading: 'JSON to Java, TypeScript and Go models',
+    heading: 'JSON to Code: Types and Models',
     aboutLabel: 'the JSON to code generator',
     deepDive: {
       heading: 'Generating a Java class, TypeScript interface or Go struct from a payload',
       body: [
-        'Paste a JSON response and pick a target — Java with or without Lombok, TypeScript, Go, Python or C# — and the generator walks the payload, names a type for each nested object, and emits the model. It is the fastest way to stop hand-typing a DTO from an API you are integrating against.',
-        'Like any inference from a single sample, it is right about the shape and guessing about everything else. The list below is what to check before the generated class goes anywhere near production.',
+        'Paste a JSON response and pick a target — Java with or without Lombok, TypeScript, Go, Python or C# — and the generator walks the payload, names a type for each nested object, and emits the model. It is the fastest way to stop hand-typing a DTO from an API you are integrating against; if the payload is minified, [format the sample JSON](/json-formatter) first so you can check it.',
+        'Like any inference from a single sample, it is right about the shape and guessing about everything else. The list below is what to check before the generated class goes anywhere near production. When you need a contract rather than classes, [generate a JSON Schema](/json-schema-generator) from the same sample.',
       ],
       example: {
         inputLabel: 'JSON',
@@ -221,7 +160,13 @@ public class Customer {
     ],
   },
   '/sql': {
-    title: 'SQL Formatter & Beautifier — 11 Dialects — DevPocket',
+    related: [
+      ['/sql-guide', 'Look up the syntax for the query you are formatting'],
+      ['/diff', 'Compare two versions of a query'],
+      ['/mock', 'Generate INSERT statements full of test data'],
+      ['/case-converter', 'Convert column names between snake_case and camelCase'],
+    ],
+    title: 'SQL Formatter & Beautifier — 11 Dialects | DevPocket',
     description:
       'Format and beautify SQL online for PostgreSQL, MySQL, T-SQL, Oracle, BigQuery, Snowflake, SQLite and more. Also minifies queries. Free and browser-based.',
     heading: 'SQL formatter and beautifier',
@@ -256,7 +201,14 @@ public class Customer {
     ],
   },
   '/sql-guide': {
-    title: 'SQL Query Guide \u2014 Syntax, Recipes & Gotchas \u2014 DevPocket',
+    related: [
+      ['/sql', 'Format a query you copied from the guide'],
+      ['/docker-guide', 'Run a database in a container to practise on'],
+      ['/http', 'The other reference: status codes and headers'],
+      ['/uuid-v7-generator', 'Choose a primary-key format for a new table'],
+      ['/timestamp', 'Convert epoch columns to readable dates'],
+    ],
+    title: 'SQL Query Guide \u2014 Syntax, Recipes & Gotchas | DevPocket',
     description:
       'Search 117 SQL queries with runnable examples: joins, window functions, CTEs, upserts, indexing and the traps that return wrong results. Free to use.',
     heading: 'SQL query guide and searchable reference',
@@ -295,7 +247,14 @@ public class Customer {
     ],
   },
   '/docker-guide': {
-    title: 'Docker & Swarm Command Guide with Examples \u2014 DevPocket',
+    related: [
+      ['/yaml', 'Validate a docker-compose.yml before deploying'],
+      ['/json-to-yaml', 'Turn a JSON config into Compose YAML'],
+      ['/cron', 'Schedule container jobs with a cron expression'],
+      ['/http', 'Decode the status codes your containerised API returns'],
+      ['/sql-guide', 'Query the database running in your container'],
+    ],
+    title: 'Docker & Swarm Command Guide with Examples | DevPocket',
     description:
       'Search 106 Docker and Swarm commands with real examples: build, run, exec, volumes, networks, Compose, services, stacks and secrets. Free, no signup.',
     heading: 'Docker and Docker Swarm command guide',
@@ -334,7 +293,15 @@ public class Customer {
     ],
   },
   '/yaml': {
-    title: 'YAML Formatter, Validator & Comment Remover \u2014 DevPocket',
+    related: [
+      ['/yaml-to-json', 'See the YAML as JSON to check its types'],
+      ['/json-to-yaml', 'Convert JSON into YAML'],
+      ['/properties-to-yaml', 'Convert Spring .properties to YAML'],
+      ['/docker-guide', 'Commands for the Compose file you are editing'],
+      ['/diff', 'Compare two YAML files line by line'],
+      ['/xml-formatter', 'Format XML config files as well'],
+    ],
+    title: 'YAML Formatter, Validator & Comment Remover | DevPocket',
     description:
       'Format and validate YAML online, strip every # comment, fix tab indentation and collapse to one line. Runs in your browser \u2014 nothing is uploaded.',
     heading: 'YAML formatter, validator and comment remover',
@@ -373,7 +340,14 @@ public class Customer {
     ],
   },
   '/properties': {
-    title: 'Properties Viewer, Key List & YAML Converter — DevPocket',
+    related: [
+      ['/properties-compare', 'Compare two environments’ .properties files'],
+      ['/properties-to-yaml', 'Convert the file to application.yml'],
+      ['/yaml-to-properties', 'Flatten an application.yml into .properties'],
+      ['/case-converter', 'Rename keys between kebab-case and camelCase'],
+      ['/json-unflatten', 'Nest dotted keys from any flat JSON object'],
+    ],
+    title: 'Properties Viewer, Key List & YAML Converter | DevPocket',
     description:
       'Read a .properties file, list every key, spot duplicate and empty values, and convert it to YAML or JSON. Runs in your browser — nothing is uploaded.',
     heading: 'Properties file viewer, key list and converter',
@@ -383,7 +357,7 @@ public class Customer {
     deepDive: {
       heading: 'The parts of a .properties file that bite',
       body: [
-        'A .properties file looks like a list of key=value pairs and is parsed by rules most editors do not implement. Three characters separate a key from its value, two start a comment, a backslash at the end of a line joins the next one, and a key defined twice is not an error — the last one silently wins.',
+        'A .properties file looks like a list of key=value pairs and is parsed by rules most editors do not implement. Three characters separate a key from its value, two start a comment, a backslash at the end of a line joins the next one, and a key defined twice is not an error — the last one silently wins. To move the file to YAML with those rules applied, use the [properties to YAML converter](/properties-to-yaml).',
         'Every one of those rules is behind a bug someone has spent an afternoon on. Here is what the parser actually does with your file.',
       ],
       example: {
@@ -490,7 +464,13 @@ value never reaches the app.`,
     ],
   },
   '/properties-compare': {
-    title: 'Compare .properties Files — Key & Value Diff — DevPocket',
+    related: [
+      ['/properties', 'Inspect one file for duplicates and stray whitespace'],
+      ['/diff', 'Compare any two text files line by line'],
+      ['/yaml-to-properties', 'Flatten YAML first to compare it with .properties'],
+      ['/properties-to-yaml', 'Convert the reconciled file to YAML'],
+    ],
+    title: 'Compare .properties Files — Key & Value Diff | DevPocket',
     description:
       'Diff two .properties files by key and value: missing keys, changed values, identical ones hidden. Ideal for dev vs prod configs. Nothing is uploaded.',
     heading: 'Compare two .properties files',
@@ -500,8 +480,8 @@ value never reaches the app.`,
     deepDive: {
       heading: 'Why a text diff is the wrong tool for two config files',
       body: [
-        'Environment configs drift in two ways that matter — a key one file has and the other does not, and a key both have with different values — and in several that do not: order, separator style, comments, whitespace. A line diff cannot tell those apart, so the real differences arrive buried in false ones.',
-        'Comparing the parsed keys instead removes every difference that a properties loader would also ignore.',
+        'Environment configs drift in two ways that matter — a key one file has and the other does not, and a key both have with different values — and in several that do not: order, separator style, comments, whitespace. A line diff cannot tell those apart, so the real differences arrive buried in false ones — which is why a general [line-by-line diff checker](/diff) is the wrong tool here.',
+        'Comparing the parsed keys instead removes every difference that a properties loader would also ignore. To check a single file for duplicates first, open it in the [Properties Viewer](/properties).',
       ],
       example: {
         inputLabel: 'What a line diff reports',
@@ -582,16 +562,24 @@ server.port is identical`,
     ],
   },
   '/diff': {
-    title: 'Text Diff Checker — Compare Two Files Online — DevPocket',
+    related: [
+      ['/json-sort-keys', 'Sort keys so a JSON diff shows only real changes'],
+      ['/json-formatter', 'Format both JSON documents before comparing'],
+      ['/properties-compare', 'Compare .properties files by key, not by line'],
+      ['/regex-tester', 'Test the pattern behind a search-and-replace'],
+      ['/markdown', 'Preview a README after the change'],
+      ['/xml-formatter', 'Pretty-print XML so a diff lines up'],
+    ],
+    title: 'Diff Checker — Compare Text & Code Online, Privately | DevPocket',
     description:
       'Compare two blocks of text or code line by line or word by word. Highlights additions and deletions with a change count. Free, private, in your browser.',
-    heading: 'Text and code diff checker',
+    heading: 'Diff Checker (Text Compare)',
     aboutLabel: 'the diff checker',
     deepDive: {
       heading: 'When a diff lies to you',
       body: [
-        'A line diff finds the longest common subsequence of lines and calls everything else an addition or a deletion. That model is exactly right for source code and exactly wrong for several common situations, and knowing which is which saves a lot of time staring at a wall of red.',
-        'Word-level comparison helps for prose and for single-line changes; it does not help when the underlying problem is that the two files differ in ways you cannot see.',
+        'A line diff finds the longest common subsequence of lines and calls everything else an addition or a deletion. That model is exactly right for source code and exactly wrong for several common situations, and knowing which is which saves a lot of time staring at a wall of red. For JSON, [sort the keys of both documents](/json-sort-keys) first so only real changes show.',
+        'Word-level comparison helps for prose and for single-line changes; it does not help when the underlying problem is that the two files differ in ways you cannot see. For config files, [compare .properties by key](/properties-compare) instead of by line.',
       ],
       example: {
         inputLabel: 'Symptom',
@@ -672,198 +660,22 @@ the single precomposed character`,
       },
     ],
   },
-  '/encode-decode': {
-    title: 'Base64, URL & Hash Encoder / Decoder — DevPocket',
-    description:
-      'Encode and decode Base64 and URLs, and generate MD5, SHA-1, SHA-256 and SHA-512 hashes online. Full Unicode support, computed in your browser.',
-    heading: 'Base64, URL encoding and hashing',
-    aboutLabel: 'Base64, URL encoding and hashing',
-    blurb:
-      'Base64 encode or decode any text with full Unicode support, switch between component and full-URI encoding, and generate MD5 and SHA-family digests. Hashes are computed with the browser’s native Web Crypto API, so the input never leaves your machine.',
-    howItWorks: [
-      'Paste text into the Base64 or URL section to encode or decode it, or into the Hash section to compute a digest.',
-      'Base64 encoding and decoding correctly handles full Unicode via UTF-8, not just ASCII.',
-      'Hashes (MD5, SHA-1, SHA-256, SHA-384, SHA-512) are computed with the browser’s native Web Crypto API where available.',
-      'Copy any result — nothing you paste is sent anywhere.',
-    ],
-    useCases: [
-      'Decoding a Base64-encoded JWT segment or Basic Auth header to read what’s inside',
-      'URL-encoding a query parameter that contains spaces or special characters',
-      'Generating a SHA-256 checksum to compare against a downloaded file’s published hash',
-      'Quickly checking what a Base64 blob in a config file or log actually contains',
-    ],
-    faq: [
-      {
-        q: 'Is Base64 encryption?',
-        a: 'No — it’s a reversible encoding, not encryption. Anyone can decode it back to the original text with no key required. Never use it to hide secrets.',
-      },
-      {
-        q: 'Does it handle Unicode correctly?',
-        a: 'Yes — text is UTF-8 encoded before Base64 conversion, so non-ASCII characters round-trip correctly, unlike a naive btoa() call.',
-      },
-      {
-        q: 'Is MD5 or SHA-1 secure for passwords?',
-        a: 'No — both are broken for password hashing and have known collision attacks. They’re included here for checksums and legacy compatibility, not for storing credentials; use a dedicated password-hashing algorithm (bcrypt, Argon2) server-side instead.',
-      },
-      {
-        q: 'What’s the difference between "encode" and "encode component"?',
-        a: 'Full URL encoding escapes characters unsafe anywhere in a URL; component encoding also escapes characters like & and = that are safe in a full URL but not inside a single query parameter value.',
-      },
-    ],
-  },
-  '/jwtvalidator': {
-    // The JWT group has only this tool, so name its neighbours explicitly.
-    related: ['/encode-decode', '/timestamp', '/jsonvalidator', '/url-parser', '/json-xml'],
-    title: 'JWT Decoder & Validator — Check Token Expiry — DevPocket',
-    description:
-      'Decode a JSON Web Token and check its structure, algorithm and expiry. Runs entirely in your browser, so pasting a real token never sends it anywhere.',
-    heading: 'JWT decoder and validator',
-    aboutLabel: 'the JWT decoder',
-    deepDive: {
-      heading: 'Why a token can decode cleanly and still be rejected',
-      body: [
-        'A JWT is three base64url segments joined by dots: header, payload, signature. The first two are encoded, not encrypted — anyone holding the token can read every claim in it. That is the single most misunderstood thing about JWTs, and the reason a token should never carry anything you would not be comfortable seeing in a log line.',
-        'Decoding therefore proves nothing about authenticity. A decoder shows you what the issuer claimed; only a server holding the signing key can tell you whether that claim is real. DevPocket decodes the header and payload and checks the time claims against your clock. It deliberately does not verify the signature, because doing that would mean pasting your signing secret into a web page.',
-      ],
-      example: {
-        inputLabel: 'Token',
-        input: `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IjIwMjYtMDYifQ
-.eyJpc3MiOiJodHRwczovL2F1dGguZXhhbXBsZS5jb20iLCJzdWIiOiJ1c2Vy
-XzhmMjEiLCJhdWQiOiJzaG9wLWFwaSIsImlhdCI6MTc4OTQ2MjgwMCwibmJmIjox
-Nzg5NDYyODAwLCJleHAiOjE3ODk0NjY0MDAsInNjb3BlIjoib3JkZXJzOnJlYWQg
-b3JkZXJzOndyaXRlIn0
-.<signature>`,
-        outputLabel: 'Decoded',
-        output: `{
-  "alg": "HS256",
-  "typ": "JWT",
-  "kid": "2026-06"
-}
-{
-  "iss": "https://auth.example.com",
-  "sub": "user_8f21",
-  "aud": "shop-api",
-  "iat": 1789462800,
-  "nbf": 1789462800,
-  "exp": 1789466400,
-  "scope": "orders:read orders:write"
-}
-
-iat  2026-09-15 09:00:00 UTC
-exp  2026-09-15 10:00:00 UTC  (1 hour life)`,
-        note: 'The line breaks above are for reading only — a real token is one unbroken string, and the signature segment is elided here because nothing in a browser can check it.',
-      },
-      table: {
-        caption: 'The registered claims, and the error each one produces when it is wrong',
-        columns: ['Claim', 'Means', 'Typical rejection'],
-        rows: [
-          [
-            'iss',
-            'Who issued the token',
-            'Issuer mismatch — usually a staging token sent at production',
-          ],
-          [
-            'sub',
-            'Who the token is about',
-            'Rarely validated; do not use it as a display name',
-          ],
-          [
-            'aud',
-            'Which API the token is for',
-            'Invalid audience — an access token used against the wrong service',
-          ],
-          [
-            'exp',
-            'Expiry, in seconds since the epoch',
-            'Token expired — the most common 401 in practice',
-          ],
-          [
-            'nbf',
-            'Not valid before this second',
-            'Token not yet valid — nearly always clock skew, not logic',
-          ],
-          [
-            'iat',
-            'When it was issued',
-            'Used for max-age policies and for spotting replayed tokens',
-          ],
-          [
-            'jti',
-            'Unique token id',
-            'Needed if you want revocation; a JWT is otherwise valid until it expires',
-          ],
-        ],
-      },
-      gotchas: [
-        {
-          title: 'exp and iat are seconds, not milliseconds',
-          detail: 'JavaScript hands you Date.now() in milliseconds, so a token minted with it appears to expire in the year 58000 and every expiry check silently passes. If a decoded exp is a 13-digit number, that is the bug.',
-        },
-        {
-          title: 'A minute of clock skew is enough to break nbf',
-          detail: 'nbf and exp are compared against whatever clock the verifier is running. A container whose clock drifts a minute ahead of the issuer rejects freshly minted tokens as "not yet valid". Most libraries allow 30–60 seconds of leeway; check the clock before you check the code.',
-        },
-        {
-          title: 'Never let the token choose its own algorithm',
-          detail: 'A forged token can set alg to none and ship an empty signature, or swap RS256 for HS256 so the public key gets used as an HMAC secret. Pin the expected algorithm on the server and reject anything else, rather than reading it out of the header.',
-        },
-        {
-          title: 'Decoding is not verification',
-          detail: 'Anyone can edit the payload and re-encode it; only the signature check tells you it came from the issuer. Until the signature has been verified against the key, treat every claim in the token as user input.',
-        },
-        {
-          title: 'A production token pasted into a website is a live session',
-          detail: 'A bearer token is a password with an expiry. Any online decoder that posts it to a server has just been handed an account. Everything here runs in your tab — you can confirm it with the Network tab open.',
-        },
-        {
-          title: 'Logging out does not invalidate a JWT',
-          detail: 'There is no server-side session to destroy. A token stays valid until exp, which is why short lifetimes plus a refresh token beat a 30-day access token, and why revocation needs a jti and a deny list.',
-        },
-      ],
-    },
-    blurb:
-      'Paste a JSON Web Token to read its header and payload as formatted JSON, with iat, exp and nbf rendered as readable dates. It checks that the three segments decode correctly, flags an "alg" of none, and tells you whether the token has expired or is not yet valid. Decoding happens locally and the token is never transmitted, so a real production token is safe to paste. The signature is shown but not verified — doing that would mean pasting your signing key into a web page, which this tool deliberately does not ask for.',
-    howItWorks: [
-      'Paste a JWT (three dot-separated base64url segments).',
-      'DevPocket decodes the header and payload locally and renders them as formatted JSON.',
-      'Standard time claims (iat, exp, nbf) are converted to readable dates, and the token’s expiry status is checked against your device clock.',
-      'The signature is shown as-is for reference — it is not verified, since that would require pasting your signing secret into a web page.',
-    ],
-    useCases: [
-      'Checking why an API call is failing with a 401 by inspecting a token’s exp claim',
-      'Reading the aud or iss claims to confirm a token was issued for the right service',
-      'Debugging an auth integration without pasting a production token into a third-party site',
-      'Confirming a refreshed token actually has a later exp than the one it replaced',
-    ],
-    faq: [
-      {
-        q: 'Does this verify the signature?',
-        a: 'No. Decoding and verifying are different operations — verifying needs the signing secret or public key, which this tool deliberately never asks for. It only decodes and inspects the claims.',
-      },
-      {
-        q: 'Is it safe to paste a real production token?',
-        a: 'The token is decoded entirely in your browser and never transmitted — you can confirm this yourself in DevTools → Network. See the Privacy page for how to check.',
-      },
-      {
-        q: 'What does "alg: none" mean and why is it flagged?',
-        a: 'It’s a JWT that claims to need no signature at all, a known attack vector against poorly configured verifiers. DevPocket flags it so you notice, but still decodes the token so you can inspect it.',
-      },
-      {
-        q: 'Why is the expiry check based on my device clock?',
-        a: 'A JWT’s exp claim is a Unix timestamp — checking it just compares your local clock to that number. If your device clock is wrong, the check will be too.',
-      },
-    ],
-  },
   '/color': {
-    title: 'Colour Converter — HEX, RGB, HSL, px & rem — DevPocket',
+    related: [
+      ['/number-base', 'Convert other hex values to decimal and binary'],
+      ['/html-entities', 'Escape characters for HTML and CSS content'],
+      ['/lorem', 'Fill a mock-up with placeholder text'],
+      ['/markdown', 'Preview a style guide as you write it'],
+    ],
+    title: 'Color Converter — HEX to RGB, HSL & px to rem | DevPocket',
     description:
-      'Convert colours between HEX, RGB and HSL with a live picker, and convert CSS units between px, rem, em and pt using any root font size. Free and offline.',
-    heading: 'Colour and CSS unit converter',
-    aboutLabel: 'the colour and CSS unit converter',
+      'Convert colors between HEX, RGB and HSL with a live picker, and convert CSS units between px, rem, em and pt using any root font size. Free and offline.',
+    heading: 'Color and CSS Unit Converter',
+    aboutLabel: 'the color and CSS unit converter',
     deepDive: {
-      heading: 'Why two colours with the same lightness look nothing alike',
+      heading: 'Why two colors with the same lightness look nothing alike',
       body: [
-        'HEX, RGB and HSL are three spellings of the same sRGB colour — converting between them changes nothing but the notation. HSL is easier to reason about because hue, saturation and lightness map to words, but its lightness channel is a geometric construct, not a measure of how bright a colour looks.',
+        'HEX, RGB and HSL are three spellings of the same sRGB color (colour, if you write British English) — converting between them changes nothing but the notation. HSL is easier to reason about because hue, saturation and lightness map to words, but its lightness channel is a geometric construct, not a measure of how bright a color looks. A hex color is also just a number — the [number base converter](/number-base) shows #FF8800 as decimal and binary.',
         'Pure yellow and pure blue are both hsl(… 100% 50%). One is nearly unreadable on white and the other is nearly unreadable on black. That is why accessibility rules are written in contrast ratios, which are computed from relative luminance, rather than in anything you can read off an HSL value.',
       ],
       example: {
@@ -903,7 +715,7 @@ WCAG needs 4.5:1 for body text,
       gotchas: [
         {
           title: 'HSL lightness is not perceived brightness',
-          detail: 'Picking a palette by holding lightness constant gives you colours that look wildly uneven. OKLCH was designed to fix exactly this, and is worth reaching for when a palette has to look consistent.',
+          detail: 'Picking a palette by holding lightness constant gives you colors that look wildly uneven. OKLCH was designed to fix exactly this, and is worth reaching for when a palette has to look consistent.',
         },
         {
           title: 'em compounds, rem does not',
@@ -919,25 +731,25 @@ WCAG needs 4.5:1 for body text,
         },
         {
           title: 'Round-tripping shifts values',
-          detail: 'HEX stores 8 bits per channel; HSL is computed in floats. HEX to HSL and back can land one step away from where it started, which is why a colour pasted between two tools sometimes stops matching the brand value exactly.',
+          detail: 'HEX stores 8 bits per channel; HSL is computed in floats. HEX to HSL and back can land one step away from where it started, which is why a color pasted between two tools sometimes stops matching the brand value exactly.',
         },
         {
-          title: 'A translucent colour is not one colour',
+          title: 'A translucent color is not one color',
           detail: '#00000080 over white and over a photo are two different results. If a value has to meet a contrast ratio, compute it against the actual background, not against the swatch.',
         },
       ],
     },
     blurb:
-      'Pick a colour or paste a value and read it back in HEX, RGB and HSL, with every field editable so you can nudge a hue or lightness and see the others follow. The CSS unit converter turns pixels into rem, em and pt against whatever root font size your project uses — handy when translating a design handoff into stylesheet values.',
+      'Pick a color or paste a value and read it back in HEX, RGB and HSL, with every field editable so you can nudge a hue or lightness and see the others follow. The CSS unit converter turns pixels into rem, em and pt against whatever root font size your project uses — handy when translating a design handoff into stylesheet values.',
     howItWorks: [
-      'Pick a colour with the picker, or paste a HEX, RGB or HSL value.',
+      'Pick a color with the picker, or paste a HEX, RGB or HSL value.',
       'All three representations update together, and each field stays editable so you can nudge one and watch the others follow.',
       'For CSS units, enter a value and the root font size your project uses.',
       'Copy the representation you need.',
     ],
     useCases: [
       'Translating a HEX value from a design handoff into the HSL your stylesheet uses',
-      'Adjusting lightness or saturation to derive a hover state from a base colour',
+      'Adjusting lightness or saturation to derive a hover state from a base color',
       'Converting a pixel spacing scale into rem against a 16px root',
       'Working out what an em value resolves to inside a nested component',
     ],
@@ -952,13 +764,20 @@ WCAG needs 4.5:1 for body text,
       },
       {
         q: 'Are alpha values supported?',
-        a: 'The picker works with opaque colours. For a translucent variant, take the RGB values and add the alpha channel yourself as rgba() or an eight-digit HEX.',
+        a: 'The picker works with opaque colors. For a translucent variant, take the RGB values and add the alpha channel yourself as rgba() or an eight-digit HEX.',
       },
     ],
   },
   '/markdown': {
+    related: [
+      ['/html-entities', 'Escape characters Markdown would render as HTML'],
+      ['/lorem', 'Fill a draft with placeholder paragraphs'],
+      ['/diff', 'Compare two versions of a README'],
+      ['/json-formatter', 'Format a JSON example before pasting it into docs'],
+      ['/color', 'Pick and convert colors for diagrams and badges'],
+    ],
     // The editor wants the viewport; the copy below it renders collapsed.
-    title: 'Markdown Preview — Live GitHub-Flavoured Editor — DevPocket',
+    title: 'Markdown Preview — Live GitHub-Flavoured Editor | DevPocket',
     description:
       'Live Markdown preview with GitHub-flavoured tables, task lists, highlighted code and Mermaid diagrams. Copy the HTML or download it as a file.',
     heading: 'Markdown live preview',
@@ -966,8 +785,8 @@ WCAG needs 4.5:1 for body text,
     deepDive: {
       heading: 'Which Markdown, exactly',
       body: [
-        '"Markdown" is not one format. CommonMark is the specification that settled the ambiguities in the 2004 original; GitHub-flavoured Markdown adds tables, task lists, strikethrough and autolinks on top of it; and every renderer adds its own extras. This preview renders GitHub-flavoured Markdown, plus Mermaid diagrams and maths, which is the combination most developer documentation is written in.',
-        'Most "my Markdown looks wrong" problems are a mismatch between the flavour you wrote and the flavour that rendered it.',
+        '"Markdown" is not one format. CommonMark is the specification that settled the ambiguities in the 2004 original; GitHub-flavoured Markdown adds tables, task lists, strikethrough and autolinks on top of it; and every renderer adds its own extras. This preview renders GitHub-flavoured Markdown, plus Mermaid diagrams and maths, which is the combination most developer documentation is written in. To show literal tags in a document, [escape them as HTML entities](/html-entities).',
+        'Most "my Markdown looks wrong" problems are a mismatch between the flavour you wrote and the flavour that rendered it. When a README changes, [compare the two versions](/diff) to see exactly what moved.',
       ],
       example: {
         inputLabel: 'Source',
@@ -1060,56 +879,22 @@ italicise the middle`,
       },
     ],
   },
-  '/timestamp': {
-    related: ['/cron', '/jwtvalidator', '/uuid', '/number-base', '/json-xml'],
-    title: 'Unix Timestamp Converter — IST, SAST & UTC — DevPocket',
-    description:
-      'Convert Unix timestamps to dates across India (IST), South Africa (SAST), UTC and local time. Plus a UUID v4 generator and live regex tester.',
-    heading: 'Timestamps, UUIDs and regular expressions',
-    aboutLabel: 'the timestamp, UUID and regex tools',
-    blurb:
-      'Convert a Unix timestamp in seconds or milliseconds into a readable date in every timezone at once — local, India (IST), South Africa (SAST) and UTC — or go the other way from a date to an epoch. Live clocks show the same instant across all four zones. Also generates UUID v4 identifiers in bulk and tests regular expressions with live match indexes and capture groups.',
-    howItWorks: [
-      'Paste a Unix timestamp (seconds or milliseconds) to see it converted to UTC, your local time, IST and SAST at once — or enter a date to go the other way.',
-      'Live clocks below show the current time in all four zones, updating every second.',
-      'The same page also includes a bulk UUID v4 generator and a live regex tester with match and capture-group highlighting.',
-    ],
-    useCases: [
-      'Converting an epoch value from a log line or API response into a readable date',
-      'Checking what a timestamp means in a teammate’s timezone before a release',
-      'Testing a regex pattern against sample strings before dropping it into code',
-      'Quickly generating a UUID while already on the page for something else',
-    ],
-    faq: [
-      {
-        q: 'Does it handle timestamps in seconds and milliseconds?',
-        a: 'Yes — DevPocket detects which unit you likely mean based on magnitude, or you can set it explicitly.',
-      },
-      {
-        q: 'Which timezones are shown?',
-        a: 'Local (your device), UTC, IST (India) and SAST (South Africa) — chosen because they’re common in the distributed teams DevPocket was built for.',
-      },
-      {
-        q: 'Does the regex tester support all JS regex flags?',
-        a: 'It supports the standard g, i, m, s and u flags and highlights every match and capture group live as you type.',
-      },
-      {
-        q: 'Why are timestamp, UUID and regex on one page instead of three?',
-        a: 'They’re all quick, single-input utilities developers reach for in the same debugging session — keeping them together avoids a page reload between them.',
-      },
-    ],
-  },
   '/cron': {
-    related: ['/timestamp', '/yaml', '/docker-guide', '/sql-guide'],
-    title: 'Cron Expression Builder & Parser — DevPocket',
+    related: [
+      ['/timestamp', 'Convert a run time to Unix seconds and back'],
+      ['/docker-guide', 'Run scheduled jobs in containers'],
+      ['/jwt-decoder', 'Check whether a job’s token expires before it runs'],
+      ['/sql-guide', 'Write the query a nightly job runs'],
+    ],
+    title: 'Cron Expression Generator & Parser — Next Run Times | DevPocket',
     description:
       'Decode any cron expression into plain English and preview the next 8 run times in IST, SAST, UTC or local time. Includes common presets. Free and online.',
-    heading: 'Cron expression builder and parser',
+    heading: 'Cron Expression Generator and Parser',
     aboutLabel: 'the cron expression parser',
     deepDive: {
       heading: 'The cron rule that catches almost everyone',
       body: [
-        'Five fields: minute, hour, day-of-month, month, day-of-week. The trap is what happens when you restrict both day fields at once. When day-of-month and day-of-week are both something other than *, Vixie cron — and therefore Linux, and therefore most schedulers — runs the job when EITHER matches, not both.',
+        'Five fields: minute, hour, day-of-month, month, day-of-week. The trap is what happens when you restrict both day fields at once. When day-of-month and day-of-week are both something other than *, Vixie cron — and therefore Linux, and therefore most schedulers — runs the job when EITHER matches, not both. To turn a run time into the epoch seconds a log shows, use the [Unix timestamp converter](/timestamp).',
         'So 0 0 13 * 5 does not mean "midnight on Friday the 13th". It means midnight on the 13th of every month, and also midnight every Friday. If you want Friday the 13th you need a day-of-week-only schedule plus a date check inside the job.',
       ],
       example: {
@@ -1214,7 +999,15 @@ Friday — not Friday the 13th
     ],
   },
   '/http': {
-    title: 'HTTP Status Codes, Methods & Headers — DevPocket',
+    related: [
+      ['/url-parser', 'Split the request URL into its parts'],
+      ['/url-encode', 'Encode query values before sending the request'],
+      ['/jwt-decoder', 'Decode the bearer token behind a 401'],
+      ['/json-formatter', 'Format the response body'],
+      ['/cron', 'Schedule a health check against the endpoint'],
+      ['/xml-formatter', 'Format a SOAP or XML response body'],
+    ],
+    title: 'HTTP Status Codes, Methods & Headers | DevPocket',
     description:
       'Searchable reference for HTTP status codes (200, 301, 401, 404, 409, 422, 429, 500), request methods with safe and idempotent flags, and common headers.',
     heading: 'HTTP status code, method and header reference',
@@ -1249,7 +1042,14 @@ Friday — not Friday the 13th
     ],
   },
   '/mock': {
-    title: 'Mock Data Generator — JSON, CSV & SQL — DevPocket',
+    related: [
+      ['/json-to-csv', 'Export the generated records as a CSV'],
+      ['/sql', 'Format the generated INSERT statements'],
+      ['/uuid', 'Generate IDs for extra columns'],
+      ['/json-schema-generator', 'Describe the generated records as a schema'],
+      ['/lorem', 'Longer placeholder text for description fields'],
+    ],
+    title: 'Mock Data Generator — JSON, CSV & SQL | DevPocket',
     description:
       'Generate realistic fake test data from 21 field types — names, emails, UUIDs, addresses, dates — and export as JSON, CSV or SQL INSERT. Free online.',
     heading: 'Mock and test data generator',
@@ -1283,8 +1083,15 @@ Friday — not Friday the 13th
       },
     ],
   },
-  '/jsonvalidator': {
-    title: 'JSON Validator Online — Tree View & Errors — DevPocket',
+  '/json-validator': {
+    related: [
+      ['/json-formatter', 'Beautify, minify or sort the JSON once it is valid'],
+      ['/json-viewer', 'Browse a large document as a tree'],
+      ['/json-schema-generator', 'Infer a schema from the validated JSON'],
+      ['/jsonpath', 'Pull one field out with a $.path query'],
+      ['/json-stats', 'Count nodes and measure nesting depth'],
+    ],
+    title: 'JSON Validator Online — Tree View & Errors | DevPocket',
     description:
       'Validate JSON online with the exact error line and column, a collapsible tree view, duplicate-key detection and search. Free and browser-based.',
     heading: 'JSON validator and editor',
@@ -1292,7 +1099,7 @@ Friday — not Friday the 13th
     deepDive: {
       heading: 'The eight things that actually break JSON',
       body: [
-        'Most JSON errors come from writing it the way JavaScript would accept it. JSON is a much smaller language than JavaScript object syntax, and the differences are exactly where people get caught. Below are the ones that account for nearly every parse failure in practice, and three that are worse — they parse cleanly and corrupt your data.',
+        'Most JSON errors come from writing it the way JavaScript would accept it. JSON is a much smaller language than JavaScript object syntax, and the differences are exactly where people get caught. Below are the ones that account for nearly every parse failure in practice, and three that are worse — they parse cleanly and corrupt your data. Once the document is valid, the [JSON formatter](/json-formatter) re-indents, minifies or sorts it, and [JSONPath](/jsonpath) pulls out a single field.',
       ],
       example: {
         inputLabel: 'Looks fine, is not JSON',
@@ -1380,7 +1187,13 @@ Line 7  trailing comma in the object`,
     ],
   },
   '/json-sort-keys': {
-    title: 'JSON Sort Keys Online — Alphabetise Object Keys — DevPocket',
+    related: [
+      ['/diff', 'Compare two documents once their keys are sorted'],
+      ['/json-formatter', 'Format or minify after sorting'],
+      ['/json-merge', 'Merge documents, then sort the result'],
+      ['/json-validator', 'Find duplicate keys that sorting would hide'],
+    ],
+    title: 'JSON Sort Keys Online — Alphabetise Object Keys | DevPocket',
     description:
       'Sort JSON object keys alphabetically at every nesting level, ascending or descending. Array order is preserved. Free, runs entirely in your browser.',
     heading: 'Sort JSON keys alphabetically',
@@ -1415,7 +1228,13 @@ Line 7  trailing comma in the object`,
     ],
   },
   '/json-flatten': {
-    title: 'JSON Flattener — Nested JSON to Dot Notation — DevPocket',
+    related: [
+      ['/json-unflatten', 'Rebuild the nested structure from dot keys'],
+      ['/json-to-csv', 'Flatten records straight into a CSV'],
+      ['/properties', 'Dot-notation keys the .properties way'],
+      ['/jsonpath', 'Query nested values without flattening'],
+    ],
+    title: 'JSON Flattener — Nested JSON to Dot Notation | DevPocket',
     description:
       'Flatten nested JSON into single-level dot-notation keys like a.b[0].c. Useful for config files, feature flags and spreadsheet exports. Free and offline.',
     heading: 'Flatten nested JSON',
@@ -1423,8 +1242,8 @@ Line 7  trailing comma in the object`,
     deepDive: {
       heading: 'Dot notation, and the two cases where it cannot round-trip',
       body: [
-        'Flattening turns a nested document into a single level of key-value pairs, with the path to each leaf joined by dots. It is how you get a JSON config into environment variables, how you turn an API response into CSV columns, and how you make two payloads diffable line by line instead of block by block.',
-        'The operation is lossy in two specific ways, and both bite when you try to unflatten afterwards.',
+        'Flattening turns a nested document into a single level of key-value pairs, with the path to each leaf joined by dots. It is how you get a JSON config into environment variables, how you turn an API response into CSV columns, and how you make two payloads diffable line by line instead of block by block. For CSV specifically, the [JSON to CSV converter](/json-to-csv) flattens every record and writes the columns in one step.',
+        'The operation is lossy in two specific ways, and both bite when you try to [unflatten the keys back into JSON](/json-unflatten) afterwards.',
       ],
       example: {
         inputLabel: 'Nested',
@@ -1500,7 +1319,13 @@ Line 7  trailing comma in the object`,
     ],
   },
   '/json-unflatten': {
-    title: 'JSON Unflattener — Dot Notation to Nested JSON — DevPocket',
+    related: [
+      ['/json-flatten', 'Flatten nested JSON back to dot keys'],
+      ['/csv-to-json', 'Nest dotted CSV headers while converting'],
+      ['/properties-to-yaml', 'Nest dotted Spring keys into YAML'],
+      ['/json-formatter', 'Format the rebuilt document'],
+    ],
+    title: 'JSON Unflattener — Dot Notation to Nested JSON | DevPocket',
     description:
       'Rebuild nested JSON objects and arrays from flat dot-notation keys such as user.address.city. The exact inverse of flattening. Free, browser-based.',
     heading: 'Rebuild nested JSON from flat keys',
@@ -1535,7 +1360,13 @@ Line 7  trailing comma in the object`,
     ],
   },
   '/json-escape': {
-    title: 'JSON Escape & Unescape Online — DevPocket',
+    related: [
+      ['/base64', 'Encode a string for transport instead of escaping it'],
+      ['/url-encode', 'Percent-encode the string for a URL'],
+      ['/html-entities', 'Escape the string for HTML instead'],
+      ['/json-formatter', 'Format the JSON an escaped string contains'],
+    ],
+    title: 'JSON Escape & Unescape Online | DevPocket',
     description:
       'Escape text into a JSON string literal, or unescape one back to readable text. Handles quotes, backslashes, newlines and unicode. Free and private.',
     heading: 'Escape and unescape JSON strings',
@@ -1570,7 +1401,13 @@ Line 7  trailing comma in the object`,
     ],
   },
   '/json-remove-nulls': {
-    title: 'Remove Nulls from JSON Online — Free Cleaner — DevPocket',
+    related: [
+      ['/json-remove-empty', 'Also strip empty strings, arrays and objects'],
+      ['/json-merge', 'Merge documents without nulls overwriting values'],
+      ['/json-formatter', 'Format the cleaned document'],
+      ['/json-stats', 'Count how many nulls a payload carries'],
+    ],
+    title: 'Remove Nulls from JSON Online — Free Cleaner | DevPocket',
     description:
       'Strip every null value and null array entry from a JSON document, at any nesting depth. Free, instant, and nothing you paste is ever uploaded.',
     heading: 'Remove null values from JSON',
@@ -1578,7 +1415,7 @@ Line 7  trailing comma in the object`,
     deepDive: {
       heading: 'null, missing and empty are three different things',
       body: [
-        'Stripping nulls looks like tidying. In several common contexts it changes the meaning of the document rather than its size, because null is not a synonym for absent — it is a value that some protocols and schemas treat as significant.',
+        'Stripping nulls looks like tidying. In several common contexts it changes the meaning of the document rather than its size, because null is not a synonym for absent — it is a value that some protocols and schemas treat as significant. To also drop empty strings, arrays and objects, use [Remove Empty Values](/json-remove-empty).',
         'Before removing them, it is worth knowing which of the three states your consumer actually distinguishes.',
       ],
       example: {
@@ -1651,7 +1488,13 @@ With null stripped:
     ],
   },
   '/json-remove-empty': {
-    title: 'Remove Empty Values from JSON — DevPocket',
+    related: [
+      ['/json-remove-nulls', 'Strip only nulls and keep empty strings'],
+      ['/json-stats', 'See how many empty values there are first'],
+      ['/json-validator', 'Validate the cleaned JSON'],
+      ['/json-sort-keys', 'Sort keys for a stable, diffable output'],
+    ],
+    title: 'Remove Empty Values from JSON | DevPocket',
     description:
       'Strip nulls, empty strings, empty arrays and empty objects from JSON at every level. More aggressive than a null-only clean. Free and browser-based.',
     heading: 'Remove empty values from JSON',
@@ -1686,7 +1529,14 @@ With null stripped:
     ],
   },
   '/json-merge': {
-    title: 'JSON Merge Online — Deep Merge Two Documents — DevPocket',
+    related: [
+      ['/json-sort-keys', 'Sort the merged result'],
+      ['/diff', 'Compare the merged result with the original'],
+      ['/json-remove-nulls', 'Drop nulls before they overwrite values'],
+      ['/yaml-to-json', 'Convert YAML overrides to JSON before merging'],
+      ['/json-remove-empty', 'Drop empty values before merging'],
+    ],
+    title: 'JSON Merge Online — Deep Merge Two Documents | DevPocket',
     description:
       'Merge two JSON documents with a deep or shallow strategy. Nested objects combine recursively; the second document wins on conflicts. Free and private.',
     heading: 'Merge two JSON documents',
@@ -1720,11 +1570,18 @@ With null stripped:
       },
     ],
   },
-  '/json-tree': {
-    title: 'JSON Tree Viewer Online — Explore Nested JSON — DevPocket',
+  '/json-viewer': {
+    related: [
+      ['/json-formatter', 'Format and search the same document'],
+      ['/jsonpath', 'Select values by path once you have found them'],
+      ['/json-stats', 'Measure the document’s size and depth'],
+      ['/json-validator', 'Find the error when the tree will not load'],
+      ['/json-remove-nulls', 'Strip null fields that clutter the tree'],
+    ],
+    title: 'JSON Viewer Online — Collapsible Tree View | DevPocket',
     description:
       'View any JSON payload as a collapsible tree with typed, colour-coded values. Far easier than scrolling a large raw response. Free, no upload.',
-    heading: 'Browse JSON as a tree',
+    heading: 'JSON Viewer',
     aboutLabel: 'the JSON tree viewer',
     blurb:
       'Renders a payload as an expandable tree, with each branch showing how many children it holds and every leaf colour-coded by type. Collapse the parts you do not care about to find the one field you do.',
@@ -1756,7 +1613,13 @@ With null stripped:
     ],
   },
   '/json-stats': {
-    title: 'JSON Statistics — Node Count, Depth & Types — DevPocket',
+    related: [
+      ['/json-viewer', 'Browse the document you just analysed'],
+      ['/json-schema-generator', 'Infer the structure as a JSON Schema'],
+      ['/json-remove-empty', 'Strip the empty values the stats found'],
+      ['/json-validator', 'Check for duplicate keys and precision loss'],
+    ],
+    title: 'JSON Statistics — Node Count, Depth & Types | DevPocket',
     description:
       'Analyse a JSON payload: total nodes, maximum nesting depth, unique key count, size in bytes and a breakdown by type. Free and runs in your browser.',
     heading: 'Analyse a JSON payload',
@@ -1764,7 +1627,7 @@ With null stripped:
     deepDive: {
       heading: 'Reading a payload by its numbers',
       body: [
-        'Size, depth and node count answer different questions. Bytes tell you what the response costs on the wire; depth tells you whether a parser will refuse it; node count predicts parse time far better than bytes do, because the work is per value, not per character.',
+        'Size, depth and node count answer different questions. Bytes tell you what the response costs on the wire; depth tells you whether a parser will refuse it; node count predicts parse time far better than bytes do, because the work is per value, not per character. To see where the nodes are, [browse the document as a tree](/json-viewer).',
         'The most useful number is usually the ratio between them. A 2 MB payload with 40,000 nodes is a large collection and will parse in milliseconds. A 2 MB payload with 900,000 nodes is a pathological shape and will not.',
       ],
       example: {
@@ -1837,7 +1700,13 @@ format would take more.`,
     ],
   },
   '/jsonpath': {
-    title: 'JSONPath Evaluator Online — Test $.path Queries — DevPocket',
+    related: [
+      ['/json-viewer', 'Find a path by browsing the tree'],
+      ['/json-flatten', 'List every path in dot notation'],
+      ['/regex-tester', 'Match text patterns inside the values'],
+      ['/json-formatter', 'Format the matched result'],
+    ],
+    title: 'JSONPath Evaluator Online — Test $.path Queries | DevPocket',
     description:
       'Run JSONPath expressions against a document and see the matches instantly. Supports dot paths, array indexes, wildcards and recursive descent. Free.',
     heading: 'Evaluate JSONPath expressions',
@@ -1871,8 +1740,14 @@ format would take more.`,
       },
     ],
   },
-  '/json-schema': {
-    title: 'JSON Schema Generator — Infer a Schema from JSON — DevPocket',
+  '/json-schema-generator': {
+    related: [
+      ['/codegen', 'Generate typed models from the same sample'],
+      ['/json-validator', 'Validate the sample before inferring'],
+      ['/mock', 'Generate records that fit the schema'],
+      ['/csv-to-json', 'Turn tabular data into JSON to describe'],
+    ],
+    title: 'JSON Schema Generator — Infer a Schema from JSON | DevPocket',
     description:
       'Generate a draft 2020-12 JSON Schema from a sample payload, with types, required fields and detected date-time and email formats. Free and offline.',
     heading: 'Generate a JSON Schema from a sample',
@@ -1880,7 +1755,7 @@ format would take more.`,
     deepDive: {
       heading: 'What a generated schema gets right, and what you have to fix by hand',
       body: [
-        'Inference reads one sample and describes exactly that sample. It gives you the skeleton — types, nesting, property names — in seconds, which is the tedious part. What it cannot know is the difference between a field that happened to be present and a field that is always present, or between a string and a date.',
+        'Inference reads one sample and describes exactly that sample. It gives you the skeleton — types, nesting, property names — in seconds, which is the tedious part. What it cannot know is the difference between a field that happened to be present and a field that is always present, or between a string and a date. If what you need is code rather than a schema, [generate typed models](/codegen) from the same sample.',
         'Treat the output as a first draft: generate, then prune the required list, widen the types that can be null, and add the formats and constraints that carry the real rules.',
       ],
       example: {
@@ -1968,46 +1843,14 @@ format would take more.`,
       },
     ],
   },
-  '/uuid': {
-    title: 'UUID & Nano ID Generator Online — Bulk — DevPocket',
-    description:
-      'Generate UUID v4 or Nano IDs in bulk, up to 100 at a time, with uppercase and hyphen options. Uses the browser crypto source. Free, no sign-up.',
-    heading: 'Generate UUIDs and Nano IDs',
-    aboutLabel: 'the UUID and Nano ID generator',
-    blurb:
-      'Produces UUID v4 identifiers via the browser’s crypto.randomUUID, or shorter URL-friendly Nano IDs at whatever length you need. Generate up to a hundred at once and copy them individually or as a block.',
-    howItWorks: [
-      'Choose UUID v4 or Nano ID and set how many you need (up to 100).',
-      'DevPocket generates them using the browser’s crypto.getRandomValues source, not Math.random.',
-      'Copy one at a time or copy the whole batch, then regenerate as needed.',
-    ],
-    useCases: [
-      'Seeding test fixtures or mock database rows with unique IDs',
-      'Generating a primary key or idempotency key while prototyping',
-      'Creating short, URL-safe Nano IDs for slugs instead of full UUIDs',
-      'Bulk-generating IDs for a CSV or seed script',
-    ],
-    faq: [
-      {
-        q: 'Are these cryptographically random?',
-        a: 'Yes — both use the browser’s Web Crypto API (crypto.getRandomValues), the same source used for cryptographic key generation, not a pseudo-random Math.random() fallback.',
-      },
-      {
-        q: 'What UUID version is generated?',
-        a: 'Version 4 (random), the most common choice when you don’t need time-ordering or a namespace-derived ID.',
-      },
-      {
-        q: 'What’s a Nano ID and why would I use it over a UUID?',
-        a: 'A shorter, URL-friendly random ID (21 characters by default) — useful when a full 36-character UUID is overkill, e.g. in a URL slug.',
-      },
-      {
-        q: 'Is there a collision risk?',
-        a: 'Statistically negligible at any realistic scale — a UUID v4 has 122 random bits, and even generating billions of them keeps collision probability effectively zero.',
-      },
-    ],
-  },
   '/password': {
-    title: 'Password Generator — Strong Random Passwords — DevPocket',
+    related: [
+      ['/hash-generator', 'See why a fast hash like SHA-256 is not password storage'],
+      ['/jwt-encoder', 'Sign test tokens with a random secret'],
+      ['/uuid', 'Generate identifiers rather than secrets'],
+      ['/base64', 'Encode random key bytes as Base64'],
+    ],
+    title: 'Password Generator — Strong Random Passwords | DevPocket',
     description:
       'Generate strong random passwords with configurable length and character sets, plus an entropy estimate. Uses browser crypto and never transmits them.',
     heading: 'Generate strong passwords',
@@ -2015,7 +1858,7 @@ format would take more.`,
     deepDive: {
       heading: 'What actually makes a password hard to guess',
       body: [
-        'Strength is a property of how a password was generated, not how it looks. A password picked uniformly at random from a known alphabet has entropy you can calculate: length multiplied by log2(alphabet size). A password a human invented to satisfy a strength meter has far less, because the ways humans substitute characters are few and well known to cracking tools.',
+        'Strength is a property of how a password was generated, not how it looks. A password picked uniformly at random from a known alphabet has entropy you can calculate: length multiplied by log2(alphabet size). A password a human invented to satisfy a strength meter has far less, because the ways humans substitute characters are few and well known to cracking tools. And storing one needs a slow, salted hash such as Argon2 or bcrypt — not the fast digests in the [hash generator](/hash-generator).',
         'That is why this generator does two things and no more: it draws from crypto.getRandomValues — the browser\'s cryptographic random source, not Math.random — and it tells you the resulting entropy in bits, so the number is something you can reason about rather than a coloured bar.',
       ],
       table: {
@@ -2100,7 +1943,13 @@ format would take more.`,
     ],
   },
   '/lorem': {
-    title: 'Lorem Ipsum Generator — Words & Paragraphs — DevPocket',
+    related: [
+      ['/mock', 'Generate realistic records instead of Latin'],
+      ['/markdown', 'Draft a document around placeholder text'],
+      ['/case-converter', 'Turn placeholder words into identifiers'],
+      ['/color', 'Pick colors for the mock-up'],
+    ],
+    title: 'Lorem Ipsum Generator — Words & Paragraphs | DevPocket',
     description:
       'Generate placeholder Lorem Ipsum text by word, sentence or paragraph count, with the classic opening line optional. Free, instant and offline.',
     heading: 'Generate placeholder text',
@@ -2135,18 +1984,24 @@ format would take more.`,
     ],
   },
   '/url-parser': {
-    title: 'URL Parser & Query String Editor Online — DevPocket',
+    related: [
+      ['/url-encode', 'Encode or decode a single query value'],
+      ['/http', 'Look up the status code the request returned'],
+      ['/base64', 'Decode a Base64URL value found in the query'],
+      ['/regex-tester', 'Match URLs in logs with a pattern'],
+      ['/jwt-decoder', 'Decode a token passed as a query parameter'],
+    ],
+    title: 'URL Parser & Query String Editor Online | DevPocket',
     description:
       'Split any URL into protocol, host, port, path, query and fragment, decode every parameter, edit them as rows and copy the rebuilt URL. Runs in your browser.',
     heading: 'URL parser and query string editor',
     aboutLabel: 'the URL parser',
     blurb:
       'Paste a URL to see it the way a browser does: every part named, the path split into decoded segments, and each query parameter decoded into its own row that you can edit, remove or add to before copying the rebuilt URL or the query as JSON.',
-    related: ['/encode-decode', '/html-entities', '/http', '/jwtvalidator', '/json-xml'],
     deepDive: {
       heading: 'A URL is parsed by rules, not by splitting on "?" and "&"',
       body: [
-        'Most bugs with URLs come from reading them with string functions. Splitting on "?" breaks when the fragment contains one, splitting on "&" breaks when a value was not encoded, and a hand-written decoder gets "+" wrong half the time. This page uses the same WHATWG URL parser your browser uses for fetch() and the address bar, so what you see here is what the server will receive.',
+        'Most bugs with URLs come from reading them with string functions. Splitting on "?" breaks when the fragment contains one, splitting on "&" breaks when a value was not encoded, and a hand-written decoder gets "+" wrong half the time. This page uses the same WHATWG URL parser your browser uses for fetch() and the address bar, so what you see here is what the server will receive. To encode or decode one value on its own, use the [URL encoder](/url-encode).',
         'The query string is where the confusion lives. Parameter names can repeat (tag=a&tag=b is two values, not a typo), order is preserved and sometimes significant, and each value is percent-encoded independently. The parameter table shows every pair decoded, marks repeated keys, and rebuilds the query with correct encoding when you edit a row — so you can change a filter or strip a tracking parameter without hand-encoding anything.',
       ],
       example: {
@@ -2215,18 +2070,23 @@ fragment  #results`,
     ],
   },
   '/html-entities': {
-    title: 'HTML Entity Encoder & Decoder Online — DevPocket',
+    related: [
+      ['/url-encode', 'Encode for URLs rather than HTML'],
+      ['/markdown', 'Preview how escaped HTML renders in Markdown'],
+      ['/json-escape', 'Escape for JSON string literals instead'],
+      ['/xml-formatter', 'Check that escaped text leaves XML well-formed'],
+    ],
+    title: 'HTML Entity Encoder & Decoder Online | DevPocket',
     description:
       'Escape text for HTML with minimal, named or ASCII-only entities, or decode &amp;, &#233; and &#xE9; back to characters. Free and private, in your browser.',
     heading: 'HTML entity encoder and decoder',
     aboutLabel: 'HTML entity encoding',
     blurb:
       'Escape text so it is safe to put inside HTML, choosing how much to escape, or paste HTML full of &entities; and get readable text back, with a breakdown of every reference found and a warning for ones missing their closing semicolon.',
-    related: ['/encode-decode', '/url-parser', '/json-escape', '/markdown', '/diff'],
     deepDive: {
       heading: 'Which characters actually need escaping — and where',
       body: [
-        'In HTML only a handful of characters are dangerous: < and & start markup, and " or \' end an attribute value. Escaping those five is enough to display any text safely inside an element or a quoted attribute, and it is what the Minimal mode does. Everything else, including accented letters and emoji, is valid as-is in a UTF-8 page.',
+        'In HTML only a handful of characters are dangerous: < and & start markup, and " or \' end an attribute value. Escaping those five is enough to display any text safely inside an element or a quoted attribute, and it is what the Minimal mode does. Everything else, including accented letters and emoji, is valid as-is in a UTF-8 page. Text going into a URL needs [percent-encoding](/url-encode) instead, and text going into JSON needs [JSON string escaping](/json-escape).',
         'The other two modes exist for other destinations. Named mode writes common symbols as readable names (&copy;, &mdash;, &nbsp;) for hand-edited templates. All-non-ASCII mode turns every character above U+007F into a numeric reference, for the rare pipeline that is not UTF-8 clean — old email systems, some XML tools, a database column with the wrong charset.',
       ],
       example: {
@@ -2288,18 +2148,23 @@ All non-ASCII:
     ],
   },
   '/case-converter': {
-    title: 'Case Converter — camelCase, snake_case & More — DevPocket',
+    related: [
+      ['/regex-tester', 'Rename with a pattern when case rules are not enough'],
+      ['/properties', 'Rename .properties keys between cases'],
+      ['/codegen', 'Generate models with idiomatic field names'],
+      ['/diff', 'Compare before and after a rename'],
+    ],
+    title: 'Case Converter — camelCase, snake_case & More | DevPocket',
     description:
       'Convert names between camelCase, PascalCase, snake_case, SCREAMING_SNAKE, kebab-case and seven more. Handles acronyms like XMLHttp, one name or a list.',
     heading: 'Case converter for code identifiers',
     aboutLabel: 'the case converter',
     blurb:
       'Type an identifier or a phrase and see it in twelve naming conventions at once, or paste a whole list — column names, JSON keys, environment variables — and convert every line to one convention in a single pass.',
-    related: ['/codegen', '/json-sort-keys', '/properties', '/diff', '/lorem'],
     deepDive: {
       heading: 'Converting case is really about finding word boundaries',
       body: [
-        'Joining words is easy; finding them is the hard part. "user_id", "userId", "UserID" and "user-id" have to become the same two words before they can become anything else, and a naive splitter that breaks on every capital turns "XMLHttpRequest" into x, m, l, http, request. This converter treats a run of capitals followed by a lowercase word as an acronym and a separate word, so it comes out as xml, http, request.',
+        'Joining words is easy; finding them is the hard part. "user_id", "userId", "UserID" and "user-id" have to become the same two words before they can become anything else, and a naive splitter that breaks on every capital turns "XMLHttpRequest" into x, m, l, http, request. This converter treats a run of capitals followed by a lowercase word as an acronym and a separate word, so it comes out as xml, http, request. When a rename follows a pattern that is not about case, [test a regular expression](/regex-tester) instead.',
         'Digits stay attached to the word before them (utf8, v2, line1). That keeps version suffixes and numbered fields intact through a round trip, which is what you want when renaming database columns or mapping JSON keys to struct fields. The detector also tells you which convention the first line already uses, which helps when you are auditing a file with mixed styles.',
       ],
       example: {
@@ -2369,18 +2234,23 @@ shippingAddressLine1`,
     ],
   },
   '/number-base': {
-    title: 'Number Base Converter — Binary, Hex, Octal — DevPocket',
+    related: [
+      ['/color', 'Convert hex color codes to RGB'],
+      ['/hash-generator', 'See digests in hex or Base64'],
+      ['/timestamp', 'Read a timestamp written in hex'],
+      ['/base64', 'Encode raw bytes as Base64'],
+    ],
+    title: 'Number Base Converter — Binary, Hex, Octal | DevPocket',
     description:
       "Convert numbers between binary, octal, decimal and hexadecimal exactly, at any size, with 8- to 64-bit two's complement views. Free and runs in your browser.",
     heading: 'Number base converter',
     aboutLabel: 'number base conversion',
     blurb:
       "Enter a number in binary, octal, decimal or hex — or with a 0x, 0b or 0o prefix — and read it in every base at once, exactly, however many digits it has, along with its unsigned and two's complement signed value at 8, 16, 32 and 64 bits.",
-    related: ['/color', '/encode-decode', '/timestamp', '/uuid', '/password'],
     deepDive: {
       heading: 'Why a hex converter needs more than parseInt',
       body: [
-        "JavaScript numbers are 64-bit floats, so parseInt('FFFFFFFFFFFFFFFF', 16) returns 18446744073709552000 — close, and wrong. That matters for exactly the numbers developers convert most: 64-bit IDs, hashes, memory addresses and bit masks. This converter works on BigInt throughout, so a 64-bit or 256-bit value converts digit for digit.",
+        "JavaScript numbers are 64-bit floats, so parseInt('FFFFFFFFFFFFFFFF', 16) returns 18446744073709552000 — close, and wrong. That matters for exactly the numbers developers convert most: 64-bit IDs, hashes, memory addresses and bit masks. This converter works on BigInt throughout, so a 64-bit or 256-bit value converts digit for digit — a SHA-256 from the [hash generator](/hash-generator), say.",
         "The fixed-width table answers the other common question: what does this bit pattern mean as a signed integer? The same eight bits, 11001000, are 200 as an unsigned byte and -56 as a signed one. Seeing both side by side is how you debug an overflow, a sign-extension bug or a checksum that came back negative.",
       ],
       example: {
@@ -2442,7 +2312,7 @@ Decimal      4,294,967,294
   },
   '/privacy': {
     collapsedContent: false,
-    title: 'Privacy — How DevPocket Handles Your Data',
+    title: 'Privacy — How Your Data Is Handled | DevPocket',
     description:
       'DevPocket runs entirely client-side: no backend, no analytics, no cookies, no error tracking. See what is stored locally and how to verify it yourself.',
     heading: 'How DevPocket actually handles your data',
@@ -2470,12 +2340,12 @@ Decimal      4,294,967,294
   },
   '/about': {
     collapsedContent: false,
-    title: 'About DevPocket — Built by Sourabh Kumar',
+    title: 'About — Built by Sourabh Kumar | DevPocket',
     description:
       'DevPocket is a local-first developer toolbox built by Sourabh Kumar, a backend developer. No trackers, no ads, and nothing you paste leaves your browser.',
     heading: 'About DevPocket',
     // The page's own header reads "About"; keep that as its one <h1>.
-    h1: 'About',
+    h1: 'About DevPocket',
     aboutLabel: 'this project',
     blurb:
       'DevPocket was built to replace a pile of browser tabs pointed at ad-heavy formatter sites. Every tool runs as JavaScript in your own browser, so there is no server to send your data to in the first place.',
@@ -2494,6 +2364,12 @@ Decimal      4,294,967,294
       },
     ],
   },
+  ...encodingPages,
+  ...formatPages,
+  ...timePages,
+  ...idPages,
+  ...jwtPages,
+  ...springPages,
 }
 
 export const ROUTES = Object.keys(SEO)

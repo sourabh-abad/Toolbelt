@@ -441,3 +441,7 @@ textarea, pre {
 .code-err-line { background: rgb(244 63 94 / 0.10); color: inherit; border-radius: 2px; }
 .code-err-char { background: rgb(244 63 94 / 0.35); color: inherit; border-radius: 2px; text-decoration: underline wavy rgb(244 63 94); text-underline-offset: 3px; }
 .code-err-caret { display: inline-block; width: 0; height: 1.2em; vertical-align: text-bottom; box-shadow: 0 0 0 1px rgb(244 63 94); }
+/* Regex Tester match marks: colour only, so the paint layer stays in register. */
+.rx-a { background: rgb(16 185 129 / 0.28); color: inherit; border-radius: 2px; }
+.rx-b { background: rgb(14 165 233 / 0.28); color: inherit; border-radius: 2px; }
+.rx-empty { display: inline-block; width: 0; height: 1.2em; vertical-align: text-bottom; box-shadow: 0 0 0 1px rgb(16 185 129); }

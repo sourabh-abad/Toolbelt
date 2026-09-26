@@ -1,6 +1,7 @@
 import { useEffect, useState, lazy, Suspense } from 'react'
 import { Routes, Route, useLocation, Navigate } from 'react-router-dom'
 import { pushRecent, hrefFor } from './lib/nav'
+import { REDIRECTS } from './lib/redirects'
 import { useSeo } from './lib/useSeo'
 import { normalizePath } from './lib/seo'
 import SeoFooter from './components/SeoFooter'
@@ -14,14 +15,27 @@ import NotFound from './pages/NotFound'
 // stale chunk after a deploy), so the button just took focus and nothing opened.
 import CommandPalette from './components/CommandPalette'
 import ErrorBoundary from './components/ErrorBoundary'
+import UpdateBanner from './components/UpdateBanner'
 
 // Route-level code splitting: heavy tools (sql-formatter, js-yaml, cronstrue)
 // load on demand instead of inflating the initial bundle.
 // One loader per route: `lazy` uses it for rendering, and hovering a nav link
 // calls the same function to warm the chunk before the click lands.
 export const LOADERS = {
-  '/json-xml': () => import('./pages/JsonXmlTool'),
-  '/convert': () => import('./pages/ConvertTool'),
+  '/uuid-v7-generator': () => import('./pages/UuidV7Tool'),
+  '/jwt-encoder': () => import('./pages/JwtEncoderTool'),
+  '/properties-to-yaml': () => import('./pages/PropertiesToYamlTool'),
+  '/yaml-to-properties': () => import('./pages/YamlToPropertiesTool'),
+  '/regex-tester': () => import('./pages/RegexTesterTool'),
+  '/json-formatter': () => import('./pages/JsonFormatterTool'),
+  '/xml-formatter': () => import('./pages/XmlFormatterTool'),
+  '/json-to-csv': () => import('./pages/JsonToCsvTool'),
+  '/csv-to-json': () => import('./pages/CsvToJsonTool'),
+  '/json-to-yaml': () => import('./pages/JsonToYamlTool'),
+  '/yaml-to-json': () => import('./pages/YamlToJsonTool'),
+  '/hash-generator': () => import('./pages/HashGeneratorTool'),
+  '/url-encode': () => import('./pages/UrlEncodeTool'),
+  '/base64': () => import('./pages/Base64Tool'),
   '/codegen': () => import('./pages/CodeGenTool'),
   '/sql': () => import('./pages/SqlTool'),
   '/yaml': () => import('./pages/YamlTool'),
@@ -30,8 +44,7 @@ export const LOADERS = {
   '/sql-guide': () => import('./pages/SqlGuideTool'),
   '/docker-guide': () => import('./pages/DockerGuideTool'),
   '/diff': () => import('./pages/DiffTool'),
-  '/encode-decode': () => import('./pages/EncodeDecodeTool'),
-  '/jwtvalidator': () => import('./pages/JwtValidatorTool'),
+  '/jwt-decoder': () => import('./pages/JwtValidatorTool'),
   '/color': () => import('./pages/ColorTool'),
   '/markdown': () => import('./pages/MarkdownTool'),
   '/url-parser': () => import('./pages/UrlParserTool'),
@@ -51,11 +64,11 @@ export const LOADERS = {
   '/json-remove-nulls': () => import('./pages/JsonClean'),
   '/json-remove-empty': () => import('./pages/JsonClean'),
   '/json-merge': () => import('./pages/JsonMerge'),
-  '/json-tree': () => import('./pages/JsonTreeTool'),
-  '/jsonvalidator': () => import('./pages/JsonValidatorTool'),
+  '/json-viewer': () => import('./pages/JsonTreeTool'),
+  '/json-validator': () => import('./pages/JsonValidatorTool'),
   '/json-stats': () => import('./pages/JsonStats'),
   '/jsonpath': () => import('./pages/JsonPathTool'),
-  '/json-schema': () => import('./pages/JsonSchemaTool'),
+  '/json-schema-generator': () => import('./pages/JsonSchemaTool'),
   '/uuid': () => import('./pages/IdGeneratorTool'),
   '/password': () => import('./pages/PasswordTool'),
   '/lorem': () => import('./pages/LoremTool'),
@@ -189,8 +202,11 @@ export default function App() {
                 {Object.keys(LOADERS).map((path) => (
                   <Route key={path} path={path} element={<Page path={path} />} />
                 ))}
-                {/* The JWT tool used to live at /jwt-color; keep old links working. */}
-                <Route path="/jwt-color" element={<Navigate to={hrefFor('/jwtvalidator')} replace />} />
+                {/* Retired URLs (src/lib/redirects.js). A static stub answers
+                    them on first load; this covers links inside the app. */}
+                {Object.entries(REDIRECTS).map(([from, to]) => (
+                  <Route key={from} path={from} element={<Navigate to={hrefFor(to)} replace />} />
+                ))}
                 <Route path="*" element={<NotFound />} />
               </Routes>
               <ToolContentSections />
@@ -200,6 +216,8 @@ export default function App() {
           </ErrorBoundary>
         </main>
       </div>
+
+      <UpdateBanner />
 
       {paletteOpen && (
         <ErrorBoundary compact>

@@ -39,6 +39,9 @@ export default function CodeEditor({
   errorCol = null,
   /** Receives { reveal(pos, line, { focus }) } for scrolling to a position. */
   handleRef,
+  /** Ready-made HTML for the paint layer (escaped text plus marks), used
+   *  instead of the language highlighter — e.g. regex match highlighting. */
+  paintHtml = null,
   ...rest
 }) {
   const textRef = useRef(null)
@@ -48,6 +51,7 @@ export default function CodeEditor({
   const highlight = useMemo(() => lineHighlighter(language), [language])
   const html = useMemo(() => {
     if (plain) return ''
+    if (paintHtml !== null) return paintHtml + '\n'
     const lines = (value || '').split('\n')
     const errIdx = errorLine ? errorLine - 1 : -1
     return (
@@ -66,7 +70,7 @@ export default function CodeEditor({
         // The trailing newline keeps a blank last line under the caret.
         .join('\n') + '\n'
     )
-  }, [value, highlight, plain, errorLine, errorCol])
+  }, [value, highlight, plain, errorLine, errorCol, paintHtml])
 
   const syncScroll = () => {
     const input = textRef.current

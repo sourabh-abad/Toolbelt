@@ -27,7 +27,9 @@ export default function SeoFooter() {
   return (
     <footer className="bd mt-2 border-t px-4 py-8 sm:px-6">
       <div className="mx-auto max-w-4xl">
-        <h2 className="t-main text-sm font-semibold">{seo.footerHeading || seo.heading}</h2>
+        {/* A paragraph, not a heading: it repeats the page's H1, and a second
+            heading with the same text is noise to screen readers and crawlers. */}
+        <p className="t-main text-sm font-semibold">{seo.footerHeading || seo.heading}</p>
         <p className="t-muted mt-2 max-w-3xl text-sm leading-relaxed">{seo.blurb}</p>
 
         <details className="group mt-5">

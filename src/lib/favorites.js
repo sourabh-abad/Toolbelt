@@ -2,12 +2,18 @@
 // reactive: multiple components (a tool page's star, a home-page card's star)
 // can toggle the same path and stay in sync without a full page reload.
 import { useSyncExternalStore, useCallback } from 'react'
+import { currentPath } from './redirects.js'
 
 const KEY = 'devpocket-favorites'
 
+// Favorites saved under a URL that has since moved (/jwtvalidator → /jwt-decoder)
+// are rewritten to the new one, once, so the star still opens the right tool.
 function readSet() {
   try {
-    return new Set(JSON.parse(localStorage.getItem(KEY) || '[]'))
+    const saved = JSON.parse(localStorage.getItem(KEY) || '[]')
+    const migrated = [...new Set(saved.map(currentPath))]
+    if (migrated.join() !== saved.join()) localStorage.setItem(KEY, JSON.stringify(migrated))
+    return new Set(migrated)
   } catch {
     return new Set()
   }

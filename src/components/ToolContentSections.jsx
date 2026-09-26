@@ -117,7 +117,7 @@ export default function ToolContentSections() {
                 >
                   <span className="min-w-0">
                     <span className="t-main block text-sm font-medium">{n.label}</span>
-                    <span className="t-muted block truncate text-xs">{n.description}</span>
+                    <span className="t-muted block text-xs">{n.why}</span>
                   </span>
                   <ArrowRight className="t-faint h-4 w-4 shrink-0 transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
                 </Link>
@@ -131,25 +131,48 @@ export default function ToolContentSections() {
 }
 
 /**
- * The route's `related` list from seo.js when it has one. Otherwise: tools in
- * the same menu group, then tools whose own `related` list names this one,
- * then its neighbours in the menu — at least four, at most five. Pages outside
- * the tool menu (home, about, privacy) get none.
+ * The route's `related` list from seo.js: [route, reason] pairs, rendered as
+ * cards with the reason as their second line. Pages outside the tool menu
+ * (home, about, privacy) get none. scripts/check-site.mjs fails the build if a
+ * tool page has fewer than three, if two pages share the same list, or if one
+ * points at a route that does not exist.
  */
 function relatedTools(route, related) {
   const self = navItems.find((n) => n.to === route)
-  if (!self?.group) return []
-  if (related?.length) return related.map((to) => navItems.find((n) => n.to === to)).filter(Boolean)
+  if (!self?.group || !related?.length) return []
+  return related
+    .map((entry) => {
+      const [to, why] = Array.isArray(entry) ? entry : [entry, null]
+      const item = navItems.find((n) => n.to === to)
+      return item && { ...item, why: why || item.description }
+    })
+    .filter(Boolean)
+}
 
-  const tools = navItems.filter((n) => n.group && n.to !== route)
-  const at = navItems.indexOf(self)
-  const byDistance = [...tools].sort((a, b) => Math.abs(navItems.indexOf(a) - at) - Math.abs(navItems.indexOf(b) - at))
-  const picks = [
-    ...tools.filter((n) => n.group === self.group),
-    ...tools.filter((n) => seoFor(n.to).related?.includes(route)),
-    ...byDistance,
-  ]
-  return [...new Set(picks)].slice(0, 5)
+// [anchor](/route) and [anchor](https://…) inside guide copy become links;
+// everything else is plain text.
+const LINK = /\[([^\]]+)\]\(([^)\s]+)\)/g
+export function RichText({ text }) {
+  const out = []
+  let last = 0
+  for (const m of String(text).matchAll(LINK)) {
+    if (m.index > last) out.push(text.slice(last, m.index))
+    const [, label, href] = m
+    out.push(
+      href.startsWith('/') ? (
+        <Link key={m.index} to={href.replace(/\/$/, '')} className="font-medium text-emerald-700 underline underline-offset-2 hover:no-underline dark:text-emerald-400">
+          {label}
+        </Link>
+      ) : (
+        <a key={m.index} href={href} target="_blank" rel="noopener noreferrer" className="font-medium text-emerald-700 underline underline-offset-2 hover:no-underline dark:text-emerald-400">
+          {label}
+        </a>
+      )
+    )
+    last = m.index + m[0].length
+  }
+  if (last < text.length) out.push(text.slice(last))
+  return out
 }
 
 /** The one line under the "About" title that says what opening it gets you. */
@@ -181,7 +204,7 @@ function Guide({ accent, heading, body, example, table, gotchas }) {
           <div className="mt-4 space-y-3">
             {body.map((para, i) => (
               <p key={i} className="t-muted text-[15px] leading-relaxed">
-                {para}
+                <RichText text={para} />
               </p>
             ))}
           </div>
@@ -207,7 +230,11 @@ function Guide({ accent, heading, body, example, table, gotchas }) {
             </div>
           </div>
         )}
-        {example?.note && <p className="t-faint mt-2.5 text-sm leading-relaxed">{example.note}</p>}
+        {example?.note && (
+          <p className="t-faint mt-2.5 text-sm leading-relaxed">
+            <RichText text={example.note} />
+          </p>
+        )}
 
         {table && (
           <div className="mt-6 overflow-x-auto">
@@ -228,7 +255,7 @@ function Guide({ accent, heading, body, example, table, gotchas }) {
                 {table.rows.map((row, i) => (
                   <tr key={i} className="bd border-b last:border-0">
                     {row.map((cell, j) => (
-                      <td key={j} className={`py-2 pr-4 align-top ${j === 0 ? 'mono t-main' : 't-muted'}`}>
+                      <td key={j} className={`py-2 pr-4 align-top ${(table.codeColumns || [0]).includes(j) ? 'mono t-main whitespace-pre-wrap' : 't-muted whitespace-pre-line'}`}>
                         {cell}
                       </td>
                     ))}
@@ -246,7 +273,9 @@ function Guide({ accent, heading, body, example, table, gotchas }) {
               {gotchas.map(({ title, detail }, i) => (
                 <div key={i} className={`border-l-2 pl-4 ${accent.border}`}>
                   <p className="t-main text-[15px] font-semibold">{title}</p>
-                  <p className="t-muted mt-1 text-sm leading-relaxed">{detail}</p>
+                  <p className="t-muted mt-1 text-sm leading-relaxed">
+                    <RichText text={detail} />
+                  </p>
                 </div>
               ))}
             </div>

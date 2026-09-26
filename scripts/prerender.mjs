@@ -18,10 +18,9 @@ const root = join(dirname(fileURLToPath(import.meta.url)), '..')
 const dist = join(root, 'dist')
 
 // Read the route table straight from the app so the two can't drift apart.
-const seoSrc = readFileSync(join(root, 'src/lib/seo.js'), 'utf8')
-const { SEO, SITE_ORIGIN, canonicalUrl } = await import(
-  'data:text/javascript;base64,' + Buffer.from(seoSrc).toString('base64')
-)
+// Imported as real modules (seo.js pulls page copy in from src/content/).
+const { SEO, SITE_ORIGIN, canonicalUrl } = await import(pathToFileURL(join(root, 'src/lib/seo.js')).href)
+const { REDIRECTS } = await import(pathToFileURL(join(root, 'src/lib/redirects.js')).href)
 
 const template = readFileSync(join(dist, 'index.html'), 'utf8')
 
@@ -179,7 +178,14 @@ if (NAV.length < 20) throw new Error(`prerender: parsed only ${NAV.length} nav i
     ...Object.keys(SEO).filter((p) => p !== '/' && !ROUTE_SOURCE[p]).map((p) => `${p} has a seo.js entry but no route in App.jsx`),
     ...pages.filter((p) => !menu.has(p) && !OUTSIDE_MENU.has(p)).map((p) => `${p} is not in the nav.js menu`),
     ...[...menu].filter((p) => p !== '/' && !ROUTE_SOURCE[p]).map((p) => `${p} is in the menu but has no route`),
+    ...Object.keys(REDIRECTS).filter((p) => ROUTE_SOURCE[p] || SEO[p]).map((p) => `${p} is retired in redirects.js but still a route`),
+    ...Object.values(REDIRECTS).filter((p) => !ROUTE_SOURCE[p]).map((p) => `redirects.js points at ${p}, which is not a route`),
   ]
+  try {
+    execFileSync('node', [join(root, 'scripts/redirects-csv.mjs'), '--check'], { stdio: 'pipe' })
+  } catch (e) {
+    problems.push(String(e.stderr || e.message).trim())
+  }
   if (problems.length) throw new Error(`prerender: route tables disagree:\n  ${problems.join('\n  ')}`)
 }
 
@@ -217,16 +223,16 @@ async function render(pathname, seo, { noindex = false, appUrl } = {}) {
   const url = canonicalUrl(pathname)
   let html = template
 
-  html = html.replace(/<title>[\s\S]*?<\/title>/, `<title>${esc(seo.title)}</title>`)
+  html = html.replace(/<title>[\s\S]*?<\/title>/, () => `<title>${esc(seo.title)}</title>`)
   html = html.replace(
     /(<meta\s+name="description"\s+content=")[\s\S]*?(")/,
-    `$1${esc(seo.description)}$2`
+    (_m, a, b) => a + esc(seo.description) + b
   )
   html = html.replace(
     /(<link rel="canonical" href=")[^"]*(")/,
-    `$1${url}$2`
+    (_m, a, b) => a + url + b
   )
-  html = html.replace(/(<meta property="og:url" content=")[^"]*(")/, `$1${url}$2`)
+  html = html.replace(/(<meta property="og:url" content=")[^"]*(")/, (_m, a, b) => a + url + b)
 
   // GitHub Pages serves this file under every unknown path, so without a robots
   // tag the same body is reachable at an unbounded number of URLs. The 404
@@ -240,23 +246,25 @@ async function render(pathname, seo, { noindex = false, appUrl } = {}) {
   }
   html = html.replace(
     /(<meta property="og:title" content=")[^"]*(")/,
-    `$1${esc(seo.title)}$2`
+    (_m, a, b) => a + esc(seo.title) + b
   )
   html = html.replace(
     /(<meta\s+property="og:description"\s+content=")[\s\S]*?(")/,
-    `$1${esc(seo.description)}$2`
+    (_m, a, b) => a + esc(seo.description) + b
   )
   html = html.replace(
     /(<meta name="twitter:title" content=")[^"]*(")/,
-    `$1${esc(seo.title)}$2`
+    (_m, a, b) => a + esc(seo.title) + b
   )
   html = html.replace(
     /(<meta\s+name="twitter:description"\s+content=")[\s\S]*?(")/,
-    `$1${esc(seo.description)}$2`
+    (_m, a, b) => a + esc(seo.description) + b
   )
   html = html.replace(
     /<script type="application\/ld\+json">[\s\S]*?<\/script>/,
-    `<script type="application/ld+json">${buildLdJson(pathname, seo)}</script>`
+    // A function, not a string: FAQ answers contain $& and $$, which a
+    // replacement string would expand.
+    () => `<script type="application/ld+json">${buildLdJson(pathname, seo).replace(/</g, '\\u003c')}</script>`
   )
 
   const body = await renderApp(appUrl || hrefFor(pathname))
@@ -264,7 +272,7 @@ async function render(pathname, seo, { noindex = false, appUrl } = {}) {
   html = replaceRoot(html, body)
 
   const preloads = preloadTags(pathname)
-  if (preloads) html = html.replace('</head>', `    ${preloads}
+  if (preloads) html = html.replace('</head>', () => `    ${preloads}
   </head>`)
 
   return html
@@ -292,9 +300,13 @@ writeFileSync(
 // Retired URLs: a static page that redirects, plus a canonical pointing at the
 // new location so search engines transfer rather than index a duplicate.
 // GitHub Pages cannot issue 301s, so this is the closest equivalent.
-const REDIRECTS = { '/jwt-color': '/jwtvalidator' }
+// The table lives in src/lib/redirects.js; cloudflare-bulk-redirects.csv is
+// generated from it for real 301s once imported into Cloudflare.
 for (const [from, to] of Object.entries(REDIRECTS)) {
   const target = canonicalUrl(to)
+  // Relative for the redirect itself, so it also works on a preview host;
+  // the script keeps the query string and hash, as the 301 rules do.
+  const local = hrefFor(to)
   const dir = join(dist, from.replace(/^\//, ''))
   if (!existsSync(dir)) mkdirSync(dir, { recursive: true })
   writeFileSync(
@@ -306,11 +318,11 @@ for (const [from, to] of Object.entries(REDIRECTS)) {
     <title>Moved — ${esc(SEO[to].title)}</title>
     <link rel="canonical" href="${target}" />
     <meta name="robots" content="noindex, follow" />
-    <meta http-equiv="refresh" content="0; url=${target}" />
-    <script>window.location.replace(${JSON.stringify(target)})</script>
+    <meta http-equiv="refresh" content="0; url=${local}" />
+    <script>window.location.replace(${JSON.stringify(local)} + location.search + location.hash)</script>
   </head>
   <body>
-    <p>This tool moved to <a href="${target}">${target}</a>.</p>
+    <p>This tool moved to <a href="${local}">${esc(SEO[to].heading || SEO[to].title)}</a>.</p>
   </body>
 </html>
 `

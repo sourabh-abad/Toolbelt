@@ -1,6 +1,7 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Link2, Trash2, Plus, X, AlertTriangle } from 'lucide-react'
 import { parseUrl, withParams, paramsToJson } from '../lib/urlparse'
+import { takeHandoff } from '../lib/handoff'
 import { useToast } from '../lib/toast'
 import SplitPane from '../components/SplitPane'
 import CodeViewer from '../components/CodeViewer'
@@ -19,6 +20,15 @@ export default function UrlParserTool() {
   // Edited rows, or null while they simply mirror the parsed URL.
   const [edited, setEdited] = useState(null)
   const toast = useToast()
+
+  // A URL sent here from the URL encoder ("Inspect in URL parser").
+  useEffect(() => {
+    const value = takeHandoff('/url-parser')
+    if (value) {
+      setInput(value)
+      setEdited(null)
+    }
+  }, [])
 
   const { parsed, error } = useMemo(() => {
     try {

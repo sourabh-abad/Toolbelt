@@ -26,6 +26,14 @@ window.addEventListener('vite:preloadError', (event) => {
 // Offline support. The worker only caches this site's own files; see
 // scripts/prerender.mjs, which generates it.
 if (import.meta.env.PROD && 'serviceWorker' in navigator) {
+  // The worker calls skipWaiting() and clients.claim(), so a new version takes
+  // over this tab as soon as it installs. This tab is still running the old
+  // bundle (and the old route table), so offer a reload. First installs (no
+  // controller yet) are not updates and stay silent.
+  const hadController = Boolean(navigator.serviceWorker.controller)
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    if (hadController) window.dispatchEvent(new Event('devpocket:updated'))
+  })
   window.addEventListener('load', () => {
     // updateViaCache: 'none' — always fetch sw.js itself from the network.
     navigator.serviceWorker.register('/sw.js', { updateViaCache: 'none' }).catch(() => {})

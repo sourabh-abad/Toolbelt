@@ -111,7 +111,7 @@ export default function ColorTool() {
     <div>
       <PageHeader
         icon={Palette}
-        title="Colour & CSS Units"
+        title="Color & CSS Units"
         subtitle="Convert between HEX, RGB and HSL, and between px, rem, em and pt."
         accent="pink"
       />
