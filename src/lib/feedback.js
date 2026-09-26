@@ -11,7 +11,7 @@
  * VITE_WEB3FORMS_KEY when building). The key is designed to be public: it can
  * only deliver mail to the inbox it was created for.
  */
-const KEY = ''
+const KEY = 'b33ac70b-2aaf-4bf3-8c62-fa611629fadc'
 export const ACCESS_KEY = KEY || (import.meta.env || {}).VITE_WEB3FORMS_KEY || ''
 
 export const FEEDBACK_TO = 'info@devpocket.in'
