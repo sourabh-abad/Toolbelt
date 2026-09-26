@@ -4,6 +4,7 @@ import { ChevronRight } from 'lucide-react'
 import { seoFor, normalizePath } from '../lib/seo'
 import { navItems, NAV_GROUPS } from '../lib/nav'
 import { mailto } from '../lib/profile'
+import { openFeedback } from '../lib/feedback'
 
 /**
  * Real, visible copy describing the current tool, plus a link to every other
@@ -89,6 +90,10 @@ export default function SeoFooter() {
           <Link to="/about" className="inline-flex min-h-[36px] items-center underline-offset-2 hover:underline">
             about this project
           </Link>{' '}
+          ·{' '}
+          <button type="button" onClick={() => openFeedback()} className="inline-flex min-h-[36px] items-center underline-offset-2 hover:underline">
+            send feedback
+          </button>{' '}
           ·{' '}
           <a href={mailto()} className="inline-flex min-h-[36px] items-center underline-offset-2 hover:underline">
             contact

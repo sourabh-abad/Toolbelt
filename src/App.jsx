@@ -16,6 +16,7 @@ import NotFound from './pages/NotFound'
 import CommandPalette from './components/CommandPalette'
 import ErrorBoundary from './components/ErrorBoundary'
 import UpdateBanner from './components/UpdateBanner'
+import FeedbackHost from './components/FeedbackHost'
 
 // Route-level code splitting: heavy tools (sql-formatter, js-yaml, cronstrue)
 // load on demand instead of inflating the initial bundle.
@@ -218,6 +219,7 @@ export default function App() {
       </div>
 
       <UpdateBanner />
+      <FeedbackHost />
 
       {paletteOpen && (
         <ErrorBoundary compact>

@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 import { NavLink, Link } from './AppLink'
-import { ChevronDown, Search, Command, Sun, Moon, Menu, X, Heart, Lock, Info } from 'lucide-react'
+import { ChevronDown, Search, Command, Sun, Moon, Menu, X, Heart, Lock, Info, MessageSquarePlus } from 'lucide-react'
+import { openFeedback } from '../lib/feedback'
 import { navItems, NAV_GROUPS, ACCENTS } from '../lib/nav'
 import { normalizePath } from '../lib/seo'
 import { useTheme } from '../lib/theme'
@@ -75,7 +76,8 @@ export default function TopNav({ onOpenPalette, onPrefetch }) {
       <div className="mx-auto flex h-14 max-w-[1600px] items-center gap-2 px-3 sm:px-5">
         <Link to="/" className="flex shrink-0 items-center gap-2.5" aria-label="DevPocket home">
           <Logo className="h-7 w-7" />
-          <span className="t-main hidden text-base font-bold tracking-tight sm:inline">DevPocket</span>
+          {/* Between lg and xl the eight menus need the room: logo mark only. */}
+          <span className="t-main hidden text-base font-bold tracking-tight sm:inline lg:hidden xl:inline">DevPocket</span>
         </Link>
 
         {/* Desktop menu bar */}
@@ -145,9 +147,9 @@ export default function TopNav({ onOpenPalette, onPrefetch }) {
             className="field hover-surface t-muted flex items-center gap-2 rounded-lg border px-2.5 py-1.5 text-sm transition-colors"
           >
             <Search className="h-3.5 w-3.5" aria-hidden="true" />
-            {/* Between lg and xl the menu bar needs the room: icon only. */}
-            <span className="hidden whitespace-nowrap sm:inline lg:hidden xl:inline">Search tools…</span>
-            <kbd className="bd hidden items-center gap-0.5 rounded border px-1.5 py-0.5 text-[10px] whitespace-nowrap sm:flex lg:hidden xl:flex">
+            {/* Between lg and 2xl the menu bar needs the room: icon only. */}
+            <span className="hidden whitespace-nowrap sm:inline lg:hidden 2xl:inline">Search tools…</span>
+            <kbd className="bd hidden items-center gap-0.5 rounded border px-1.5 py-0.5 text-[10px] whitespace-nowrap sm:flex lg:hidden 2xl:flex">
               {apple ? (
                 <>
                   <Command className="h-2.5 w-2.5" aria-hidden="true" />K
@@ -165,6 +167,17 @@ export default function TopNav({ onOpenPalette, onPrefetch }) {
             className="field hover-surface t-muted flex h-8 w-8 items-center justify-center rounded-lg border transition-colors"
           >
             {theme === 'dark' ? <Sun className="h-3.5 w-3.5" aria-hidden="true" /> : <Moon className="h-3.5 w-3.5" aria-hidden="true" />}
+          </button>
+
+          <button
+            onClick={() => openFeedback()}
+            type="button"
+            aria-label="Send feedback"
+            title="Report a bug or suggest an improvement"
+            className="field hover-surface t-muted flex h-8 shrink-0 items-center justify-center gap-1.5 rounded-lg border px-2 text-sm transition-colors"
+          >
+            <MessageSquarePlus className="h-3.5 w-3.5" aria-hidden="true" />
+            <span className="hidden 2xl:inline">Feedback</span>
           </button>
 
           <Link
@@ -230,6 +243,17 @@ export default function TopNav({ onOpenPalette, onPrefetch }) {
               <Lock className="h-4 w-4" aria-hidden="true" />
               Privacy
             </Link>
+            <button
+              type="button"
+              onClick={() => {
+                setMobileOpen(false)
+                openFeedback()
+              }}
+              className="t-muted hover-surface flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-left text-sm"
+            >
+              <MessageSquarePlus className="h-4 w-4" aria-hidden="true" />
+              Send feedback
+            </button>
           </div>
         </div>
       )}

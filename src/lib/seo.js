@@ -2326,7 +2326,7 @@ Decimal      4,294,967,294
       },
       {
         q: 'Is there analytics or error tracking?',
-        a: 'Neither. There is no analytics script, no error reporting service and no third-party tag. The only requests the site makes are for its own HTML, JavaScript, CSS and fonts.',
+        a: 'Neither. There is no analytics script, no error reporting service and no third-party tag. The only requests the site makes are for its own HTML, JavaScript, CSS and fonts — plus the feedback form, and only when you press its Send button.',
       },
       {
         q: 'What is stored in my browser?',

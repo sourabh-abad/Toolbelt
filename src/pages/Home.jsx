@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
-import { Keyboard, Lock, UserX, UploadCloud, Zap, Star, History } from 'lucide-react'
+import { Keyboard, Lock, UserX, UploadCloud, Zap, Star, History, MessageSquarePlus, Bug, Lightbulb } from 'lucide-react'
+import { openFeedback } from '../lib/feedback'
 import { navItems, NAV_GROUPS, getRecent } from '../lib/nav'
 import { useFavorites } from '../lib/favorites'
 import ToolCard from '../components/ToolCard'
@@ -99,6 +100,26 @@ export default function Home() {
             </section>
           )
         })}
+
+        <section className="panel flex flex-col gap-4 rounded-2xl border p-5 sm:flex-row sm:items-center sm:justify-between sm:p-6">
+          <div className="min-w-0">
+            <h2 className="t-main flex items-center gap-2 text-base font-semibold">
+              <MessageSquarePlus className="h-4 w-4 text-emerald-500" aria-hidden="true" />
+              Found a bug or missing a tool?
+            </h2>
+            <p className="t-muted mt-1 max-w-xl text-sm leading-relaxed">
+              Tell us in a short form — no email app needed. It is the only thing on DevPocket that sends what you type, and only when you press Send.
+            </p>
+          </div>
+          <div className="flex shrink-0 flex-wrap gap-2">
+            <button type="button" onClick={() => openFeedback('bug')} className="field hover-surface t-main inline-flex min-h-[40px] items-center gap-1.5 rounded-lg border px-3 text-sm font-medium">
+              <Bug className="h-4 w-4 text-rose-500" aria-hidden="true" />Report a bug
+            </button>
+            <button type="button" onClick={() => openFeedback('suggestion')} className="inline-flex min-h-[40px] items-center gap-1.5 rounded-lg bg-emerald-600 px-3 text-sm font-medium text-white hover:bg-emerald-700">
+              <Lightbulb className="h-4 w-4" aria-hidden="true" />Suggest an idea
+            </button>
+          </div>
+        </section>
       </div>
     </div>
   )

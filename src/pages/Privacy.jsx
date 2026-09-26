@@ -1,4 +1,5 @@
-import { ShieldCheck, Lock, Cookie, BarChart3, HardDrive, Radio, Wifi, Search } from 'lucide-react'
+import { ShieldCheck, Lock, Cookie, BarChart3, HardDrive, Radio, Wifi, Search, MessageSquarePlus } from 'lucide-react'
+import { openFeedback, FEEDBACK_TO } from '../lib/feedback'
 import { PageHeader, Panel } from '../components/ui'
 
 const ROWS = [
@@ -10,7 +11,12 @@ const ROWS = [
   {
     icon: Wifi,
     title: 'What is sent externally',
-    body: 'Nothing you type or paste into a tool. The only network requests DevPocket itself makes are for the page shell: the JavaScript/CSS bundles and the Inter font from Google Fonts (fonts.googleapis.com, fonts.gstatic.com), fetched once per visit regardless of what you do afterward. No tool currently calls an external API — if one ever needs to, its page will carry a "Needs network" badge instead of "Runs locally" and state exactly what is sent and why.',
+    body: 'Nothing you type or paste into a tool. The only network requests DevPocket itself makes are for the page shell: the JavaScript/CSS bundles and the Inter font from Google Fonts (fonts.googleapis.com, fonts.gstatic.com), fetched once per visit regardless of what you do afterward. No tool currently calls an external API — if one ever needs to, its page will carry a "Needs network" badge instead of "Runs locally" and state exactly what is sent and why. The one exception is the feedback form below, and only when you press its Send button.',
+  },
+  {
+    icon: MessageSquarePlus,
+    title: 'Feedback form',
+    body: `The feedback form (in the header and the footer) is the only part of DevPocket that sends text you typed, and it does so only when you press Send. What goes out is exactly its fields: the kind of feedback, your message, your email if you chose to give one, and the page address unless you untick it — never the input of the tool you were using. It is delivered to ${FEEDBACK_TO} through Web3Forms (web3forms.com), a form-to-email service, and is used only to read and answer your feedback.`,
   },
   {
     icon: BarChart3,
@@ -30,7 +36,7 @@ const ROWS = [
   {
     icon: HardDrive,
     title: 'Local storage',
-    body: 'A few small preferences live in your browser\'s localStorage, scoped to devpocket.in: your theme choice, the paths of your last few visited and favorited tools, and the sizes you\'ve dragged split panes to. None of it holds the text, tokens or files you paste into a tool — only UI state and tool paths. IndexedDB is not used. Clear it any time via your browser\'s site data settings.',
+    body: 'A few small preferences live in your browser\'s localStorage, scoped to devpocket.in: your theme choice, the paths of your last few visited and favorited tools, the sizes you\'ve dragged split panes to, and the time zones you picked on the timestamp converter. None of it holds the text, tokens or files you paste into a tool — only UI state and tool paths. IndexedDB is not used. Clear it any time via your browser\'s site data settings.',
   },
   {
     icon: Radio,
@@ -81,7 +87,11 @@ export default function Privacy() {
         </Panel>
 
         <p className="t-faint pb-4 text-center text-xs">
-          Found a tool that doesn't match this description? That would be a bug — please report it.
+          Found a tool that doesn't match this description? That would be a bug —{' '}
+          <button type="button" onClick={() => openFeedback('bug')} className="underline underline-offset-2 hover:text-emerald-500">
+            please report it
+          </button>
+          .
         </p>
       </div>
     </div>

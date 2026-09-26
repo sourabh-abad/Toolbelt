@@ -84,6 +84,18 @@ Retired slugs are listed once, in `src/lib/redirects.js` (old → new). From tha
 
 GitHub Pages cannot send a 301, so import the CSV into Cloudflare once (it is already in Cloudflare's format: no header row, sources without a scheme so both http and https match): **Account → Bulk Redirects → Create Bulk Redirect List → Upload CSV**, then **Create Bulk Redirect Rule** using that list. Cloudflare then answers the old URLs with a real 301 before the request reaches Pages; the stubs remain as a fallback. Re-upload the file whenever `redirects.js` changes (`node scripts/redirects-csv.mjs` regenerates it).
 
+### Feedback form
+
+The **Feedback** button in the header (also in the mobile menu, the footer, the homepage and the privacy page) opens a form — bug, improvement or suggestion, a message, an optional reply-to email and, if left ticked, the page address. On **Send** it is posted to [Web3Forms](https://web3forms.com), a free form-to-email service (250 messages a month), which mails it to **info@devpocket.in**. Nothing else is ever sent, and nothing at all until the user presses Send; the form says so above the button, and the privacy page describes it.
+
+One-time setup:
+
+1. Make sure mail to info@devpocket.in arrives: in Cloudflare → Email → Email Routing, add a custom address `info` routed to your inbox (or rely on a catch-all).
+2. At [web3forms.com](https://web3forms.com), enter info@devpocket.in to get an access key (it is emailed to that address).
+3. Paste the key between the quotes of `KEY` in `src/lib/feedback.js` — or set `VITE_WEB3FORMS_KEY` when building — and deploy. The key is public by design: it can only deliver to the inbox it was created for.
+
+Until a key is set, the form still opens and explains that sending is not set up, pointing to the email address instead. A hidden honeypot field drops bot submissions before any request is made.
+
 ### After deploying
 
 1. Add the site at [Google Search Console](https://search.google.com/search-console) (verify via the DNS TXT record).
