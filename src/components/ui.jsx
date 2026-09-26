@@ -190,9 +190,10 @@ export function PrivacyBadge({ privacy = 'local', className = '' }) {
 export function FavoriteButton({ path, size = 'md', className = '' }) {
   const { isFavorite, toggle } = useFavorites()
   const active = isFavorite(path)
-  // 44×44 on touch screens and small viewports (the icon stays 16px); the
-  // compact size is for a mouse, where precision is not the problem.
-  const dim = `${size === 'sm' ? 'h-7 w-7' : 'h-8 w-8'} max-sm:h-11 max-sm:w-11 pointer-coarse:h-11 pointer-coarse:w-11`
+  // A 44×44 hit area everywhere (WCAG 2.5.5); the star itself stays 16px.
+  // `size` only trims the outer margin so the card and header layouts keep
+  // their spacing.
+  const dim = size === 'sm' ? 'h-11 w-11' : 'h-11 w-11 -my-1'
   return (
     <button
       type="button"

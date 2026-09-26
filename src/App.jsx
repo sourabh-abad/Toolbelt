@@ -11,6 +11,7 @@ import Home from './pages/Home'
 // search button could land while the chunk was still downloading (or fail on a
 // stale chunk after a deploy), so the button just took focus and nothing opened.
 import CommandPalette from './components/CommandPalette'
+import ErrorBoundary from './components/ErrorBoundary'
 
 
 // Route-level code splitting: heavy tools (sql-formatter, js-yaml, cronstrue)
@@ -174,8 +175,10 @@ export default function App() {
 
       <div className="relative z-10 flex min-w-0 flex-1 flex-col">
         <main id="main" className="mx-auto w-full max-w-[1600px] flex-1">
+          {/* Keyed by route, so moving to another page clears an error. */}
+          <ErrorBoundary key={location.pathname}>
           <Suspense fallback={<RouteFallback />}>
-            <div key={location.pathname}>
+            <div>
               <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/json-xml" element={<JsonXmlTool />} />
@@ -222,10 +225,15 @@ export default function App() {
               <SeoFooter />
             </div>
           </Suspense>
+          </ErrorBoundary>
         </main>
       </div>
 
-      {paletteOpen && <CommandPalette open={paletteOpen} onClose={() => setPaletteOpen(false)} />}
+      {paletteOpen && (
+        <ErrorBoundary compact>
+          <CommandPalette open={paletteOpen} onClose={() => setPaletteOpen(false)} />
+        </ErrorBoundary>
+      )}
     </div>
   )
 }

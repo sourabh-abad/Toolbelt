@@ -13,14 +13,14 @@ import { FavoriteButton, PrivacyBadge } from './ui'
  * screen readers, even though most browsers render it without complaint.
  */
 export default function ToolCard({ item }) {
-  const { to, label, icon: Icon, description, accent, network } = item
+  const { to, label, icon: Icon, description, accent, network, group } = item
   const a = ACCENTS[accent] || ACCENTS.emerald
   return (
     <div className={`panel will-lift group relative overflow-hidden rounded-2xl border transition-all duration-200 hover:-translate-y-0.5 hover:shadow-xl ${a.glow}`}>
       <div
         className={`pointer-events-none absolute -top-8 -right-8 h-28 w-28 rounded-full bg-gradient-to-br ${a.grad} opacity-0 blur-2xl transition-opacity duration-300 group-hover:opacity-25`}
       />
-      <FavoriteButton path={to} size="sm" className="absolute top-3 right-3 z-10 max-sm:top-1.5 max-sm:right-1.5 pointer-coarse:top-1.5 pointer-coarse:right-1.5" />
+      <FavoriteButton path={to} size="sm" className="absolute top-1.5 right-1.5 z-10" />
       <Link to={to} className="relative flex flex-col justify-between p-5">
         <div className="pr-8">
           <div className={`mb-4 flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br ${a.grad} text-white shadow-md ${a.glow}`}>
@@ -30,7 +30,8 @@ export default function ToolCard({ item }) {
           <p className="t-muted mt-1.5 text-xs leading-relaxed">{description}</p>
         </div>
         <div className="mt-5 flex items-center justify-between gap-2">
-          <PrivacyBadge privacy={network ? 'network' : 'local'} />
+          {/* Reference pages take no input, so "Runs locally" says nothing there. */}
+          {group === 'Reference' ? <span /> : <PrivacyBadge privacy={network ? 'network' : 'local'} />}
           <div className={`t-muted flex items-center gap-1 text-xs font-medium transition-colors ${a.groupHoverText}`}>
             Open
             <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" aria-hidden="true" />

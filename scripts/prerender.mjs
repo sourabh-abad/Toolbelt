@@ -560,7 +560,9 @@ writeFileSync(
 // with a connection it keeps working without one. Lazily loaded extras (the
 // Mermaid renderer and its diagram types) are cached the first time they are
 // used. The cache name is a hash of the precached files, so a deploy installs
-// a fresh cache and drops the old one.
+// a fresh cache. The previous version's cache is kept (one release back), so a
+// tab still running the old build can load its old chunks after the new
+// worker takes over; anything older is deleted.
 const precacheFiles = new Set(['/', '/404.html', '/site.webmanifest', '/favicon.svg', '/favicon.ico', '/icon-192.png', '/icon-512.png', '/apple-touch-icon.png'])
 for (const p of routes) if (p !== '/') precacheFiles.add(hrefFor(p))
 for (const f of shellChunks) precacheFiles.add(`/${f}`)
@@ -590,10 +592,13 @@ self.addEventListener('install', (event) => {
 
 self.addEventListener('activate', (event) => {
   event.waitUntil(
-    caches
-      .keys()
-      .then((keys) => Promise.all(keys.filter((k) => k.startsWith('devpocket-') && k !== CACHE).map((k) => caches.delete(k))))
-      .then(() => self.clients.claim())
+    (async () => {
+      await self.clients.claim()
+      // caches.keys() lists caches oldest first. Keep this version and the one
+      // before it: open tabs from the previous deploy still need its chunks.
+      const versions = (await caches.keys()).filter((k) => /^devpocket-[0-9a-f]{12}$/.test(k) && k !== CACHE)
+      await Promise.all(versions.slice(0, -1).map((k) => caches.delete(k)))
+    })()
   )
 })
 
@@ -601,7 +606,9 @@ self.addEventListener('activate', (event) => {
 async function page(request) {
   const cache = await caches.open(CACHE)
   try {
-    const response = await fetch(request)
+    // no-cache: always revalidate with the server, never take the browser's
+    // HTTP-cached copy of an HTML page that may point at deleted chunks.
+    const response = await fetch(request, { cache: 'no-cache' })
     if (response.ok) cache.put(request, response.clone())
     return response
   } catch {
@@ -617,12 +624,14 @@ async function page(request) {
 }
 
 // Hashed assets never change under the same name: cache first, forever.
+// caches.match looks in every cache, so the previous version's chunks are
+// still served to a tab that loaded before the deploy. A 404 is passed through
+// but never stored.
 async function asset(request) {
-  const cache = await caches.open(CACHE)
-  const hit = await cache.match(request)
+  const hit = await caches.match(request)
   if (hit) return hit
   const response = await fetch(request)
-  if (response.ok) cache.put(request, response.clone())
+  if (response.ok) (await caches.open(CACHE)).put(request, response.clone())
   return response
 }
 
@@ -655,5 +664,10 @@ self.addEventListener('fetch', (event) => {
 })
 `
 )
+
+// This build's own hashed files. scripts/keep-previous-assets.mjs reads the
+// live copy at deploy time to carry the previous release's chunks forward.
+const ownAssets = readdirSync(join(dist, 'assets')).sort()
+writeFileSync(join(dist, 'assets-manifest.json'), JSON.stringify({ version, files: ownAssets }) + '\n')
 
 console.log(`✓ prerendered ${routes.length} routes + sitemap.xml, robots.txt, 404.html, sw.js (${precache.length} files precached)`)

@@ -1,0 +1,24 @@
+# Cache policy, in the _headers format Cloudflare Pages and Netlify read.
+# GitHub Pages ignores this file: while the site is served from Pages behind
+# the Cloudflare proxy, the same policy is set with Cloudflare rules instead
+# (see "Caching" in README.md). Kept here so a move to Cloudflare Pages
+# carries it over unchanged.
+
+# HTML and the service worker: always revalidate, so a deploy is seen at once
+# and no page keeps pointing at chunks that no longer exist.
+/
+  Cache-Control: no-cache
+/*/
+  Cache-Control: no-cache
+/*.html
+  Cache-Control: no-cache
+/sw.js
+  Cache-Control: no-cache
+/assets-manifest.json
+  Cache-Control: no-cache
+/site.webmanifest
+  Cache-Control: no-cache
+
+# Hashed build output never changes under the same name.
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable

@@ -19,6 +19,25 @@
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/site.webmanifest" />
 
+    <!-- If this HTML is older than the current deploy, its hashed script or
+         stylesheet may already be gone (404). The app cannot recover from that
+         itself because it never starts, so reload once for the fresh HTML.
+         Same key and one-minute guard as src/lib/reload.js. -->
+    <script>
+      window.addEventListener('error', function (e) {
+        var t = e.target
+        if (!t || (t.tagName !== 'SCRIPT' && t.tagName !== 'LINK')) return
+        var url = t.src || t.href || ''
+        if (url.indexOf('/assets/') === -1) return
+        try {
+          var last = Number(sessionStorage.getItem('devpocket-chunk-reload') || 0)
+          if (Date.now() - last < 60000) return
+          sessionStorage.setItem('devpocket-chunk-reload', String(Date.now()))
+        } catch (err) {}
+        location.reload()
+      }, true)
+    </script>
+
     <title>DevPocket — Developer Tools That Stay In Your Browser</title>
     <meta
       name="description"
