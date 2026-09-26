@@ -15,9 +15,8 @@ import { mailto } from '../lib/profile'
  * The directory itself is behind a closed disclosure: twenty-eight links is a
  * wall of text under every tool, and a crawler reads the markup either way.
  *
- * scripts/prerender.mjs writes the same markup into the static HTML. If this
- * component changes shape, that mirror has to change with it — static HTML
- * that differs from the hydrated page is cloaking.
+ * The static HTML is this component rendered at build time (src/entry-server.jsx),
+ * so the prerendered footer and the live one cannot differ.
  */
 export default function SeoFooter() {
   const { pathname } = useLocation()

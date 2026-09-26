@@ -1,5 +1,6 @@
 import { useLocation } from 'react-router-dom'
-import { ChevronDown } from 'lucide-react'
+import { ChevronDown, ArrowRight } from 'lucide-react'
+import { Link } from './AppLink'
 import { seoFor, normalizePath } from '../lib/seo'
 import { navItems, ACCENTS } from '../lib/nav'
 
@@ -20,16 +21,17 @@ import { navItems, ACCENTS } from '../lib/nav'
  * A route sets `collapsedContent: false` to render all of it open, which is
  * right only where the copy IS the page (About, Privacy).
  *
- * scripts/prerender.mjs writes the same copy into the static HTML. Change the
- * shape here and that mirror has to change with it.
+ * The static HTML is this same component rendered at build time (see
+ * src/entry-server.jsx), so there is no separate copy to keep in step.
  */
 export default function ToolContentSections() {
   const { pathname } = useLocation()
   const route = normalizePath(pathname)
-  const { howItWorks, useCases, faq, aboutLabel, collapsedContent, deepDive } = seoFor(route)
+  const { howItWorks, useCases, faq, aboutLabel, collapsedContent, deepDive, related } = seoFor(route)
   const accent = ACCENTS[navItems.find((n) => n.to === route)?.accent] || ACCENTS.emerald
+  const relatedItems = relatedTools(route, related)
 
-  if (!howItWorks && !useCases && !faq && !deepDive) return null
+  if (!howItWorks && !useCases && !faq && !deepDive && !relatedItems.length) return null
 
   const about = (howItWorks || useCases || faq) && (
     <div className="space-y-6">
@@ -102,8 +104,52 @@ export default function ToolContentSections() {
           <div className="bd border-t px-5 pt-5 pb-6 sm:px-6">{about}</div>
         </details>
       )}
+
+      {relatedItems.length > 0 && (
+        <section className="panel rounded-2xl border p-5 sm:p-6" aria-labelledby="related-tools">
+          <h2 id="related-tools" className="t-main text-base font-semibold">Related tools</h2>
+          <ul className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2">
+            {relatedItems.map((n) => (
+              <li key={n.to} className="min-w-0">
+                <Link
+                  to={n.to}
+                  className="bd hover-surface group flex min-h-[44px] items-center justify-between gap-3 rounded-xl border px-3.5 py-2.5"
+                >
+                  <span className="min-w-0">
+                    <span className="t-main block text-sm font-medium">{n.label}</span>
+                    <span className="t-muted block truncate text-xs">{n.description}</span>
+                  </span>
+                  <ArrowRight className="t-faint h-4 w-4 shrink-0 transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
     </div>
   )
+}
+
+/**
+ * The route's `related` list from seo.js when it has one. Otherwise: tools in
+ * the same menu group, then tools whose own `related` list names this one,
+ * then its neighbours in the menu — at least four, at most five. Pages outside
+ * the tool menu (home, about, privacy) get none.
+ */
+function relatedTools(route, related) {
+  const self = navItems.find((n) => n.to === route)
+  if (!self?.group) return []
+  if (related?.length) return related.map((to) => navItems.find((n) => n.to === to)).filter(Boolean)
+
+  const tools = navItems.filter((n) => n.group && n.to !== route)
+  const at = navItems.indexOf(self)
+  const byDistance = [...tools].sort((a, b) => Math.abs(navItems.indexOf(a) - at) - Math.abs(navItems.indexOf(b) - at))
+  const picks = [
+    ...tools.filter((n) => n.group === self.group),
+    ...tools.filter((n) => seoFor(n.to).related?.includes(route)),
+    ...byDistance,
+  ]
+  return [...new Set(picks)].slice(0, 5)
 }
 
 /** The one line under the "About" title that says what opening it gets you. */
@@ -117,7 +163,7 @@ function teaserFor({ howItWorks, useCases, faq }) {
 
 /**
  * The page-specific guide. Deliberately plain markup — no syntax highlighting
- * — because scripts/prerender.mjs emits the same HTML for the static file.
+ * — so it reads the same before and after the page's script loads.
  */
 function Guide({ accent, heading, body, example, table, gotchas }) {
   return (

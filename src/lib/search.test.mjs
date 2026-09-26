@@ -22,6 +22,12 @@ test('common words reach the right tool first', () => {
   assert.equal(first('jwt decode'), '/jwtvalidator')
   assert.equal(first('crontab'), '/cron')
   assert.equal(first('guid'), '/uuid')
+  assert.equal(first('camelcase'), '/case-converter')
+  assert.equal(first('snake_case'), '/case-converter')
+  assert.equal(first('hex to decimal'), '/number-base')
+  assert.equal(first('binary'), '/number-base')
+  assert.equal(first('query string'), '/url-parser')
+  assert.equal(first('html escape'), '/html-entities')
 })
 
 test('dedicated tools outrank tools that mention the word', () => {

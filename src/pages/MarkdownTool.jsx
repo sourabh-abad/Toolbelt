@@ -13,7 +13,7 @@ import {
 import { useToast } from '../lib/toast'
 import { useTheme } from '../lib/theme'
 import { useDebounced } from '../lib/useDebounced'
-import { renderMarkdown, documentStats, hasMermaid, standaloneHtml } from '../lib/markdown'
+import { renderMarkdown, documentStats, hasMermaid, standaloneHtml, demoteHeadings } from '../lib/markdown'
 import SplitPane from '../components/SplitPane'
 import { Button, CopyButton, Tabs, Checkbox, PageHeader } from '../components/ui'
 
@@ -114,7 +114,7 @@ export default function MarkdownTool() {
   // just its string, so a fresh literal on every render wipes the SVGs Mermaid
   // drew into the preview — toggling any control used to blank the diagrams.
   // Memoising it means the markup is only written when the document changes.
-  const previewHtml = useMemo(() => ({ __html: html }), [html])
+  const previewHtml = useMemo(() => ({ __html: demoteHeadings(html) }), [html])
 
   // Both modes leave the preview alone with the full width, which is too wide a
   // line to read comfortably and means there is no editor to sync scroll with.

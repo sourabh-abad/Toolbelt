@@ -152,6 +152,20 @@ export function documentStats(source) {
 }
 
 /** True when the rendered HTML contains at least one mermaid fence. */
+/**
+ * For the in-page preview: shift every heading down one level (h1 → h2 …,
+ * h6 stays h6) and tag it with its original level as a class, so it looks the
+ * same. The page itself has exactly one <h1>, the tool's title; a "# Title" in
+ * the user's document must not add a second. Downloads keep the real levels.
+ */
+export function demoteHeadings(html) {
+  return html.replace(/<(\/?)h([1-6])\b/g, (_m, close, level) => {
+    const n = Number(level)
+    const to = Math.min(6, n + 1)
+    return close ? `</h${to}` : `<h${to} class="md-h${n}"`
+  })
+}
+
 export const hasMermaid = (html) => html.includes('class="md-mermaid"')
 
 /** A self-contained HTML file carrying the preview's own styling. */

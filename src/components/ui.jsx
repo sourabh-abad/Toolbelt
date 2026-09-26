@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useLocation } from 'react-router-dom'
-import { normalizePath } from '../lib/seo'
+import { normalizePath, SEO } from '../lib/seo'
 import { Check, Copy, Lock, Globe, Star } from 'lucide-react'
 import { ACCENTS } from '../lib/nav'
 import { useFavorites } from '../lib/favorites'
@@ -14,7 +14,7 @@ export function Panel({ title, description, actions, children, className = '' })
         <div className="bd flex flex-wrap items-center justify-between gap-x-3 gap-y-2 border-b px-4 py-3.5">
           <div className="min-w-0">
             {title && <h2 className="t-main text-sm font-semibold">{title}</h2>}
-            {description && <p className="t-muted mt-0.5 text-xs">{description}</p>}
+            {description && <p className="t-muted mt-0.5 text-xs [overflow-wrap:anywhere]">{description}</p>}
           </div>
           {actions && <div className="flex flex-wrap items-center gap-2">{actions}</div>}
         </div>
@@ -215,6 +215,12 @@ export function FavoriteButton({ path, size = 'md', className = '' }) {
 export function PageHeader({ icon: Icon, title, subtitle, accent = 'emerald', privacy = 'local', isTool = true, actions }) {
   const a = ACCENTS[accent] || ACCENTS.emerald
   const { pathname } = useLocation()
+  // The page's one <h1> comes from seo.js — the same `heading` the JSON-LD,
+  // breadcrumbs and footer use — so every place that names the page agrees.
+  // `h1` in a route's entry overrides it; `title` is the fallback for routes
+  // without an entry.
+  const seo = SEO[normalizePath(pathname)] || {}
+  const h1 = seo.h1 || seo.heading || title
   return (
     <div className="bd sticky top-0 z-10 flex items-center gap-3 border-b px-4 py-4 backdrop-blur-md sm:px-6 sm:py-5"
          style={{ backgroundColor: 'color-mix(in srgb, var(--bg) 80%, transparent)' }}>
@@ -225,7 +231,7 @@ export function PageHeader({ icon: Icon, title, subtitle, accent = 'emerald', pr
       )}
       <div className="min-w-0">
         <div className="flex flex-wrap items-center gap-2">
-          <h1 className="t-main text-base font-semibold">{title}</h1>
+          <h1 className="t-main text-base font-semibold">{h1}</h1>
           {isTool && privacy && <PrivacyBadge privacy={privacy} />}
         </div>
         {subtitle && <p className="t-muted truncate text-xs">{subtitle}</p>}

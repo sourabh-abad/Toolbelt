@@ -85,7 +85,7 @@ export const SEO = {
     ],
   },
   '/convert': {
-    title: 'JSON to YAML to CSV Converter — Free & Online — DevPocket',
+    title: 'JSON to YAML to CSV Converter Online — DevPocket',
     description:
       'Convert JSON to YAML, YAML to JSON, JSON to CSV and back. Ideal for Kubernetes manifests, CI configs and data dumps. Free, browser-based, no upload.',
     heading: 'Convert between JSON, YAML and CSV',
@@ -373,7 +373,7 @@ public class Customer {
     ],
   },
   '/properties': {
-    title: 'Properties File Viewer, Keys & YAML Converter — DevPocket',
+    title: 'Properties Viewer, Key List & YAML Converter — DevPocket',
     description:
       'Read a .properties file, list every key, spot duplicate and empty values, and convert it to YAML or JSON. Runs in your browser — nothing is uploaded.',
     heading: 'Properties file viewer, key list and converter',
@@ -490,7 +490,7 @@ value never reaches the app.`,
     ],
   },
   '/properties-compare': {
-    title: 'Compare Two .properties Files — Key & Value Diff — DevPocket',
+    title: 'Compare .properties Files — Key & Value Diff — DevPocket',
     description:
       'Diff two .properties files by key and value: missing keys, changed values, identical ones hidden. Ideal for dev vs prod configs. Nothing is uploaded.',
     heading: 'Compare two .properties files',
@@ -584,7 +584,7 @@ server.port is identical`,
   '/diff': {
     title: 'Text Diff Checker — Compare Two Files Online — DevPocket',
     description:
-      'Compare two blocks of text or code line by line or word by word. Highlights additions and deletions with a change count. Free and private.',
+      'Compare two blocks of text or code line by line or word by word. Highlights additions and deletions with a change count. Free, private, in your browser.',
     heading: 'Text and code diff checker',
     aboutLabel: 'the diff checker',
     deepDive: {
@@ -712,6 +712,8 @@ the single precomposed character`,
     ],
   },
   '/jwtvalidator': {
+    // The JWT group has only this tool, so name its neighbours explicitly.
+    related: ['/encode-decode', '/timestamp', '/jsonvalidator', '/url-parser', '/json-xml'],
     title: 'JWT Decoder & Validator — Check Token Expiry — DevPocket',
     description:
       'Decode a JSON Web Token and check its structure, algorithm and expiry. Runs entirely in your browser, so pasting a real token never sends it anywhere.',
@@ -853,7 +855,7 @@ exp  2026-09-15 10:00:00 UTC  (1 hour life)`,
     ],
   },
   '/color': {
-    title: 'Colour Converter — HEX, RGB, HSL & px / rem / em — DevPocket',
+    title: 'Colour Converter — HEX, RGB, HSL, px & rem — DevPocket',
     description:
       'Convert colours between HEX, RGB and HSL with a live picker, and convert CSS units between px, rem, em and pt using any root font size. Free and offline.',
     heading: 'Colour and CSS unit converter',
@@ -958,7 +960,7 @@ WCAG needs 4.5:1 for body text,
     // The editor wants the viewport; the copy below it renders collapsed.
     title: 'Markdown Preview — Live GitHub-Flavoured Editor — DevPocket',
     description:
-      'Live Markdown preview with GitHub-flavoured tables, task lists, highlighted code and Mermaid diagrams. Copy the HTML or download a file.',
+      'Live Markdown preview with GitHub-flavoured tables, task lists, highlighted code and Mermaid diagrams. Copy the HTML or download it as a file.',
     heading: 'Markdown live preview',
     aboutLabel: 'the Markdown preview',
     deepDive: {
@@ -1059,6 +1061,7 @@ italicise the middle`,
     ],
   },
   '/timestamp': {
+    related: ['/cron', '/jwtvalidator', '/uuid', '/number-base', '/json-xml'],
     title: 'Unix Timestamp Converter — IST, SAST & UTC — DevPocket',
     description:
       'Convert Unix timestamps to dates across India (IST), South Africa (SAST), UTC and local time. Plus a UUID v4 generator and live regex tester.',
@@ -1097,6 +1100,7 @@ italicise the middle`,
     ],
   },
   '/cron': {
+    related: ['/timestamp', '/yaml', '/docker-guide', '/sql-guide'],
     title: 'Cron Expression Builder & Parser — DevPocket',
     description:
       'Decode any cron expression into plain English and preview the next 8 run times in IST, SAST, UTC or local time. Includes common presets. Free and online.',
@@ -1210,7 +1214,7 @@ Friday — not Friday the 13th
     ],
   },
   '/http': {
-    title: 'HTTP Status Codes, Methods & Headers Reference — DevPocket',
+    title: 'HTTP Status Codes, Methods & Headers — DevPocket',
     description:
       'Searchable reference for HTTP status codes (200, 301, 401, 404, 409, 422, 429, 500), request methods with safe and idempotent flags, and common headers.',
     heading: 'HTTP status code, method and header reference',
@@ -1245,7 +1249,7 @@ Friday — not Friday the 13th
     ],
   },
   '/mock': {
-    title: 'Mock Data Generator — JSON, CSV & SQL Inserts — DevPocket',
+    title: 'Mock Data Generator — JSON, CSV & SQL — DevPocket',
     description:
       'Generate realistic fake test data from 21 field types — names, emails, UUIDs, addresses, dates — and export as JSON, CSV or SQL INSERT. Free online.',
     heading: 'Mock and test data generator',
@@ -1965,7 +1969,7 @@ format would take more.`,
     ],
   },
   '/uuid': {
-    title: 'UUID Generator & Nano ID Generator Online — Bulk — DevPocket',
+    title: 'UUID & Nano ID Generator Online — Bulk — DevPocket',
     description:
       'Generate UUID v4 or Nano IDs in bulk, up to 100 at a time, with uppercase and hyphen options. Uses the browser crypto source. Free, no sign-up.',
     heading: 'Generate UUIDs and Nano IDs',
@@ -2098,7 +2102,7 @@ format would take more.`,
   '/lorem': {
     title: 'Lorem Ipsum Generator — Words & Paragraphs — DevPocket',
     description:
-      'Generate placeholder Lorem Ipsum text by word, sentence or paragraph count, with the classic opening line optional. Free and instant.',
+      'Generate placeholder Lorem Ipsum text by word, sentence or paragraph count, with the classic opening line optional. Free, instant and offline.',
     heading: 'Generate placeholder text',
     aboutLabel: 'the placeholder text generator',
     blurb:
@@ -2127,6 +2131,312 @@ format would take more.`,
       {
         q: 'Is Lorem Ipsum actually Latin?',
         a: 'It is scrambled Latin, derived from a passage of Cicero, and does not read as meaningful prose. That is precisely why it works as filler.',
+      },
+    ],
+  },
+  '/url-parser': {
+    title: 'URL Parser & Query String Editor Online — DevPocket',
+    description:
+      'Split any URL into protocol, host, port, path, query and fragment, decode every parameter, edit them as rows and copy the rebuilt URL. Runs in your browser.',
+    heading: 'URL parser and query string editor',
+    aboutLabel: 'the URL parser',
+    blurb:
+      'Paste a URL to see it the way a browser does: every part named, the path split into decoded segments, and each query parameter decoded into its own row that you can edit, remove or add to before copying the rebuilt URL or the query as JSON.',
+    related: ['/encode-decode', '/html-entities', '/http', '/jwtvalidator', '/json-xml'],
+    deepDive: {
+      heading: 'A URL is parsed by rules, not by splitting on "?" and "&"',
+      body: [
+        'Most bugs with URLs come from reading them with string functions. Splitting on "?" breaks when the fragment contains one, splitting on "&" breaks when a value was not encoded, and a hand-written decoder gets "+" wrong half the time. This page uses the same WHATWG URL parser your browser uses for fetch() and the address bar, so what you see here is what the server will receive.',
+        'The query string is where the confusion lives. Parameter names can repeat (tag=a&tag=b is two values, not a typo), order is preserved and sometimes significant, and each value is percent-encoded independently. The parameter table shows every pair decoded, marks repeated keys, and rebuilds the query with correct encoding when you edit a row — so you can change a filter or strip a tracking parameter without hand-encoding anything.',
+      ],
+      example: {
+        inputLabel: 'Pasted URL',
+        input: 'https://api.example.com:8443/v2/orders/%E2%82%AC-refunds?status=open&tag=vip&tag=eu&q=caf%C3%A9+latte#results',
+        outputLabel: 'What the parser reads',
+        output: `host      api.example.com:8443
+path      /v2/orders/€-refunds  (decoded)
+status    open
+tag       vip   (repeated)
+tag       eu    (repeated)
+q         café latte
+fragment  #results`,
+        note: 'The "+" in q became a space because URLSearchParams and HTML forms read it that way. A server that decodes with decodeURIComponent would keep it as "+" — one of the warnings the tool raises.',
+      },
+      gotchas: [
+        {
+          title: '"+" means space only in the query',
+          detail: 'Form encoding (application/x-www-form-urlencoded) turns spaces into "+", so query parsers read "+" as a space. In the path, "+" is a literal plus. Encode a real plus in a query value as %2B.',
+        },
+        {
+          title: 'Double encoding hides in plain sight',
+          detail: '%2520 is an encoded %20: something encoded a value that was already encoded. The server then sees the text "%20" instead of a space. The tool flags %25 followed by hex digits for exactly this reason.',
+        },
+        {
+          title: 'The fragment never reaches the server',
+          detail: 'Everything after "#" stays in the browser. Putting a token or a filter there means the server never sees it, and moving one out of the fragment into the query means it starts appearing in server logs.',
+        },
+        {
+          title: 'Credentials in a URL leak everywhere',
+          detail: 'user:password@host works, but the URL ends up in browser history, proxy and server logs, and Referer headers. Browsers increasingly strip or block it. Use an Authorization header instead.',
+        },
+      ],
+    },
+    howItWorks: [
+      'Paste a URL. A bare host like example.com/path is read as https://.',
+      'Every part is listed: protocol, credentials, host, port, origin, path, query and fragment.',
+      'Query parameters appear decoded, one row each, with repeated keys marked.',
+      'Edit, add or remove rows; the rebuilt URL updates with correct encoding.',
+      'Copy the rebuilt URL, or the query string as a JSON object.',
+    ],
+    useCases: [
+      'Reading a long redirect or callback URL from a log line',
+      'Stripping utm_ and other tracking parameters before sharing a link',
+      'Checking what a signed or pre-signed URL actually contains',
+      'Debugging why a server receives "+" instead of a space',
+      'Turning a query string into JSON for a test fixture',
+    ],
+    faq: [
+      {
+        q: 'Is the URL sent anywhere to be parsed?',
+        a: 'No. Parsing uses the URL class built into your browser. Nothing is fetched, not even the URL you paste.',
+      },
+      {
+        q: 'Why did my port disappear from the rebuilt URL?',
+        a: 'Port 443 for https and port 80 for http are the defaults, so the normalised URL leaves them out. The request goes to the same place either way.',
+      },
+      {
+        q: 'How are repeated parameters converted to JSON?',
+        a: 'A key that appears once becomes a string; a key that appears more than once becomes an array of its values, in order.',
+      },
+      {
+        q: 'Does it handle internationalised domain names?',
+        a: 'Yes. A host with non-ASCII characters is converted to its punycode form (xn--…), which is what browsers actually send in the request.',
+      },
+    ],
+  },
+  '/html-entities': {
+    title: 'HTML Entity Encoder & Decoder Online — DevPocket',
+    description:
+      'Escape text for HTML with minimal, named or ASCII-only entities, or decode &amp;, &#233; and &#xE9; back to characters. Free and private, in your browser.',
+    heading: 'HTML entity encoder and decoder',
+    aboutLabel: 'HTML entity encoding',
+    blurb:
+      'Escape text so it is safe to put inside HTML, choosing how much to escape, or paste HTML full of &entities; and get readable text back, with a breakdown of every reference found and a warning for ones missing their closing semicolon.',
+    related: ['/encode-decode', '/url-parser', '/json-escape', '/markdown', '/diff'],
+    deepDive: {
+      heading: 'Which characters actually need escaping — and where',
+      body: [
+        'In HTML only a handful of characters are dangerous: < and & start markup, and " or \' end an attribute value. Escaping those five is enough to display any text safely inside an element or a quoted attribute, and it is what the Minimal mode does. Everything else, including accented letters and emoji, is valid as-is in a UTF-8 page.',
+        'The other two modes exist for other destinations. Named mode writes common symbols as readable names (&copy;, &mdash;, &nbsp;) for hand-edited templates. All-non-ASCII mode turns every character above U+007F into a numeric reference, for the rare pipeline that is not UTF-8 clean — old email systems, some XML tools, a database column with the wrong charset.',
+      ],
+      example: {
+        inputLabel: 'Text to put in a page',
+        input: `<p>Tom & Jerry's "R&D" — €1,200</p>`,
+        outputLabel: 'Minimal and ASCII-only',
+        output: `Minimal:
+&lt;p&gt;Tom &amp; Jerry&#39;s &quot;R&amp;D&quot; — €1,200&lt;/p&gt;
+
+All non-ASCII:
+&lt;p&gt;Tom &amp; Jerry&#39;s &quot;R&amp;D&quot; &#x2014; &#x20AC;1,200&lt;/p&gt;`,
+        note: 'The dash and the euro sign are left alone by Minimal because a UTF-8 page displays them correctly. Only the five markup characters change.',
+      },
+      gotchas: [
+        {
+          title: 'Escaping HTML is not escaping JavaScript or URLs',
+          detail: 'Entities protect text inside HTML. Inside a <script> block, an onclick handler or an href, different rules apply: use JSON encoding for script, and URL encoding (then HTML escaping) for links.',
+        },
+        {
+          title: 'Encode once, at output',
+          detail: 'Escaping on input and again on output gives &amp;amp; on screen. Store the raw text and escape it once, when it is written into the page.',
+        },
+        {
+          title: 'A missing semicolon still decodes — sometimes',
+          detail: 'Browsers decode &amp without a semicolon for legacy names, so "&copy2024" can become "©2024" by accident. The decoder lists references without a closing ; so you can spot them.',
+        },
+        {
+          title: '&nbsp; is not a space',
+          detail: 'It decodes to U+00A0, which looks like a space but does not match " " in code, breaks string comparisons and survives trim(). The breakdown shows it as [nbsp] so it cannot hide.',
+        },
+      ],
+    },
+    howItWorks: [
+      'Choose Encode or Decode.',
+      'For encoding, pick Minimal, Named or All non-ASCII.',
+      'Paste text, or upload an .html or .txt file.',
+      'In Decode mode, every entity reference is listed with the character it becomes.',
+      'Copy the result or download it as a file.',
+    ],
+    useCases: [
+      'Showing a code sample or user-supplied text inside an HTML page',
+      'Reading an HTML-escaped string copied out of a template or API response',
+      'Making a snippet safe for an ASCII-only email or legacy system',
+      'Finding a stray &nbsp; that breaks a string comparison',
+    ],
+    faq: [
+      {
+        q: 'Is this enough to prevent XSS?',
+        a: 'Minimal encoding makes text safe inside element content and quoted attribute values. It does not make text safe inside script, style, unquoted attributes or URLs; those need their own encoding.',
+      },
+      {
+        q: 'How many named entities does the decoder know?',
+        a: 'In the browser it uses the browser’s own HTML parser, which knows all 2,231 named references in the HTML standard. It builds an inert document, so nothing in the text runs or loads.',
+      },
+      {
+        q: 'Why is &#39; used for the apostrophe instead of &apos;?',
+        a: '&apos; is not defined in HTML 4 and some older parsers ignore it. &#39; works everywhere.',
+      },
+    ],
+  },
+  '/case-converter': {
+    title: 'Case Converter — camelCase, snake_case & More — DevPocket',
+    description:
+      'Convert names between camelCase, PascalCase, snake_case, SCREAMING_SNAKE, kebab-case and seven more. Handles acronyms like XMLHttp, one name or a list.',
+    heading: 'Case converter for code identifiers',
+    aboutLabel: 'the case converter',
+    blurb:
+      'Type an identifier or a phrase and see it in twelve naming conventions at once, or paste a whole list — column names, JSON keys, environment variables — and convert every line to one convention in a single pass.',
+    related: ['/codegen', '/json-sort-keys', '/properties', '/diff', '/lorem'],
+    deepDive: {
+      heading: 'Converting case is really about finding word boundaries',
+      body: [
+        'Joining words is easy; finding them is the hard part. "user_id", "userId", "UserID" and "user-id" have to become the same two words before they can become anything else, and a naive splitter that breaks on every capital turns "XMLHttpRequest" into x, m, l, http, request. This converter treats a run of capitals followed by a lowercase word as an acronym and a separate word, so it comes out as xml, http, request.',
+        'Digits stay attached to the word before them (utf8, v2, line1). That keeps version suffixes and numbered fields intact through a round trip, which is what you want when renaming database columns or mapping JSON keys to struct fields. The detector also tells you which convention the first line already uses, which helps when you are auditing a file with mixed styles.',
+      ],
+      example: {
+        inputLabel: 'Mixed input, one per line',
+        input: `XMLHttpRequest
+user_id
+first-name
+SHIPPING_ADDRESS_LINE_1`,
+        outputLabel: 'Converted to camelCase',
+        output: `xmlHttpRequest
+userId
+firstName
+shippingAddressLine1`,
+      },
+      table: {
+        caption: 'Where each convention is usually expected',
+        columns: ['Convention', 'Typical home'],
+        rows: [
+          ['camelCase', 'JavaScript and Java variables, JSON keys in most web APIs'],
+          ['PascalCase', 'Classes, types, React components, C# members'],
+          ['snake_case', 'Python, Ruby, SQL columns, Postgres identifiers'],
+          ['SCREAMING_SNAKE_CASE', 'Constants and environment variables'],
+          ['kebab-case', 'URLs, CSS classes, CLI flags, Kubernetes resource names'],
+          ['dot.case', 'Java properties and Spring configuration keys'],
+        ],
+      },
+      gotchas: [
+        {
+          title: 'Acronyms do not survive a round trip',
+          detail: 'XMLHttpRequest → xml_http_request → XmlHttpRequest. The capitals were information the snake_case form cannot hold. Style guides disagree on acronyms (Go wants URLID, Java prefers UrlId), so check the result.',
+        },
+        {
+          title: 'Renaming a JSON key is an API change',
+          detail: 'Switching a response from user_id to userId breaks every client that reads it. Map at the boundary — a serializer naming strategy — rather than renaming stored data.',
+        },
+        {
+          title: 'Case-insensitive systems merge names',
+          detail: 'Environment variables on Windows, MySQL table names on macOS and most SQL identifiers without quotes ignore case, so UserId and userid collide. Pick one convention per system.',
+        },
+      ],
+    },
+    howItWorks: [
+      'Type or paste one name per line, or upload a text file.',
+      'The first line is shown in all twelve conventions, each with its own copy button.',
+      'Choose a target convention to convert every line of the list.',
+      'Copy the converted list or download it as a file.',
+    ],
+    useCases: [
+      'Mapping database column names to object properties',
+      'Turning JSON keys into environment variable names',
+      'Renaming CSS classes or URL slugs consistently',
+      'Checking which convention a legacy file uses',
+    ],
+    faq: [
+      {
+        q: 'How are numbers handled?',
+        a: 'A digit stays attached to the letters before it, so line1 and utf8 remain single words. A digit after a separator starts a new word.',
+      },
+      {
+        q: 'Does it keep non-English letters?',
+        a: 'Word boundaries are found on ASCII letters and digits. Other characters act as separators, so convert names that are already ASCII identifiers.',
+      },
+      {
+        q: 'Can I convert a whole file?',
+        a: 'Yes. Upload or paste it; every non-empty line is converted on its own and blank lines are kept, so line numbers still match.',
+      },
+    ],
+  },
+  '/number-base': {
+    title: 'Number Base Converter — Binary, Hex, Octal — DevPocket',
+    description:
+      "Convert numbers between binary, octal, decimal and hexadecimal exactly, at any size, with 8- to 64-bit two's complement views. Free and runs in your browser.",
+    heading: 'Number base converter',
+    aboutLabel: 'number base conversion',
+    blurb:
+      "Enter a number in binary, octal, decimal or hex — or with a 0x, 0b or 0o prefix — and read it in every base at once, exactly, however many digits it has, along with its unsigned and two's complement signed value at 8, 16, 32 and 64 bits.",
+    related: ['/color', '/encode-decode', '/timestamp', '/uuid', '/password'],
+    deepDive: {
+      heading: 'Why a hex converter needs more than parseInt',
+      body: [
+        "JavaScript numbers are 64-bit floats, so parseInt('FFFFFFFFFFFFFFFF', 16) returns 18446744073709552000 — close, and wrong. That matters for exactly the numbers developers convert most: 64-bit IDs, hashes, memory addresses and bit masks. This converter works on BigInt throughout, so a 64-bit or 256-bit value converts digit for digit.",
+        "The fixed-width table answers the other common question: what does this bit pattern mean as a signed integer? The same eight bits, 11001000, are 200 as an unsigned byte and -56 as a signed one. Seeing both side by side is how you debug an overflow, a sign-extension bug or a checksum that came back negative.",
+      ],
+      example: {
+        inputLabel: 'Input (hex)',
+        input: '0xFFFFFFFE',
+        outputLabel: 'Read back',
+        output: `Binary       1111 1111 1111 1111 1111 1111 1111 1110
+Decimal      4,294,967,294
+32-bit       unsigned 4294967294 · signed -2
+64-bit       unsigned 4294967294 · signed 4294967294`,
+        note: 'The same value is -2 as a signed 32-bit integer and 4294967294 as a 64-bit one. That difference is a classic source of bugs when a 32-bit field is read into a wider type.',
+      },
+      gotchas: [
+        {
+          title: 'A leading zero once meant octal',
+          detail: 'In old JavaScript, C and many config parsers, 010 is eight, not ten. File modes like 0755 are octal for this reason. Use an explicit 0o prefix where the language allows it.',
+        },
+        {
+          title: 'Doubles are exact only up to 2^53',
+          detail: 'Integers above 9,007,199,254,740,991 cannot all be represented as JavaScript numbers. IDs from 64-bit databases should travel as strings or BigInt, never as plain JSON numbers.',
+        },
+        {
+          title: "Negative hex depends on the width",
+          detail: "-1 is FF in 8 bits, FFFF in 16 and FFFFFFFF in 32. A bare '-0x1' has no fixed width, which is why the table shows each width separately.",
+        },
+      ],
+    },
+    howItWorks: [
+      'Pick the base you are typing in, or use a 0x, 0b or 0o prefix.',
+      'Type the number. Separators like _, spaces and commas are ignored.',
+      'Read it in binary, octal, decimal and hex, optionally grouped.',
+      "Check the 8-, 16-, 32- and 64-bit rows for its unsigned and two's complement values.",
+      'Copy any representation with its prefix.',
+    ],
+    useCases: [
+      'Reading a hex error code or memory address as a decimal number',
+      'Checking a bit mask or permission flags in binary',
+      'Converting 64-bit IDs without losing precision',
+      'Debugging a signed/unsigned overflow',
+    ],
+    faq: [
+      {
+        q: 'Is there a size limit?',
+        a: 'No practical one. Conversion uses BigInt, so a 256-bit hash converts as exactly as a single byte.',
+      },
+      {
+        q: "What is two's complement?",
+        a: 'The way almost every CPU stores negative integers: the top bit has a negative weight. It is why 0xFF is -1 as a signed byte and 255 as an unsigned one.',
+      },
+      {
+        q: 'Can I enter negative numbers?',
+        a: "Yes, with a leading minus in any base. The fixed-width rows then show the two's complement bit pattern for each width it fits in.",
+      },
+      {
+        q: 'Does it support fractions or floating point?',
+        a: 'No. It converts integers only. Fractional values in another base are rarely exact and are better handled by a float inspector.',
       },
     ],
   },
@@ -2164,6 +2474,8 @@ format would take more.`,
     description:
       'DevPocket is a local-first developer toolbox built by Sourabh Kumar, a backend developer. No trackers, no ads, and nothing you paste leaves your browser.',
     heading: 'About DevPocket',
+    // The page's own header reads "About"; keep that as its one <h1>.
+    h1: 'About',
     aboutLabel: 'this project',
     blurb:
       'DevPocket was built to replace a pile of browser tabs pointed at ad-heavy formatter sites. Every tool runs as JavaScript in your own browser, so there is no server to send your data to in the first place.',

@@ -7,18 +7,19 @@ import SeoFooter from './components/SeoFooter'
 import ToolContentSections from './components/ToolContentSections'
 import TopNav from './components/TopNav'
 import Home from './pages/Home'
+// Small, and needed by the prerendered 404.html: imported eagerly.
+import NotFound from './pages/NotFound'
 // Imported eagerly: it is small, and a lazy chunk meant the first click on the
 // search button could land while the chunk was still downloading (or fail on a
 // stale chunk after a deploy), so the button just took focus and nothing opened.
 import CommandPalette from './components/CommandPalette'
 import ErrorBoundary from './components/ErrorBoundary'
 
-
 // Route-level code splitting: heavy tools (sql-formatter, js-yaml, cronstrue)
 // load on demand instead of inflating the initial bundle.
 // One loader per route: `lazy` uses it for rendering, and hovering a nav link
 // calls the same function to warm the chunk before the click lands.
-const LOADERS = {
+export const LOADERS = {
   '/json-xml': () => import('./pages/JsonXmlTool'),
   '/convert': () => import('./pages/ConvertTool'),
   '/codegen': () => import('./pages/CodeGenTool'),
@@ -33,6 +34,10 @@ const LOADERS = {
   '/jwtvalidator': () => import('./pages/JwtValidatorTool'),
   '/color': () => import('./pages/ColorTool'),
   '/markdown': () => import('./pages/MarkdownTool'),
+  '/url-parser': () => import('./pages/UrlParserTool'),
+  '/html-entities': () => import('./pages/HtmlEntitiesTool'),
+  '/case-converter': () => import('./pages/CaseConverterTool'),
+  '/number-base': () => import('./pages/NumberBaseTool'),
   '/timestamp': () => import('./pages/TimestampTool'),
   '/cron': () => import('./pages/CronTool'),
   '/http': () => import('./pages/HttpRefTool'),
@@ -60,44 +65,44 @@ const prefetched = new Set()
 const prefetch = (path) => {
   if (prefetched.has(path) || !LOADERS[path]) return
   prefetched.add(path)
-  LOADERS[path]()
+  preloadRoute(path)
 }
 
-const JsonXmlTool = lazy(LOADERS['/json-xml'])
-const EncodeDecodeTool = lazy(LOADERS['/encode-decode'])
-const DiffTool = lazy(LOADERS['/diff'])
-const TimestampTool = lazy(LOADERS['/timestamp'])
-const JwtValidatorTool = lazy(LOADERS['/jwtvalidator'])
-const ColorTool = lazy(LOADERS['/color'])
-const MarkdownTool = lazy(LOADERS['/markdown'])
-const ConvertTool = lazy(LOADERS['/convert'])
-const CodeGenTool = lazy(LOADERS['/codegen'])
-const SqlTool = lazy(LOADERS['/sql'])
-const YamlTool = lazy(LOADERS['/yaml'])
-const PropertiesTool = lazy(LOADERS['/properties'])
-const PropertiesCompareTool = lazy(LOADERS['/properties-compare'])
-const SqlGuideTool = lazy(LOADERS['/sql-guide'])
-const DockerGuideTool = lazy(LOADERS['/docker-guide'])
-const CronTool = lazy(LOADERS['/cron'])
-const HttpRefTool = lazy(LOADERS['/http'])
-const MockDataTool = lazy(LOADERS['/mock'])
-const About = lazy(LOADERS['/about'])
-const Privacy = lazy(LOADERS['/privacy'])
-const JsonSortKeys = lazy(LOADERS['/json-sort-keys'])
-const JsonFlatten = lazy(LOADERS['/json-flatten'])
-const JsonUnflatten = lazy(LOADERS['/json-unflatten'])
-const JsonEscape = lazy(LOADERS['/json-escape'])
-const JsonClean = lazy(LOADERS['/json-remove-nulls'])
-const JsonMerge = lazy(LOADERS['/json-merge'])
-const JsonTreeTool = lazy(LOADERS['/json-tree'])
-const JsonValidatorTool = lazy(LOADERS['/jsonvalidator'])
-const JsonStats = lazy(LOADERS['/json-stats'])
-const JsonPathTool = lazy(LOADERS['/jsonpath'])
-const JsonSchemaTool = lazy(LOADERS['/json-schema'])
-const IdGeneratorTool = lazy(LOADERS['/uuid'])
-const PasswordTool = lazy(LOADERS['/password'])
-const LoremTool = lazy(LOADERS['/lorem'])
-const NotFound = lazy(() => import('./pages/NotFound'))
+// One lazy component per page module (two routes share JsonClean).
+const LAZY = new Map()
+function lazyFor(path) {
+  const loader = LOADERS[path]
+  if (!LAZY.has(loader)) LAZY.set(loader, lazy(loader))
+  return LAZY.get(loader)
+}
+
+// Page modules that have already loaded render directly, with no Suspense
+// round. main.jsx fills this for the landing route before the first render,
+// so the prerendered tool page is replaced by the identical live one without
+// flashing a loading state; hovering a menu link fills it for the next page.
+const READY = new Map()
+
+/** Loads a route's page module ahead of rendering it. Never rejects. */
+export function preloadRoute(pathname) {
+  const path = normalizePath(pathname)
+  if (!LOADERS[path] || READY.has(path)) return Promise.resolve()
+  return LOADERS[path]()
+    .then((m) => {
+      READY.set(path, m.default)
+    })
+    .catch(() => {
+      // Rendering will retry through lazy() and the error boundary.
+    })
+}
+
+function Page({ path }) {
+  // Chosen once per mount: switching from the lazy wrapper to the loaded
+  // module mid-visit (after a hover prefetch, say) would remount the tool and
+  // throw away what the user typed.
+  const [Component] = useState(() => READY.get(path) || lazyFor(path))
+  return <Component />
+}
+
 
 // Shown while a tool's chunk loads (the static HTML preloads it, so this is
 // usually a single frame). It has the page header and two panels in the
@@ -181,44 +186,11 @@ export default function App() {
             <div>
               <Routes>
                 <Route path="/" element={<Home />} />
-                <Route path="/json-xml" element={<JsonXmlTool />} />
-                <Route path="/convert" element={<ConvertTool />} />
-                <Route path="/codegen" element={<CodeGenTool />} />
-                <Route path="/sql" element={<SqlTool />} />
-                <Route path="/yaml" element={<YamlTool />} />
-                <Route path="/properties" element={<PropertiesTool />} />
-                <Route path="/properties-compare" element={<PropertiesCompareTool />} />
-                <Route path="/sql-guide" element={<SqlGuideTool />} />
-                <Route path="/docker-guide" element={<DockerGuideTool />} />
-                <Route path="/diff" element={<DiffTool />} />
-                <Route path="/encode-decode" element={<EncodeDecodeTool />} />
-                <Route path="/jwtvalidator" element={<JwtValidatorTool />} />
-                <Route path="/color" element={<ColorTool />} />
-                <Route path="/markdown" element={<MarkdownTool />} />
+                {Object.keys(LOADERS).map((path) => (
+                  <Route key={path} path={path} element={<Page path={path} />} />
+                ))}
                 {/* The JWT tool used to live at /jwt-color; keep old links working. */}
                 <Route path="/jwt-color" element={<Navigate to={hrefFor('/jwtvalidator')} replace />} />
-                <Route path="/timestamp" element={<TimestampTool />} />
-                <Route path="/cron" element={<CronTool />} />
-                <Route path="/http" element={<HttpRefTool />} />
-                <Route path="/mock" element={<MockDataTool />} />
-                <Route path="/about" element={<About />} />
-                <Route path="/privacy" element={<Privacy />} />
-
-                <Route path="/json-sort-keys" element={<JsonSortKeys />} />
-                <Route path="/json-flatten" element={<JsonFlatten />} />
-                <Route path="/json-unflatten" element={<JsonUnflatten />} />
-                <Route path="/json-escape" element={<JsonEscape />} />
-                <Route path="/json-remove-nulls" element={<JsonClean />} />
-                <Route path="/json-remove-empty" element={<JsonClean />} />
-                <Route path="/json-merge" element={<JsonMerge />} />
-                <Route path="/json-tree" element={<JsonTreeTool />} />
-                <Route path="/jsonvalidator" element={<JsonValidatorTool />} />
-                <Route path="/json-stats" element={<JsonStats />} />
-                <Route path="/jsonpath" element={<JsonPathTool />} />
-                <Route path="/json-schema" element={<JsonSchemaTool />} />
-                <Route path="/uuid" element={<IdGeneratorTool />} />
-                <Route path="/password" element={<PasswordTool />} />
-                <Route path="/lorem" element={<LoremTool />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
               <ToolContentSections />

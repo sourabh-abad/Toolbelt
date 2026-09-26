@@ -12,7 +12,7 @@ import { readFileSync, writeFileSync, mkdirSync, existsSync, readdirSync } from 
 import { createHash } from 'node:crypto'
 import { execFileSync } from 'node:child_process'
 import { join, dirname } from 'node:path'
-import { fileURLToPath } from 'node:url'
+import { fileURLToPath, pathToFileURL } from 'node:url'
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..')
 const dist = join(root, 'dist')
@@ -72,6 +72,20 @@ function preloadTags(pathname) {
 
 const esc = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;')
 
+function faqLd(seo) {
+  if (!seo.faq) return []
+  return [
+    {
+      '@type': 'FAQPage',
+      mainEntity: seo.faq.map(({ q, a }) => ({
+        '@type': 'Question',
+        name: q,
+        acceptedAnswer: { '@type': 'Answer', text: a },
+      })),
+    },
+  ]
+}
+
 function buildLdJson(pathname, seo) {
   const url = canonicalUrl(pathname)
   if (pathname === '/') {
@@ -95,6 +109,7 @@ function buildLdJson(pathname, seo) {
           offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
           author: { '@type': 'Person', name: 'Sourabh Kumar', url: `${SITE_ORIGIN}/about/` },
         },
+        ...faqLd(seo),
       ],
     })
   }
@@ -133,21 +148,9 @@ function buildLdJson(pathname, seo) {
           },
         ],
       },
-      // Only emitted when the route's SEO entry has an faq array, and the
-      // same Q&A pairs are rendered visibly on the page via
-      // ToolContentSections — structured data must match visible content.
-      ...(seo.faq
-        ? [
-            {
-              '@type': 'FAQPage',
-              mainEntity: seo.faq.map(({ q, a }) => ({
-                '@type': 'Question',
-                name: q,
-                acceptedAnswer: { '@type': 'Answer', text: a },
-              })),
-            },
-          ]
-        : []),
+      // Only when the route has an faq array. The same Q&A pairs are rendered
+      // visibly by ToolContentSections — structured data must match the page.
+      ...faqLd(seo),
     ],
   })
 }
@@ -162,29 +165,28 @@ const NAV = [
     /\{ to: '([^']+)', label: '([^']*)',[^}]*?group: (?:'([^']*)'|null), accent: '([^']*)', description: '([^']*)' \}/g
   ),
 ].map(([, to, label, group, accent, description]) => ({ to, label, group, accent, description }))
-// The accent class strings, one block per colour, read the same way. Tailwind
-// has already generated these classes from nav.js, so reusing the literal
-// strings here costs nothing.
-const ACCENTS = Object.fromEntries(
-  [...navSrc.matchAll(/^  (\w+): \{ [^}]*?bg: '([^']*)', text: '([^']*)', border: '([^']*)', grad: '([^']*)'/gm)].map(
-    ([, name, bg, text, border, grad]) => [name, { bg, text, border, grad }]
-  )
-)
-if (!ACCENTS.emerald) throw new Error('prerender: could not parse ACCENTS from nav.js')
-const accentFor = (pathname) => ACCENTS[NAV.find((n) => n.to === pathname)?.accent] || ACCENTS.emerald
-const NAV_GROUPS = JSON.parse(
-  navSrc.match(/export const NAV_GROUPS = (\[[^\]]*\])/)[1].replace(/'/g, '"')
-)
 if (NAV.length < 20) throw new Error(`prerender: parsed only ${NAV.length} nav items from nav.js`)
+
+// Routes live in three tables — App.jsx LOADERS (code), nav.js (menu, search)
+// and seo.js (metadata and copy). A page missing from one of them is either
+// unreachable, unlisted or unindexed, so fail the build instead of shipping it.
+{
+  const pages = Object.keys(ROUTE_SOURCE).filter((p) => p !== '/')
+  const menu = new Set(NAV.map((n) => n.to))
+  const OUTSIDE_MENU = new Set(['/about', '/privacy'])
+  const problems = [
+    ...pages.filter((p) => !SEO[p]).map((p) => `${p} has a page module but no seo.js entry`),
+    ...Object.keys(SEO).filter((p) => p !== '/' && !ROUTE_SOURCE[p]).map((p) => `${p} has a seo.js entry but no route in App.jsx`),
+    ...pages.filter((p) => !menu.has(p) && !OUTSIDE_MENU.has(p)).map((p) => `${p} is not in the nav.js menu`),
+    ...[...menu].filter((p) => p !== '/' && !ROUTE_SOURCE[p]).map((p) => `${p} is in the menu but has no route`),
+  ]
+  if (problems.length) throw new Error(`prerender: route tables disagree:\n  ${problems.join('\n  ')}`)
+}
 
 // Internal hrefs use the trailing-slash form the canonical tags advertise, so
 // the crawler follows links to exactly the URLs it is told to index.
 const hrefFor = (to) => (to === '/' ? '/' : `${to}/`)
 
-// Everything below `render` writes the same copy React renders on mount —
-// ToolContentSections and SeoFooter read the same seo.js/nav.js fields. Static
-// HTML that differs from the hydrated page is cloaking; this has to stay a
-// mirror, not an SEO-only variant.
 // Replaces whatever sits inside <div id="root"> — an empty div straight out of
 // Vite, or a previously prerendered body. Matching the real closing tag rather
 // than the literal `<div id="root"></div>` keeps `node scripts/prerender.mjs`
@@ -205,176 +207,13 @@ function replaceRoot(html, inner) {
   throw new Error('prerender: unbalanced <div id="root">')
 }
 
-// Mirrors ToolContentSections. Two parts: the guide (the route's deepDive —
-// open, titled, accent bar) and the "About …" card (how it works / use cases /
-// FAQ behind a disclosure with a real header). Same copy, same order, same
-// headings as the React tree; the class names match so the static page looks
-// like the hydrated one rather than flashing between two layouts.
-function guideHtml(d, a) {
-  const bits = [
-    `<span class="inline-flex items-center rounded-md px-2 py-0.5 text-[11px] font-semibold tracking-wider uppercase ${a.bg} ${a.text}">Guide</span>`,
-    `<h2 class="t-main mt-3 text-xl font-bold tracking-tight sm:text-2xl">${esc(d.heading)}</h2>`,
-  ]
+// The body of each page is the app itself, rendered at build time by
+// src/entry-server.jsx (built to dist-ssr/ by `vite build --ssr`). Header,
+// tool UI, guide, FAQ and footer are exactly what the browser renders, so
+// the static page cannot drift from the live one.
+const { render: renderApp } = await import(pathToFileURL(join(root, 'dist-ssr/entry-server.js')).href)
 
-  if (d.body) {
-    bits.push(
-      `<div class="mt-4 space-y-3">${d.body
-        .map((para) => `<p class="t-muted text-[15px] leading-relaxed">${esc(para)}</p>`)
-        .join('')}</div>`
-    )
-  }
-
-  if (d.example) {
-    const pane = (label, text) =>
-      `<div><h3 class="t-faint text-[11px] font-semibold tracking-wider uppercase">${esc(
-        label
-      )}</h3><pre class="sunken bd mono mt-1.5 overflow-x-auto rounded-xl border p-3.5 text-[13px] leading-relaxed whitespace-pre-wrap [overflow-wrap:anywhere]">${esc(
-        text
-      )}</pre></div>`
-    bits.push(
-      `<div class="mt-6 grid items-start gap-3 sm:grid-cols-2">${pane(d.example.inputLabel || 'Input', d.example.input)}${pane(
-        d.example.outputLabel || 'Output',
-        d.example.output
-      )}</div>`
-    )
-    if (d.example.note) bits.push(`<p class="t-faint mt-2.5 text-sm leading-relaxed">${esc(d.example.note)}</p>`)
-  }
-
-  if (d.table) {
-    bits.push(
-      `<div class="mt-6 overflow-x-auto"><table class="w-full text-left text-sm">${
-        d.table.caption ? `<caption class="t-muted mb-2.5 text-left text-sm">${esc(d.table.caption)}</caption>` : ''
-      }<thead><tr class="bd-strong border-b">${d.table.columns
-        .map((c) => `<th class="t-main py-2 pr-4 font-semibold">${esc(c)}</th>`)
-        .join('')}</tr></thead><tbody>${d.table.rows
-        .map(
-          (row) =>
-            `<tr class="bd border-b last:border-0">${row
-              .map((cell, j) => `<td class="py-2 pr-4 align-top ${j === 0 ? 'mono t-main' : 't-muted'}">${esc(cell)}</td>`)
-              .join('')}</tr>`
-        )
-        .join('')}</tbody></table></div>`
-    )
-  }
-
-  if (d.gotchas) {
-    bits.push(
-      `<div class="mt-7"><h3 class="t-main text-base font-semibold">Where people get caught</h3><div class="mt-3 space-y-4">${d.gotchas
-        .map(
-          ({ title, detail }) =>
-            `<div class="border-l-2 pl-4 ${a.border}"><p class="t-main text-[15px] font-semibold">${esc(
-              title
-            )}</p><p class="t-muted mt-1 text-sm leading-relaxed">${esc(detail)}</p></div>`
-        )
-        .join('')}</div></div>`
-    )
-  }
-
-  return `<section class="panel overflow-hidden rounded-2xl border"><div class="h-1 bg-gradient-to-r ${a.grad}" aria-hidden="true"></div><div class="p-5 sm:p-7">${bits.join(
-    ''
-  )}</div></section>`
-}
-
-function aboutHtml(seo, a) {
-  const parts = []
-
-  if (seo.howItWorks) {
-    parts.push(
-      `<section><h2 class="t-main text-sm font-semibold">How it works</h2><ol class="mt-3 space-y-2.5">${seo.howItWorks
-        .map(
-          (step, i) =>
-            `<li class="flex gap-3 text-sm leading-relaxed"><span class="mono shrink-0 font-semibold ${a.text}">${
-              i + 1
-            }.</span><span class="t-muted">${esc(step)}</span></li>`
-        )
-        .join('')}</ol></section>`
-    )
-  }
-
-  if (seo.useCases) {
-    parts.push(
-      `<section><h2 class="t-main text-sm font-semibold">Common use cases</h2><ul class="mt-3 space-y-1.5">${seo.useCases
-        .map(
-          (item) =>
-            `<li class="flex gap-2 text-sm leading-relaxed"><span class="t-faint shrink-0">•</span><span class="t-muted">${esc(
-              item
-            )}</span></li>`
-        )
-        .join('')}</ul></section>`
-    )
-  }
-
-  if (seo.faq) {
-    parts.push(
-      `<section><h2 class="t-main text-sm font-semibold">FAQ</h2><div class="mt-3 space-y-4">${seo.faq
-        .map(
-          ({ q, a: answer }) =>
-            `<div><h3 class="t-main text-sm font-medium">${esc(q)}</h3><p class="t-muted mt-1 text-sm leading-relaxed">${esc(
-              answer
-            )}</p></div>`
-        )
-        .join('')}</div></section>`
-    )
-  }
-
-  return parts.length ? `<div class="space-y-6">${parts.join('')}</div>` : ''
-}
-
-// Same wording as teaserFor in ToolContentSections.
-function teaserFor({ howItWorks, useCases, faq }) {
-  const bits = []
-  if (howItWorks) bits.push(`How it works in ${howItWorks.length} steps`)
-  if (useCases) bits.push(`${useCases.length} common use cases`)
-  if (faq) bits.push(`${faq.length} question${faq.length === 1 ? '' : 's'} answered`)
-  return bits.join(' · ')
-}
-
-function sectionsHtml(pathname, seo) {
-  const a = accentFor(pathname)
-  const parts = []
-
-  if (seo.deepDive) parts.push(guideHtml(seo.deepDive, a))
-
-  const about = aboutHtml(seo, a)
-  if (about && seo.collapsedContent === false) {
-    parts.push(`<section class="panel rounded-2xl border p-5 sm:p-7">${about}</section>`)
-  } else if (about) {
-    parts.push(
-      `<details class="panel group rounded-2xl border"><summary class="flex cursor-pointer list-none items-center justify-between gap-4 px-5 py-4 select-none sm:px-6"><div class="min-w-0"><h2 class="t-main text-base font-semibold">About ${esc(
-        seo.aboutLabel || 'this tool'
-      )}</h2><p class="t-muted mt-0.5 text-sm">${esc(
-        teaserFor(seo)
-      )}</p></div><span class="bd t-muted flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span></summary><div class="bd border-t px-5 pt-5 pb-6 sm:px-6">${about}</div></details>`
-    )
-  }
-
-  if (!parts.length) return ''
-  return `<div class="mx-auto w-full max-w-4xl space-y-4 px-4 pb-8 sm:px-6">${parts.join('')}</div>`
-}
-
-// Mirrors SeoFooter: every tool linked from every page (before this the static
-// HTML carried a single link, so an audit crawler saw 29 orphan pages), with the
-// directory inside a closed <details> — still in the markup a crawler parses,
-// without a wall of links under every tool.
-function footerHtml(pathname, seo) {
-  const groups = NAV_GROUPS.map((group) => {
-    const items = NAV.filter((n) => n.group === group)
-    if (!items.length) return ''
-    return `<div><h3 class="t-muted text-[11px] font-semibold tracking-wider uppercase">${esc(group)}</h3><ul class="mt-1">${items
-      .map((n) =>
-        n.to === pathname
-          ? `<li><span class="t-faint inline-flex min-h-[32px] items-center text-xs" aria-current="page">${esc(n.label)}</span></li>`
-          : `<li><a href="${hrefFor(n.to)}" class="t-muted inline-flex min-h-[32px] items-center text-xs underline-offset-2">${esc(n.label)}</a></li>`
-      )
-      .join('')}</ul></div>`
-  }).join('')
-
-  return `<footer class="bd mt-2 border-t px-4 py-8 sm:px-6"><div class="mx-auto max-w-4xl"><h2 class="t-main text-sm font-semibold">${esc(seo.footerHeading || seo.heading || seo.title)}</h2><p class="t-muted mt-2 max-w-3xl text-sm leading-relaxed">${esc(seo.blurb || seo.description)}</p><details class="mt-5"><summary class="bd t-muted inline-flex cursor-pointer items-center gap-1.5 rounded-lg border px-2.5 py-1.5 text-xs font-medium">All ${
-    NAV.length - 1
-  } tools</summary><nav aria-label="All tools" class="mt-4 grid grid-cols-2 gap-x-6 gap-y-5 sm:grid-cols-3 lg:grid-cols-4">${groups}</nav></details><p class="t-muted mt-6 text-xs">Free · no sign-up · nothing you paste leaves your browser · <a href="/" class="inline-flex min-h-[36px] items-center underline-offset-2">all tools</a> · <a href="/privacy/" class="inline-flex min-h-[36px] items-center underline-offset-2">privacy</a> · <a href="/about/" class="inline-flex min-h-[36px] items-center underline-offset-2">about this project</a> · <a href="mailto:hello@devpocket.in?subject=DevPocket%20feedback" class="inline-flex min-h-[36px] items-center underline-offset-2">contact</a></p></div></footer>`
-}
-
-function render(pathname, seo, { noindex = false } = {}) {
+async function render(pathname, seo, { noindex = false, appUrl } = {}) {
   const url = canonicalUrl(pathname)
   let html = template
 
@@ -420,19 +259,7 @@ function render(pathname, seo, { noindex = false } = {}) {
     `<script type="application/ld+json">${buildLdJson(pathname, seo)}</script>`
   )
 
-  const body =
-    `<div class="app-bg flex min-h-screen flex-col antialiased">` +
-    `<header class="bd sidebar-bg border-b"><div class="mx-auto flex h-14 max-w-[1600px] items-center gap-2.5 px-3 sm:px-5">` +
-    `<a href="/" class="flex shrink-0 items-center gap-2.5" aria-label="DevPocket home">` +
-    `<span class="flex h-7 w-7 items-center justify-center rounded-lg bg-emerald-500/15 text-emerald-500 font-bold text-sm">D</span>` +
-    `<span class="t-main text-base font-bold tracking-tight">DevPocket</span></a></div></header>` +
-    `<main class="mx-auto w-full max-w-[1600px] flex-1">` +
-    `<div class="bd border-b px-5 pt-10 pb-8 sm:px-8 sm:pt-14 sm:pb-10">` +
-    `<h1 class="t-main text-3xl font-bold tracking-tight sm:text-4xl lg:text-5xl">${esc(seo.heading || seo.title)}</h1>` +
-    `<p class="t-muted mt-3 max-w-xl text-sm leading-relaxed">${esc(seo.blurb || seo.description)}</p></div>` +
-    sectionsHtml(pathname, seo) +
-    footerHtml(pathname, seo) +
-    `</main></div>`
+  const body = await renderApp(appUrl || hrefFor(pathname))
 
   html = replaceRoot(html, body)
 
@@ -445,7 +272,7 @@ function render(pathname, seo, { noindex = false } = {}) {
 
 const routes = Object.keys(SEO)
 for (const pathname of routes) {
-  const html = render(pathname, SEO[pathname])
+  const html = await render(pathname, SEO[pathname])
   if (pathname === '/') {
     writeFileSync(join(dist, 'index.html'), html)
   } else {
@@ -459,7 +286,7 @@ for (const pathname of routes) {
 // deep links work even before the per-route files are hit.
 writeFileSync(
   join(dist, '404.html'),
-  render('/', { ...SEO['/'], title: 'Page not found — DevPocket' }, { noindex: true })
+  await render('/', { ...SEO['/'], title: 'Page not found — DevPocket' }, { noindex: true, appUrl: '/404/' })
 )
 
 // Retired URLs: a static page that redirects, plus a canonical pointing at the

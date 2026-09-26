@@ -52,16 +52,24 @@ Profile details live in `src/lib/profile.js` — edit that one file and the Abou
 
 Each tool is a real, indexable URL (`/cron`, `/sql`, `/json-xml`…) rather than a hash fragment, so search engines can rank them individually.
 
-The build step (`scripts/prerender.mjs`) runs after Vite and emits:
+`npm run build` runs three steps: the client build, a server build of `src/entry-server.jsx` into `dist-ssr/`, and `scripts/prerender.mjs`, which emits:
 
-- **One static HTML file per route** with its own `<title>`, meta description, canonical URL and Open Graph tags — crawlers get correct metadata without executing JavaScript.
+- **One static HTML file per route** with its own `<title>`, meta description, canonical URL, Open Graph tags and JSON-LD, and a body that is the real page — header, tool UI, guide, FAQ, related tools and footer — rendered by React at build time. The browser loads the route's chunk first and then renders the same tree, so there is no loading flash and the static and live pages (including the single `<h1>`) are identical.
 - **`sitemap.xml`** listing all 13 URLs.
 - **`robots.txt`** pointing at the sitemap.
 - **`404.html`** so deep links resolve on GitHub Pages.
 - **`<link rel="modulepreload">` tags** for each route's own chunks (read from `dist/.vite/manifest.json`), so a tool's code downloads alongside the app shell instead of after it.
 - **`sw.js`**, the service worker: every page's HTML, the shell and each tool's chunks are precached, so the site works offline and is installable. It caches the site's own files only. Its cache name is a hash of the precached files, so each deploy replaces the old cache.
 
-Copy for each route lives in one place: `src/lib/seo.js`. Edit a title or description there and both the static HTML and the in-app `<SeoFooter>` copy update together.
+Copy for each route lives in one place: `src/lib/seo.js`. Its `heading` is the page's `<h1>` (rendered by `PageHeader`), the JSON-LD name and the breadcrumb, so they always agree; `h1` overrides it where the visible header must differ. Titles should stay within 60 characters and descriptions between 140 and 160.
+
+### Adding a tool
+
+1. Write the page in `src/pages/` and add its loader to `LOADERS` in `src/App.jsx` (the route is generated from it).
+2. Add a one-line entry to `navItems` in `src/lib/nav.js`, and search words to `KEYWORDS` there.
+3. Add its `src/lib/seo.js` entry: `title`, `description`, `heading`, `blurb`, a `deepDive` guide with a worked `example`, `howItWorks`, `useCases`, 3–5 `faq` entries, and `related` (4–6 routes). Without `related`, the page links to tools in its own menu group.
+
+The build fails if a route is missing from any of the three tables.
 
 ### After deploying
 

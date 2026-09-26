@@ -169,7 +169,7 @@ export default function TopNav({ onOpenPalette, onPrefetch }) {
 
           <Link
             to="/privacy"
-            className="t-muted hover:t-main hidden shrink-0 text-sm font-medium xl:block"
+            className="t-muted hover:t-main hidden shrink-0 text-sm font-medium 2xl:block"
           >
             Privacy
           </Link>

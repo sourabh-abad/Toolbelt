@@ -30,6 +30,10 @@ import {
   AlignLeft,
   TableProperties,
   FileDiff,
+  Link2,
+  Ampersand,
+  CaseSensitive,
+  Hash,
 } from 'lucide-react'
 
 export const navItems = [
@@ -67,6 +71,10 @@ export const navItems = [
   { to: '/diff', label: 'Diff Checker', icon: GitCompare, group: 'Text', accent: 'amber', description: 'Compare two blocks of text' },
   { to: '/encode-decode', label: 'Encode / Decode', icon: Binary, group: 'Text', accent: 'violet', description: 'Base64, URL & hashing' },
   { to: '/color', label: 'Colour & CSS Units', icon: Palette, group: 'Text', accent: 'pink', description: 'HEX, RGB, HSL and px / rem / em / pt' },
+  { to: '/url-parser', label: 'URL Parser', icon: Link2, group: 'Text', accent: 'sky', description: 'Split a URL into parts and edit its query string' },
+  { to: '/html-entities', label: 'HTML Entities', icon: Ampersand, group: 'Text', accent: 'orange', description: 'Encode and decode HTML entities like &amp; and &#233;' },
+  { to: '/case-converter', label: 'Case Converter', icon: CaseSensitive, group: 'Text', accent: 'teal', description: 'camelCase, snake_case, kebab-case and more' },
+  { to: '/number-base', label: 'Number Base Converter', icon: Hash, group: 'Text', accent: 'indigo', description: 'Binary, octal, decimal and hex with two’s complement' },
   { to: '/markdown', label: 'Markdown Preview', icon: FileText, group: 'Text', accent: 'blue', description: 'Live GitHub-flavoured Markdown with Mermaid diagrams' },
 
   // --- Time
@@ -115,6 +123,10 @@ const KEYWORDS = {
   '/diff': ['diff', 'compare', 'difference', 'text compare', 'changes'],
   '/encode-decode': ['sha', 'sha1', 'sha256', 'sha-256', 'sha384', 'sha512', 'md5', 'hash', 'checksum', 'digest', 'base64', 'base64 encode', 'base64 decode', 'url encode', 'url decode', 'percent encoding', 'encodeuricomponent'],
   '/color': ['hex', 'rgb', 'hsl', 'color picker', 'colour', 'color', 'rem', 'px', 'em', 'css units', 'converter'],
+  '/url-parser': ['url', 'url parser', 'query string', 'query params', 'querystring', 'parse url', 'url decode', 'search params', 'utm', 'uri'],
+  '/html-entities': ['html entities', 'html escape', 'html unescape', 'html encode', 'html decode', 'entity', '&amp;', 'nbsp', 'xss', 'escape'],
+  '/case-converter': ['case', 'camelcase', 'camel case', 'snake_case', 'snake case', 'kebab-case', 'kebab case', 'pascalcase', 'pascal case', 'constant case', 'title case', 'rename', 'naming convention'],
+  '/number-base': ['binary', 'hex', 'hexadecimal', 'octal', 'decimal', 'base converter', 'radix', 'bin to hex', 'hex to decimal', 'two\'s complement', 'bits', 'bigint'],
   '/markdown': ['md', 'readme', 'preview', 'gfm', 'github markdown', 'mermaid', 'diagram'],
   '/timestamp': ['epoch', 'unix', 'unix time', 'timestamp', 'epoch converter', 'date', 'time zone', 'timezone', 'utc', 'iso 8601', 'milliseconds', 'regex', 'regular expression', 'uuid'],
   '/cron': ['cron', 'crontab', 'schedule', 'cron expression', 'quartz', 'next run', 'job'],

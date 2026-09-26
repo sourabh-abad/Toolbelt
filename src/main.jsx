@@ -2,7 +2,7 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom'
 import './index.css'
-import App from './App.jsx'
+import App, { preloadRoute } from './App.jsx'
 import { ThemeProvider } from './lib/theme'
 import { ToastProvider } from './lib/toast'
 import { reloadOnce } from './lib/reload'
@@ -32,7 +32,11 @@ if (import.meta.env.PROD && 'serviceWorker' in navigator) {
   })
 }
 
-createRoot(document.getElementById('root')).render(
+// The static HTML already shows this route's finished page (see
+// src/entry-server.jsx). Load its module first, so the first render is the
+// same page rather than a loading state that replaces it for a moment.
+const root = createRoot(document.getElementById('root'))
+preloadRoute(window.location.pathname).then(() => root.render(
   <StrictMode>
     <ErrorBoundary>
     <ThemeProvider>
@@ -44,4 +48,4 @@ createRoot(document.getElementById('root')).render(
     </ThemeProvider>
     </ErrorBoundary>
   </StrictMode>,
-)
+))
