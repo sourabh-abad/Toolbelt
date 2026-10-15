@@ -13,6 +13,7 @@
     "deploy": "gh-pages -d dist"
   },
   "dependencies": {
+    "bcryptjs": "^3.0.3",
     "cronstrue": "^2.50.0",
     "diff": "^9.0.0",
     "fast-xml-parser": "^5.11.1",

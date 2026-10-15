@@ -12,6 +12,7 @@ Everything runs client-side in your browser. Nothing you paste in is ever sent t
 - **Base64** — live encode/decode, Base64URL auto-detected, UTF-8 safe, files to Base64 and data: URIs, decoded bytes identified by magic bytes and downloadable.
 - **URL Encode / Decode** — component or full-URI mode, space as `%20` or `+`, double-encoding detected.
 - **Hash Generator** — MD5, SHA-1/256/384/512 of text or files, hex/HEX/Base64, checksum match and HMAC.
+- **Bcrypt Generator** — hash a password with bcrypt at a chosen cost (4–16) and prefix ($2a/$2b/$2y), verify a password against a hash, and see the version, cost and salt inside it. Runs in a Web Worker.
 - **URL Parser** and **HTML Entities**.
 
 **Formatters**

@@ -1,0 +1,730 @@
+{
+  "nodes": [
+    {
+      "id": "readme_devpocket",
+      "label": "DevPocket",
+      "file_type": "document",
+      "source_file": "/Users/sourabh/Documents/code/utility/README.md",
+      "source_location": "lines 1-5",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "readme_local_first_processing",
+      "label": "Local-first Processing",
+      "file_type": "rationale",
+      "source_file": "/Users/sourabh/Documents/code/utility/README.md",
+      "source_location": "lines 3-5",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Developer payloads and tokens are processed in the browser so pasted content is not sent to a server."
+    },
+    {
+      "id": "readme_jwt_tooling",
+      "label": "JWT Tooling",
+      "file_type": "concept",
+      "source_file": "/Users/sourabh/Documents/code/utility/README.md",
+      "source_location": "lines 9-11",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "readme_offline_progressive_web_app",
+      "label": "Offline Progressive Web App",
+      "file_type": "concept",
+      "source_file": "/Users/sourabh/Documents/code/utility/README.md",
+      "source_location": "lines 58-65",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "readme_indexable_prerendering",
+      "label": "Indexable Prerendering",
+      "file_type": "rationale",
+      "source_file": "/Users/sourabh/Documents/code/utility/README.md",
+      "source_location": "lines 54-67",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Each tool is prerendered as a real route with route-specific metadata so search engines can rank it and the static page matches the live React view."
+    },
+    {
+      "id": "readme_route_content_contract",
+      "label": "Route Content Contract",
+      "file_type": "concept",
+      "source_file": "/Users/sourabh/Documents/code/utility/README.md",
+      "source_location": "lines 69-75",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "readme_redirect_migration",
+      "label": "Redirect Migration",
+      "file_type": "concept",
+      "source_file": "/Users/sourabh/Documents/code/utility/README.md",
+      "source_location": "lines 77-85",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "readme_feedback_form",
+      "label": "Feedback Form",
+      "file_type": "concept",
+      "source_file": "/Users/sourabh/Documents/code/utility/README.md",
+      "source_location": "lines 87-97",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "readme_cloudflare_cache_policy",
+      "label": "Cloudflare Cache Policy",
+      "file_type": "rationale",
+      "source_file": "/Users/sourabh/Documents/code/utility/README.md",
+      "source_location": "lines 107-159",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "HTML is edge-cached for speed but purged on deploy, while hashed assets are immutable and retained so stale pages do not request missing chunks."
+    },
+    {
+      "id": "readme_deployment_automation",
+      "label": "GitHub Pages Deployment Automation",
+      "file_type": "concept",
+      "source_file": "/Users/sourabh/Documents/code/utility/README.md",
+      "source_location": "lines 167-206",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "readme_chunk_compatibility",
+      "label": "Chunk Compatibility Recovery",
+      "file_type": "rationale",
+      "source_file": "/Users/sourabh/Documents/code/utility/README.md",
+      "source_location": "lines 148-165",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Previous hashed chunks are retained and a failed chunk load triggers one guarded reload, preventing blank pages during CDN deployment transitions."
+    },
+    {
+      "id": "readme_accessible_responsive_interface",
+      "label": "Accessible Responsive Interface",
+      "file_type": "concept",
+      "source_file": "/Users/sourabh/Documents/code/utility/README.md",
+      "source_location": "lines 36-43",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "readme_sourabh_kumar",
+      "label": "Sourabh Kumar",
+      "file_type": "concept",
+      "source_file": "/Users/sourabh/Documents/code/utility/README.md",
+      "source_location": "lines 45-51",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "index_google_analytics",
+      "label": "Google Analytics",
+      "file_type": "code",
+      "source_file": "/Users/sourabh/Documents/code/utility/index.html",
+      "source_location": "lines 4-15",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "index_analytics_data_minimization",
+      "label": "Analytics Data Minimization",
+      "file_type": "rationale",
+      "source_file": "/Users/sourabh/Documents/code/utility/index.html",
+      "source_location": "lines 4-8",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Analytics excludes site search and form interactions, and tool input is not placed in site URLs; outbound clicked URLs remain an explicitly documented exception."
+    },
+    {
+      "id": "index_asset_load_recovery",
+      "label": "Asset Load Recovery",
+      "file_type": "rationale",
+      "source_file": "/Users/sourabh/Documents/code/utility/index.html",
+      "source_location": "lines 34-51",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "An entry page whose hashed assets have been removed reloads once, with a session-storage cooldown to prevent a reload loop."
+    },
+    {
+      "id": "index_search_metadata",
+      "label": "Search and Social Metadata",
+      "file_type": "concept",
+      "source_file": "/Users/sourabh/Documents/code/utility/index.html",
+      "source_location": "lines 53-85",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "index_devpocket_structured_data",
+      "label": "DevPocket WebApplication Structured Data",
+      "file_type": "concept",
+      "source_file": "/Users/sourabh/Documents/code/utility/index.html",
+      "source_location": "lines 87-99",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_github_workflows_deploy_ci_deployment",
+      "label": "GitHub Pages CI Deployment",
+      "file_type": "document",
+      "source_file": "/Users/sourabh/Documents/code/utility/.github/workflows/deploy.yml",
+      "source_location": "lines 1-106",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_github_workflows_deploy_build_job",
+      "label": "Build Job",
+      "file_type": "concept",
+      "source_file": "/Users/sourabh/Documents/code/utility/.github/workflows/deploy.yml",
+      "source_location": "lines 22-58",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_github_workflows_deploy_github_pages_job",
+      "label": "GitHub Pages Deploy Job",
+      "file_type": "concept",
+      "source_file": "/Users/sourabh/Documents/code/utility/.github/workflows/deploy.yml",
+      "source_location": "lines 60-69",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_github_workflows_deploy_cloudflare_purge_job",
+      "label": "Cloudflare Cache Purge Job",
+      "file_type": "concept",
+      "source_file": "/Users/sourabh/Documents/code/utility/.github/workflows/deploy.yml",
+      "source_location": "lines 71-106",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_github_workflows_deploy_release_asset_retention",
+      "label": "Release Asset Retention",
+      "file_type": "rationale",
+      "source_file": "/Users/sourabh/Documents/code/utility/.github/workflows/deploy.yml",
+      "source_location": "lines 49-53",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "The workflow carries a live release's hashed chunks forward so open tabs and cached HTML from the preceding release do not 404."
+    },
+    {
+      "id": "claude_outputs_deploy_ci_deployment",
+      "label": "Archived GitHub Pages CI Deployment",
+      "file_type": "document",
+      "source_file": "/Users/sourabh/Documents/code/utility/Claude outputs/deploy.yml",
+      "source_location": "lines 1-100",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "claude_outputs_about_card_uuid_generator_interface",
+      "label": "UUID Generator Interface Screenshot",
+      "file_type": "image",
+      "source_file": "/Users/sourabh/Documents/code/utility/Claude outputs/about-card.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "claude_outputs_guide_desktop_jwt_security_guidance",
+      "label": "JWT Security Guidance Screenshot",
+      "file_type": "image",
+      "source_file": "/Users/sourabh/Documents/code/utility/Claude outputs/guide-desktop.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "public_apple_touch_icon_devpocket_brandmark",
+      "label": "DevPocket Apple Touch Brandmark",
+      "file_type": "image",
+      "source_file": "/Users/sourabh/Documents/code/utility/public/apple-touch-icon.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "public_favicon_96_devpocket_brandmark",
+      "label": "DevPocket PNG Favicon Brandmark",
+      "file_type": "image",
+      "source_file": "/Users/sourabh/Documents/code/utility/public/favicon-96.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "public_favicon_devpocket_brandmark",
+      "label": "DevPocket SVG Favicon Brandmark",
+      "file_type": "image",
+      "source_file": "/Users/sourabh/Documents/code/utility/public/favicon.svg",
+      "source_location": "lines 1-15",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "public_icon_192_devpocket_brandmark",
+      "label": "DevPocket 192px App Brandmark",
+      "file_type": "image",
+      "source_file": "/Users/sourabh/Documents/code/utility/public/icon-192.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "public_icon_512_devpocket_brandmark",
+      "label": "DevPocket 512px App Brandmark",
+      "file_type": "image",
+      "source_file": "/Users/sourabh/Documents/code/utility/public/icon-512.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "public_og_devpocket_social_card",
+      "label": "DevPocket Social Sharing Card",
+      "file_type": "image",
+      "source_file": "/Users/sourabh/Documents/code/utility/public/og.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "public_sourabh_sourabh_kumar_jpeg_portrait",
+      "label": "Sourabh Kumar JPEG Portrait",
+      "file_type": "image",
+      "source_file": "/Users/sourabh/Documents/code/utility/public/sourabh.jpg",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "public_sourabh_sourabh_kumar_webp_portrait",
+      "label": "Sourabh Kumar WebP Portrait",
+      "file_type": "image",
+      "source_file": "/Users/sourabh/Documents/code/utility/public/sourabh.webp",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "readme_local_first_processing",
+      "target": "readme_devpocket",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/sourabh/Documents/code/utility/README.md",
+      "source_location": "lines 3-5",
+      "weight": 1.0
+    },
+    {
+      "source": "readme_jwt_tooling",
+      "target": "readme_local_first_processing",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/sourabh/Documents/code/utility/README.md",
+      "source_location": "lines 9-11",
+      "weight": 1.0
+    },
+    {
+      "source": "readme_indexable_prerendering",
+      "target": "readme_devpocket",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/sourabh/Documents/code/utility/README.md",
+      "source_location": "lines 54-67",
+      "weight": 1.0
+    },
+    {
+      "source": "readme_route_content_contract",
+      "target": "readme_indexable_prerendering",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/sourabh/Documents/code/utility/README.md",
+      "source_location": "lines 69-75",
+      "weight": 1.0
+    },
+    {
+      "source": "readme_redirect_migration",
+      "target": "readme_indexable_prerendering",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/sourabh/Documents/code/utility/README.md",
+      "source_location": "lines 77-85",
+      "weight": 1.0
+    },
+    {
+      "source": "readme_cloudflare_cache_policy",
+      "target": "readme_deployment_automation",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/sourabh/Documents/code/utility/README.md",
+      "source_location": "lines 107-159",
+      "weight": 1.0
+    },
+    {
+      "source": "readme_chunk_compatibility",
+      "target": "readme_cloudflare_cache_policy",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/sourabh/Documents/code/utility/README.md",
+      "source_location": "lines 148-165",
+      "weight": 1.0
+    },
+    {
+      "source": "readme_offline_progressive_web_app",
+      "target": "readme_local_first_processing",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "/Users/sourabh/Documents/code/utility/README.md",
+      "source_location": "lines 58-65",
+      "weight": 1.0
+    },
+    {
+      "source": "readme_accessible_responsive_interface",
+      "target": "readme_devpocket",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/sourabh/Documents/code/utility/README.md",
+      "source_location": "lines 36-43",
+      "weight": 1.0
+    },
+    {
+      "source": "index_analytics_data_minimization",
+      "target": "index_google_analytics",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/sourabh/Documents/code/utility/index.html",
+      "source_location": "lines 4-15",
+      "weight": 1.0
+    },
+    {
+      "source": "index_asset_load_recovery",
+      "target": "readme_chunk_compatibility",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": "/Users/sourabh/Documents/code/utility/index.html",
+      "source_location": "lines 34-51",
+      "weight": 1.0
+    },
+    {
+      "source": "index_search_metadata",
+      "target": "readme_indexable_prerendering",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/sourabh/Documents/code/utility/index.html",
+      "source_location": "lines 53-85",
+      "weight": 1.0
+    },
+    {
+      "source": "index_devpocket_structured_data",
+      "target": "index_search_metadata",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/sourabh/Documents/code/utility/index.html",
+      "source_location": "lines 87-99",
+      "weight": 1.0
+    },
+    {
+      "source": "_github_workflows_deploy_build_job",
+      "target": "_github_workflows_deploy_ci_deployment",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/sourabh/Documents/code/utility/.github/workflows/deploy.yml",
+      "source_location": "lines 21-58",
+      "weight": 1.0
+    },
+    {
+      "source": "_github_workflows_deploy_github_pages_job",
+      "target": "_github_workflows_deploy_ci_deployment",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/sourabh/Documents/code/utility/.github/workflows/deploy.yml",
+      "source_location": "lines 60-69",
+      "weight": 1.0
+    },
+    {
+      "source": "_github_workflows_deploy_cloudflare_purge_job",
+      "target": "_github_workflows_deploy_ci_deployment",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/sourabh/Documents/code/utility/.github/workflows/deploy.yml",
+      "source_location": "lines 77-106",
+      "weight": 1.0
+    },
+    {
+      "source": "_github_workflows_deploy_github_pages_job",
+      "target": "_github_workflows_deploy_build_job",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/sourabh/Documents/code/utility/.github/workflows/deploy.yml",
+      "source_location": "lines 60-69",
+      "weight": 1.0
+    },
+    {
+      "source": "_github_workflows_deploy_cloudflare_purge_job",
+      "target": "_github_workflows_deploy_github_pages_job",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/sourabh/Documents/code/utility/.github/workflows/deploy.yml",
+      "source_location": "lines 77-79",
+      "weight": 1.0
+    },
+    {
+      "source": "_github_workflows_deploy_release_asset_retention",
+      "target": "_github_workflows_deploy_build_job",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/sourabh/Documents/code/utility/.github/workflows/deploy.yml",
+      "source_location": "lines 49-53",
+      "weight": 1.0
+    },
+    {
+      "source": "_github_workflows_deploy_cloudflare_purge_job",
+      "target": "readme_cloudflare_cache_policy",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/sourabh/Documents/code/utility/.github/workflows/deploy.yml",
+      "source_location": "lines 71-106",
+      "weight": 1.0
+    },
+    {
+      "source": "_github_workflows_deploy_release_asset_retention",
+      "target": "readme_chunk_compatibility",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": "/Users/sourabh/Documents/code/utility/.github/workflows/deploy.yml",
+      "source_location": "lines 49-53",
+      "weight": 1.0
+    },
+    {
+      "source": "claude_outputs_deploy_ci_deployment",
+      "target": "_github_workflows_deploy_ci_deployment",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": "/Users/sourabh/Documents/code/utility/Claude outputs/deploy.yml",
+      "source_location": "lines 1-100",
+      "weight": 1.0
+    },
+    {
+      "source": "claude_outputs_about_card_uuid_generator_interface",
+      "target": "readme_devpocket",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/sourabh/Documents/code/utility/Claude outputs/about-card.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "claude_outputs_guide_desktop_jwt_security_guidance",
+      "target": "readme_jwt_tooling",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/sourabh/Documents/code/utility/Claude outputs/guide-desktop.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "public_og_devpocket_social_card",
+      "target": "readme_devpocket",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/sourabh/Documents/code/utility/public/og.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "public_favicon_96_devpocket_brandmark",
+      "target": "public_apple_touch_icon_devpocket_brandmark",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": "/Users/sourabh/Documents/code/utility/public/favicon-96.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "public_favicon_devpocket_brandmark",
+      "target": "public_apple_touch_icon_devpocket_brandmark",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": "/Users/sourabh/Documents/code/utility/public/favicon.svg",
+      "source_location": "lines 1-15",
+      "weight": 1.0
+    },
+    {
+      "source": "public_icon_192_devpocket_brandmark",
+      "target": "public_apple_touch_icon_devpocket_brandmark",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": "/Users/sourabh/Documents/code/utility/public/icon-192.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "public_icon_512_devpocket_brandmark",
+      "target": "public_apple_touch_icon_devpocket_brandmark",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": "/Users/sourabh/Documents/code/utility/public/icon-512.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "public_sourabh_sourabh_kumar_jpeg_portrait",
+      "target": "readme_sourabh_kumar",
+      "relation": "references",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": "/Users/sourabh/Documents/code/utility/public/sourabh.jpg",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "public_sourabh_sourabh_kumar_webp_portrait",
+      "target": "readme_sourabh_kumar",
+      "relation": "references",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": "/Users/sourabh/Documents/code/utility/public/sourabh.webp",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": [
+    {
+      "id": "github_pages_release_flow",
+      "label": "GitHub Pages Release Flow",
+      "nodes": [
+        "_github_workflows_deploy_build_job",
+        "_github_workflows_deploy_github_pages_job",
+        "_github_workflows_deploy_cloudflare_purge_job",
+        "_github_workflows_deploy_release_asset_retention"
+      ],
+      "relation": "participate_in",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/sourabh/Documents/code/utility/.github/workflows/deploy.yml"
+    },
+    {
+      "id": "devpocket_brand_icon_system",
+      "label": "DevPocket Brand Icon System",
+      "nodes": [
+        "public_apple_touch_icon_devpocket_brandmark",
+        "public_favicon_96_devpocket_brandmark",
+        "public_favicon_devpocket_brandmark",
+        "public_icon_192_devpocket_brandmark",
+        "public_icon_512_devpocket_brandmark"
+      ],
+      "relation": "form",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": "/Users/sourabh/Documents/code/utility/public/icon-512.png"
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

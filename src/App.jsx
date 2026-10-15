@@ -35,6 +35,7 @@ export const LOADERS = {
   '/json-to-yaml': () => import('./pages/JsonToYamlTool'),
   '/yaml-to-json': () => import('./pages/YamlToJsonTool'),
   '/hash-generator': () => import('./pages/HashGeneratorTool'),
+  '/bcrypt': () => import('./pages/BcryptTool'),
   '/url-encode': () => import('./pages/UrlEncodeTool'),
   '/base64': () => import('./pages/Base64Tool'),
   '/codegen': () => import('./pages/CodeGenTool'),

@@ -41,6 +41,7 @@ import {
   Regex,
   PenLine,
   Clock3,
+  LockKeyhole,
   ArrowLeftRight,
 } from 'lucide-react'
 import { currentPath } from './redirects.js'
@@ -54,6 +55,7 @@ export const navItems = [
   { to: '/base64', label: 'Base64', icon: Binary, group: 'Encoding', accent: 'violet', description: 'Encode and decode Base64 and Base64URL, text or files' },
   { to: '/url-encode', label: 'URL Encode / Decode', icon: Percent, group: 'Encoding', accent: 'sky', description: 'Percent-encode URLs and query values' },
   { to: '/hash-generator', label: 'Hash Generator', icon: Fingerprint, group: 'Encoding', accent: 'violet', description: 'SHA-256, MD5, SHA-512 and HMAC of text or files' },
+  { to: '/bcrypt', label: 'Bcrypt Generator', icon: LockKeyhole, group: 'Encoding', accent: 'rose', description: 'Hash passwords with bcrypt and verify them against a hash' },
   { to: '/url-parser', label: 'URL Parser', icon: Link2, group: 'Encoding', accent: 'sky', description: 'Split a URL into parts and edit its query string' },
   { to: '/html-entities', label: 'HTML Entities', icon: Ampersand, group: 'Encoding', accent: 'orange', description: 'Encode and decode HTML entities like &amp; and &#233;' },
 
@@ -132,6 +134,7 @@ const KEYWORDS = {
   '/xml-formatter': ['xml formatter', 'xml validator', 'xml beautifier', 'pretty print xml', 'xpath', 'xml lint', 'soap', 'pom.xml', 'minify xml', 'well-formed'],
   '/json-formatter': ['json formatter', 'json beautifier', 'beautify', 'prettify', 'pretty print', 'format json', 'minify', 'jsonc', 'json5', 'indent', 'sort keys'],
   '/hash-generator': ['sha', 'sha1', 'sha256', 'sha-256', 'sha384', 'sha512', 'md5', 'hash', 'checksum', 'digest', 'hmac', 'sha256sum', 'file hash'],
+  '/bcrypt': ['bcrypt', 'bcrypt generator', 'bcrypt hash', 'bcrypt verify', 'bcrypt decrypt', 'bcrypt checker', 'bcrypt online', 'password hash', 'hash password', 'password hashing', 'cost factor', 'rounds', 'salt', '$2a$', '$2b$', '$2y$', 'htpasswd', 'spring security', 'password_hash', 'blowfish'],
   '/url-encode': ['url encode', 'url decode', 'percent encoding', 'percent-encoding', 'encodeuricomponent', 'encodeuri', 'urlencode', '%20', 'query string encode', 'uri encode'],
   '/base64': ['base64', 'base64 decode', 'base64 encode', 'base64url', 'b64', 'atob', 'btoa', 'data uri', 'image to base64', 'decode base64'],
   '/jwt-decoder': ['jwt', 'jwt decode', 'jwt decoder', 'jwt verify', 'verify signature', 'token', 'bearer', 'jws', 'jwks', 'claims', 'exp', 'oauth', 'id token', 'access token'],

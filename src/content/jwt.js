@@ -109,6 +109,7 @@ Signature verified with the secret`,
       ['/timestamp', 'Pick exact exp and nbf values as Unix seconds'],
       ['/uuid', 'Generate a unique jti claim'],
       ['/json-validator', 'Check a large claims object before signing it'],
+      ['/bcrypt', 'Verify the login password with bcrypt before issuing the token'],
     ],
     deepDive: {
       heading: 'Signing a test token without handing your key to a website',

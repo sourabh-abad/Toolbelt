@@ -1048,6 +1048,7 @@ Friday — not Friday the 13th
       ['/uuid', 'Generate IDs for extra columns'],
       ['/json-schema-generator', 'Describe the generated records as a schema'],
       ['/lorem', 'Longer placeholder text for description fields'],
+      ['/bcrypt', 'Hash a password for the seeded user records'],
     ],
     title: 'Mock Data Generator — JSON, CSV & SQL | DevPocket',
     description:
@@ -1849,6 +1850,7 @@ format would take more.`,
       ['/jwt-encoder', 'Sign test tokens with a random secret'],
       ['/uuid', 'Generate identifiers rather than secrets'],
       ['/base64', 'Encode random key bytes as Base64'],
+      ['/bcrypt', 'Hash the generated password with bcrypt before storing it'],
     ],
     title: 'Password Generator — Strong Random Passwords | DevPocket',
     description:
