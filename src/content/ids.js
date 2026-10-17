@@ -86,7 +86,7 @@ Created    2022-02-22T19:22:22.000Z`,
   },
 
   '/uuid-v7-generator': {
-    title: 'UUID v7 Generator — Time-Ordered UUIDs (RFC 9562) | DevPocket',
+    title: 'UUID v7 Generator — Time-Ordered IDs (RFC 9562) | DevPocket',
     description:
       'Generate UUID v7 — time-ordered UUIDs from RFC 9562 that sort by creation time. See the bit layout, compare v4 and v7, and extract a v7’s timestamp. In your browser.',
     heading: 'UUID v7 Generator',

@@ -4,7 +4,7 @@
 
 export default {
   '/json-formatter': {
-    title: 'JSON Formatter & Beautifier Online — Free, Private | DevPocket',
+    title: 'JSON Formatter Online — Free, Private Beautifier | DevPocket',
     description:
       'Format, beautify or minify JSON instantly. Indent with 2, 4 or tabs, sort keys, browse a tree and search. Lenient mode accepts comments. Runs in your browser.',
     heading: 'JSON Formatter',
@@ -95,7 +95,7 @@ export default {
   },
 
   '/xml-formatter': {
-    title: 'XML Formatter & Validator Online — Pretty-Print XML | DevPocket',
+    title: 'XML Formatter & Validator Online — Pretty Print | DevPocket',
     description:
       'Pretty-print or minify XML and check it is well-formed, with the exact line and column of any error. Collapsible tree, XPath and attribute search, in your browser.',
     heading: 'XML Formatter',
@@ -178,7 +178,7 @@ export default {
   },
 
   '/json-to-csv': {
-    title: 'JSON to CSV Converter — Flatten Nested JSON Online | DevPocket',
+    title: 'JSON to CSV Converter — Flatten Nested JSON | DevPocket',
     description:
       'Convert a JSON array to CSV for Excel or Sheets. Nested objects become dot-notation columns; choose delimiter, array handling and quoting. Private, in your browser.',
     heading: 'JSON to CSV Converter',
@@ -348,7 +348,7 @@ B-2;12;;false`,
   },
 
   '/json-to-yaml': {
-    title: 'JSON to YAML Converter Online — Instant & Private | DevPocket',
+    title: 'JSON to YAML Converter Online — Fast & Private | DevPocket',
     description:
       'Convert JSON to YAML for Kubernetes, Docker Compose or CI config. Strings YAML would misread, like "on" and "NO", are quoted. Choose indent and quoting. In your browser.',
     heading: 'JSON to YAML Converter',
@@ -434,7 +434,7 @@ empty: ''`,
   },
 
   '/yaml-to-json': {
-    title: 'YAML to JSON Converter — Multi-Document & Anchors | DevPocket',
+    title: 'YAML to JSON Converter — Multi-Doc & Anchors | DevPocket',
     description:
       'Convert YAML to JSON with anchors, aliases and merge keys resolved and multi-document files as an array. YAML 1.1 surprises are flagged by line. In your browser.',
     heading: 'YAML to JSON Converter',

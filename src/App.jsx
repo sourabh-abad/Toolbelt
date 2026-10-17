@@ -199,18 +199,25 @@ export default function App() {
           <ErrorBoundary key={location.pathname}>
           <Suspense fallback={<RouteFallback />}>
             <div>
-              <Routes>
-                <Route path="/" element={<Home />} />
-                {Object.keys(LOADERS).map((path) => (
-                  <Route key={path} path={path} element={<Page path={path} />} />
-                ))}
-                {/* Retired URLs (src/lib/redirects.js). A static stub answers
-                    them on first load; this covers links inside the app. */}
-                {Object.entries(REDIRECTS).map(([from, to]) => (
-                  <Route key={from} path={from} element={<Navigate to={hrefFor(to)} replace />} />
-                ))}
-                <Route path="*" element={<NotFound />} />
-              </Routes>
+              {/* The tool has its own boundary. A few tools render something
+                  the build could not know (the current time, a fresh UUID),
+                  so their static markup cannot hydrate as is; React then
+                  re-renders just this boundary on the client, and the guide
+                  and footer below keep the DOM they were served with. */}
+              <Suspense fallback={<RouteFallback />}>
+                <Routes>
+                  <Route path="/" element={<Home />} />
+                  {Object.keys(LOADERS).map((path) => (
+                    <Route key={path} path={path} element={<Page path={path} />} />
+                  ))}
+                  {/* Retired URLs (src/lib/redirects.js). A static stub answers
+                      them on first load; this covers links inside the app. */}
+                  {Object.entries(REDIRECTS).map(([from, to]) => (
+                    <Route key={from} path={from} element={<Navigate to={hrefFor(to)} replace />} />
+                  ))}
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+              </Suspense>
               <ToolContentSections />
               <SeoFooter />
             </div>

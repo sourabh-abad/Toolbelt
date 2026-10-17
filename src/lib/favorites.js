@@ -54,9 +54,19 @@ function getSnapshot() {
   return favArray
 }
 
+// The build has no favourites, so the first client render reports none too
+// and the static HTML hydrates as is; the saved stars light up a render later.
+const NONE = []
+function getServerSnapshot() {
+  return NONE
+}
+
 /** Reactive list of favorited tool paths, plus a toggle for the current tool. */
 export function useFavorites() {
-  const paths = useSyncExternalStore(subscribe, getSnapshot, getSnapshot)
+  const paths = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot)
   const toggle = useCallback((path) => toggleFavorite(path), [])
-  return { favorites: paths, toggle, isFavorite }
+  // Answers from the snapshot React rendered with, not the live set, so a
+  // star never claims a state the markup around it does not show yet.
+  const has = useCallback((path) => paths.includes(path), [paths])
+  return { favorites: paths, toggle, isFavorite: has }
 }

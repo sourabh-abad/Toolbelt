@@ -41,7 +41,7 @@ export default function ToolContentSections() {
           <ol className="mt-3 space-y-2.5">
             {howItWorks.map((step, i) => (
               <li key={i} className="flex gap-3 text-sm leading-relaxed">
-                <span className={`mono shrink-0 font-semibold ${accent.text}`}>{i + 1}.</span>
+                <span className={`mono shrink-0 font-semibold ${accent.label}`}>{i + 1}.</span>
                 <span className="t-muted">{step}</span>
               </li>
             ))}
@@ -194,7 +194,7 @@ function Guide({ accent, heading, body, example, table, gotchas }) {
       <div className={`h-1 bg-gradient-to-r ${accent.grad}`} aria-hidden="true" />
       <div className="p-5 sm:p-7">
         <span
-          className={`inline-flex items-center rounded-md px-2 py-0.5 text-[11px] font-semibold tracking-wider uppercase ${accent.bg} ${accent.text}`}
+          className={`inline-flex items-center rounded-md px-2 py-0.5 text-[11px] font-semibold tracking-wider uppercase ${accent.bg} ${accent.label}`}
         >
           Guide
         </span>

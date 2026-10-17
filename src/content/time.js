@@ -91,7 +91,7 @@ nanoseconds   → 2023-11-14T22:13:20.123456789Z`,
   },
 
   '/regex-tester': {
-    title: 'Regex Tester Online — Live Match Highlighting (JavaScript) | DevPocket',
+    title: 'Regex Tester Online — JavaScript, Live Matches | DevPocket',
     description:
       'Test JavaScript regular expressions with live match highlighting, capture groups with positions, replace and a clickable cheat sheet. Runaway patterns are stopped.',
     heading: 'Regex Tester',

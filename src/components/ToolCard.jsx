@@ -5,14 +5,20 @@ import { FavoriteButton, PrivacyBadge } from './ui'
 
 /**
  * The one card design every tool listing (categories, favorites, recent,
- * search) renders — so favoriting, the privacy tag and hover treatment stay
- * identical no matter where a tool is discovered from.
+ * search) renders — so favoriting and the hover treatment stay identical no
+ * matter where a tool is discovered from.
+ *
+ * The card no longer repeats "Runs locally": every tool does, the hero says
+ * so once, and 49 copies of the same badge were the noisiest thing on the
+ * page. A tool that needs the network is the exception, so it still gets its
+ * amber badge. `showGroup` names the category instead — useful where cards
+ * from different groups sit together (favourites, recent, filter results).
  *
  * The favorite `<button>` is a sibling of the `<Link>` (`<a>`), not nested
  * inside it — a button inside an anchor is invalid HTML and unreliable for
  * screen readers, even though most browsers render it without complaint.
  */
-export default function ToolCard({ item }) {
+export default function ToolCard({ item, showGroup = false }) {
   const { to, label, icon: Icon, description, accent, network, group } = item
   const a = ACCENTS[accent] || ACCENTS.emerald
   return (
@@ -21,7 +27,7 @@ export default function ToolCard({ item }) {
         className={`pointer-events-none absolute -top-8 -right-8 h-28 w-28 rounded-full bg-gradient-to-br ${a.grad} opacity-0 blur-2xl transition-opacity duration-300 group-hover:opacity-25`}
       />
       <FavoriteButton path={to} size="sm" className="absolute top-1.5 right-1.5 z-10" />
-      <Link to={to} className="relative flex flex-col justify-between p-5">
+      <Link to={to} className="relative flex h-full flex-col justify-between p-5">
         <div className="pr-8">
           <div className={`mb-4 flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br ${a.grad} text-white shadow-md ${a.glow}`}>
             <Icon className="h-5 w-5" aria-hidden="true" />
@@ -29,9 +35,14 @@ export default function ToolCard({ item }) {
           <h3 className="t-main text-sm font-semibold">{label}</h3>
           <p className="t-muted mt-1.5 text-xs leading-relaxed">{description}</p>
         </div>
-        <div className="mt-5 flex items-center justify-between gap-2">
-          {/* Reference pages take no input, so "Runs locally" says nothing there. */}
-          {group === 'Reference' ? <span /> : <PrivacyBadge privacy={network ? 'network' : 'local'} />}
+        <div className="mt-5 flex min-h-[1.25rem] items-center justify-between gap-2">
+          {network ? (
+            <PrivacyBadge privacy="network" />
+          ) : showGroup && group ? (
+            <span className="t-faint text-[11px] font-medium tracking-wide uppercase">{group}</span>
+          ) : (
+            <span />
+          )}
           <div className={`t-muted flex items-center gap-1 text-xs font-medium transition-colors ${a.groupHoverText}`}>
             Open
             <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" aria-hidden="true" />

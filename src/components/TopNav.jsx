@@ -9,6 +9,7 @@ import { useTheme } from '../lib/theme'
 import Logo from './Logo'
 import { PROFILE } from '../lib/profile'
 import { isApplePlatform } from '../lib/platform'
+import { useClientValue } from '../lib/hydration'
 
 /**
  * Horizontal menu bar with one dropdown per group. Replaces the sidebar,
@@ -17,10 +18,11 @@ import { isApplePlatform } from '../lib/platform'
 export default function TopNav({ onOpenPalette, onPrefetch }) {
   const [openMenu, setOpenMenu] = useState(null)
   const [mobileOpen, setMobileOpen] = useState(false)
-  const { theme, toggle } = useTheme()
+  const { toggle } = useTheme()
   const location = useLocation()
   const navRef = useRef(null)
-  const apple = isApplePlatform()
+  // Build-time HTML says "Ctrl K"; a Mac corrects it right after hydration.
+  const apple = useClientValue(isApplePlatform, false)
   const closeTimer = useRef(null)
 
   useEffect(() => {
@@ -160,13 +162,17 @@ export default function TopNav({ onOpenPalette, onPrefetch }) {
             </kbd>
           </button>
 
+          {/* Both icons are in the markup and the .dark class on <html> picks
+              one, so the button looks right from the first paint — before
+              React has read the saved theme — and hydrates without a mismatch. */}
           <button
             onClick={toggle}
             type="button"
-            aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+            aria-label="Switch between dark and light mode"
             className="field hover-surface t-muted flex h-8 w-8 items-center justify-center rounded-lg border transition-colors"
           >
-            {theme === 'dark' ? <Sun className="h-3.5 w-3.5" aria-hidden="true" /> : <Moon className="h-3.5 w-3.5" aria-hidden="true" />}
+            <Sun className="hidden h-3.5 w-3.5 dark:block" aria-hidden="true" />
+            <Moon className="h-3.5 w-3.5 dark:hidden" aria-hidden="true" />
           </button>
 
           <button

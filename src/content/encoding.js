@@ -4,7 +4,7 @@
 
 export default {
   '/base64': {
-    title: 'Base64 Decode & Encode Online — Text, Files, Base64URL | DevPocket',
+    title: 'Base64 Decode & Encode — Text, Files, Base64URL | DevPocket',
     description:
       'Decode or encode Base64 instantly with full UTF-8 support. Handles Base64URL, files and images, with auto-detection. Free and private — runs entirely in your browser.',
     heading: 'Base64 Decode and Encode',
@@ -96,7 +96,7 @@ Base64URL   Y2Fmw6kg4piV
   },
 
   '/url-encode': {
-    title: 'URL Encode & Decode Online — Percent-Encoding Tool | DevPocket',
+    title: 'URL Encode & Decode Online — Percent-Encoding | DevPocket',
     description:
       'Encode or decode URLs and query parameters. Choose encodeURIComponent or full-URI mode, and space as %20 or +. Instant and private in your browser.',
     heading: 'URL Encoder and Decoder',

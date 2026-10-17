@@ -12,15 +12,19 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 export default function SplitPane({ left, right, storageKey = 'devpocket-split', initial = 50, collapsed = false }) {
   const containerRef = useRef(null)
   const draggingRef = useRef(false)
-  const [pct, setPct] = useState(() => {
+  // Starts at `initial` — the width the static HTML was rendered with — and
+  // picks up the remembered position after mount, so the prerendered page
+  // hydrates without a style mismatch. The hop is only visible to someone
+  // who has dragged the divider, and happens before they can start typing.
+  const [pct, setPct] = useState(initial)
+  useEffect(() => {
     try {
       const saved = localStorage.getItem(storageKey)
-      if (saved) return Math.min(80, Math.max(20, Number(saved)))
+      if (saved) setPct(Math.min(80, Math.max(20, Number(saved))))
     } catch {
       // ignore
     }
-    return initial
-  })
+  }, [storageKey])
 
   const onMove = useCallback(
     (clientX) => {

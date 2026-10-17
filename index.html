@@ -1,20 +1,19 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <!-- Google tag (gtag.js). Page views, scrolls, outbound clicks and downloads
-         only: site search and form interactions are off in the GA stream, and no
-         URL on the site carries what a visitor typed (see GuidePage.jsx). Outbound
-         clicks do send a clicked link's URL, including links in the Markdown
-         preview. -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-8X0HWDC79H"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-8X0HWDC79H');
-    </script>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <!-- Applies the saved (or OS) theme before the first paint. The static page
+         is served without the .dark class, so without this a dark-mode visitor
+         saw a light flash on every load. Same rules as src/lib/theme.jsx. -->
+    <script>
+      try {
+        var t = localStorage.getItem('devpocket-theme')
+        if (t === 'dark' || (t !== 'light' && !matchMedia('(prefers-color-scheme: light)').matches)) {
+          document.documentElement.classList.add('dark')
+        }
+      } catch (e) {}
+    </script>
     <!-- Google Search only reads raster favicons (ICO/PNG), so the .ico is the one
          that shows up next to a search result; the SVG is what modern browsers use. -->
     <link rel="icon" href="/favicon.ico" sizes="any" />
@@ -68,7 +67,7 @@
     <meta property="og:title" content="DevPocket — Developer Tools That Stay In Your Browser" />
     <meta
       property="og:description"
-      content="33 developer tools — JSON formatter, JWT decoder, UUID generator, regex tester, timestamp converter and more — that run entirely client-side. No signup required."
+      content="49 developer tools — JSON formatter, JWT decoder, UUID generator, regex tester, timestamp converter and more — that run entirely client-side. No signup required."
     />
     <meta property="og:image" content="https://devpocket.in/og.png" />
     <meta property="og:image:width" content="1200" />
@@ -80,7 +79,7 @@
     <meta name="twitter:title" content="DevPocket — Developer Tools That Stay In Your Browser" />
     <meta
       name="twitter:description"
-      content="33 developer tools — JSON formatter, JWT decoder, UUID generator, regex tester, timestamp converter and more — that run entirely client-side. No signup required."
+      content="49 developer tools — JSON formatter, JWT decoder, UUID generator, regex tester, timestamp converter and more — that run entirely client-side. No signup required."
     />
     <meta name="twitter:image" content="https://devpocket.in/og.png" />
 
@@ -96,6 +95,19 @@
         "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
         "author": { "@type": "Person", "name": "Sourabh Kumar", "url": "https://devpocket.in/" }
       }
+    </script>
+    <!-- Google tag (gtag.js). Last in <head> so the stylesheet and the app's
+         own chunks are requested before it; it stays async. Page views,
+         scrolls, outbound clicks and downloads only: site search and form
+         interactions are off in the GA stream, and no URL on the site carries
+         what a visitor typed (see GuidePage.jsx). Outbound clicks do send a
+         clicked link's URL, including links in the Markdown preview. -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-8X0HWDC79H"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-8X0HWDC79H');
     </script>
   </head>
   <body>

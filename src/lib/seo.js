@@ -12,7 +12,7 @@ export const SITE_ORIGIN = 'https://devpocket.in'
 // `blurb` is real copy rendered on the page — crawlers rank text, not widgets.
 export const SEO = {
   '/': {
-    title: 'DevPocket — Free Private Developer Tools: JSON, JWT, Base64, Regex',
+    title: 'DevPocket — Free Private Dev Tools: JSON, JWT, Base64, Regex',
     description:
       'Format JSON, decode JWTs, generate UUIDs, test regex and convert timestamps — free developer tools that run in your browser. No signup, no uploads.',
     heading: 'Developer tools that stay in your browser',
@@ -455,11 +455,7 @@ value never reaches the app.`,
       },
       {
         q: 'Can I compare two properties files?',
-        a: 'Yes — that is the Properties Compare page. It parses both files and reports the keys only one side defines and the values that differ, instead of diffing them line by line.',
-      },
-      {
-        q: 'Is anything uploaded?',
-        a: 'No. The file is parsed in your own tab, which is what makes it safe to paste a config containing connection strings or credentials.',
+        a: 'Yes — that is the Properties Compare page. It parses both files and reports the keys only one side defines and the values that differ, instead of diffing them line by line. Nothing is uploaded for either: both files are parsed in your own tab.',
       },
     ],
   },
@@ -482,6 +478,7 @@ value never reaches the app.`,
       body: [
         'Environment configs drift in two ways that matter — a key one file has and the other does not, and a key both have with different values — and in several that do not: order, separator style, comments, whitespace. A line diff cannot tell those apart, so the real differences arrive buried in false ones — which is why a general [line-by-line diff checker](/diff) is the wrong tool here.',
         'Comparing the parsed keys instead removes every difference that a properties loader would also ignore. To check a single file for duplicates first, open it in the [Properties Viewer](/properties).',
+        'One thing to keep in mind with Spring Boot profiles: application-prod.properties is layered over application.properties, not used instead of it, so a key that is "missing" from the production file may simply be inherited from the base file. Compare the profile file against the base one to see what production overrides, and compare two profile files against each other to see how the environments differ from one another.',
       ],
       example: {
         inputLabel: 'What a line diff reports',
@@ -570,7 +567,7 @@ server.port is identical`,
       ['/markdown', 'Preview a README after the change'],
       ['/xml-formatter', 'Pretty-print XML so a diff lines up'],
     ],
-    title: 'Diff Checker — Compare Text & Code Online, Privately | DevPocket',
+    title: 'Diff Checker — Compare Text & Code Online, Free | DevPocket',
     description:
       'Compare two blocks of text or code line by line or word by word. Highlights additions and deletions with a change count. Free, private, in your browser.',
     heading: 'Diff Checker (Text Compare)',
@@ -886,7 +883,7 @@ italicise the middle`,
       ['/jwt-decoder', 'Check whether a job’s token expires before it runs'],
       ['/sql-guide', 'Write the query a nightly job runs'],
     ],
-    title: 'Cron Expression Generator & Parser — Next Run Times | DevPocket',
+    title: 'Cron Expression Generator & Parser — Next Runs | DevPocket',
     description:
       'Decode any cron expression into plain English and preview the next 8 run times in IST, SAST, UTC or local time. Includes common presets. Free and online.',
     heading: 'Cron Expression Generator and Parser',
@@ -1417,7 +1414,7 @@ Line 7  trailing comma in the object`,
       heading: 'null, missing and empty are three different things',
       body: [
         'Stripping nulls looks like tidying. In several common contexts it changes the meaning of the document rather than its size, because null is not a synonym for absent — it is a value that some protocols and schemas treat as significant. To also drop empty strings, arrays and objects, use [Remove Empty Values](/json-remove-empty).',
-        'Before removing them, it is worth knowing which of the three states your consumer actually distinguishes.',
+        'Before removing them, it is worth knowing which of the three states your consumer actually distinguishes. Where it never does — log lines, analytics events, a response read by a client that maps a missing field to a default — stripping nulls is pure savings: a smaller payload and a diff that shows only real values. Where it does, null carries an instruction or a meaning of its own, and that is what the list below is about.',
       ],
       example: {
         inputLabel: 'A PATCH body',
@@ -1859,6 +1856,18 @@ format would take more.`,
     aboutLabel: 'the password generator',
     deepDive: {
       heading: 'What actually makes a password hard to guess',
+      example: {
+        inputLabel: 'Settings',
+        input: `Length: 20
+Lower, upper, digits, symbols
+Avoid ambiguous (I l 1 O 0 o): on
+→ 79-character pool`,
+        outputLabel: 'One draw, and what it is worth',
+        output: `Yq7#vB2!tK9&Rz4@Fw8$
+
+20 × log2(79) ≈ 126 bits · Very strong`,
+        note: 'The bits come from the pool size and the length alone — this exact string is no stronger or weaker than any other 20-character draw from the same pool. Letters and digits only (56 characters) at the same length gives 116 bits; all four sets at 12 characters gives 76.',
+      },
       body: [
         'Strength is a property of how a password was generated, not how it looks. A password picked uniformly at random from a known alphabet has entropy you can calculate: length multiplied by log2(alphabet size). A password a human invented to satisfy a strength meter has far less, because the ways humans substitute characters are few and well known to cracking tools. And storing one needs a slow, salted hash such as Argon2 or bcrypt — not the fast digests in the [hash generator](/hash-generator).',
         'That is why this generator does two things and no more: it draws from crypto.getRandomValues — the browser\'s cryptographic random source, not Math.random — and it tells you the resulting entropy in bits, so the number is something you can reason about rather than a coloured bar.',
@@ -2090,6 +2099,7 @@ fragment  #results`,
       body: [
         'In HTML only a handful of characters are dangerous: < and & start markup, and " or \' end an attribute value. Escaping those five is enough to display any text safely inside an element or a quoted attribute, and it is what the Minimal mode does. Everything else, including accented letters and emoji, is valid as-is in a UTF-8 page. Text going into a URL needs [percent-encoding](/url-encode) instead, and text going into JSON needs [JSON string escaping](/json-escape).',
         'The other two modes exist for other destinations. Named mode writes common symbols as readable names (&copy;, &mdash;, &nbsp;) for hand-edited templates. All-non-ASCII mode turns every character above U+007F into a numeric reference, for the rare pipeline that is not UTF-8 clean — old email systems, some XML tools, a database column with the wrong charset.',
+        'Decoding runs the other way, for text that arrives already escaped: a scraped page, a CMS export, an API that HTML-encodes its strings. Named, decimal and hexadecimal references are all decoded, and the references found are listed under the output, so a string that was encoded twice (&amp;amp;) shows up as what it is instead of quietly turning back into one ampersand.',
       ],
       example: {
         inputLabel: 'Text to put in a page',
@@ -2168,6 +2178,7 @@ All non-ASCII:
       body: [
         'Joining words is easy; finding them is the hard part. "user_id", "userId", "UserID" and "user-id" have to become the same two words before they can become anything else, and a naive splitter that breaks on every capital turns "XMLHttpRequest" into x, m, l, http, request. This converter treats a run of capitals followed by a lowercase word as an acronym and a separate word, so it comes out as xml, http, request. When a rename follows a pattern that is not about case, [test a regular expression](/regex-tester) instead.',
         'Digits stay attached to the word before them (utf8, v2, line1). That keeps version suffixes and numbered fields intact through a round trip, which is what you want when renaming database columns or mapping JSON keys to struct fields. The detector also tells you which convention the first line already uses, which helps when you are auditing a file with mixed styles.',
+        'Which convention to use is usually decided by the language or the place the name ends up: camelCase for variables and JSON keys in JavaScript, Java and Go, PascalCase for classes and types, snake_case in Python, Ruby, Rust and most SQL columns, kebab-case for URLs, CSS classes and command-line flags, and SCREAMING_SNAKE_CASE for constants and environment variables. The converter takes one name per line, so a column list or a set of JSON keys can be renamed in a single pass and pasted straight back.',
       ],
       example: {
         inputLabel: 'Mixed input, one per line',
@@ -2254,6 +2265,8 @@ shippingAddressLine1`,
       body: [
         "JavaScript numbers are 64-bit floats, so parseInt('FFFFFFFFFFFFFFFF', 16) returns 18446744073709552000 — close, and wrong. That matters for exactly the numbers developers convert most: 64-bit IDs, hashes, memory addresses and bit masks. This converter works on BigInt throughout, so a 64-bit or 256-bit value converts digit for digit — a SHA-256 from the [hash generator](/hash-generator), say.",
         "The fixed-width table answers the other common question: what does this bit pattern mean as a signed integer? The same eight bits, 11001000, are 200 as an unsigned byte and -56 as a signed one. Seeing both side by side is how you debug an overflow, a sign-extension bug or a checksum that came back negative.",
+        'Reading a bit mask is where the binary column earns its place. Permissions, feature flags and hardware registers pack several booleans into one integer, and 0x2A says nothing until it is 0010 1010 — bits 1, 3 and 5 are set. Binary is grouped in fours because one hex digit is exactly four bits, which is also the trick for converting between the two in your head: FE is 1111 1110, nibble by nibble, with no arithmetic at all.',
+        'Octal survives in two places worth recognising on sight: Unix file modes, where 0755 is rwxr-xr-x, and the escape sequences of older languages. Everywhere else a value starting with 0 is more likely a zero-padded decimal, so the converter only treats it as octal when you pick that base or write the 0o prefix.',
       ],
       example: {
         inputLabel: 'Input (hex)',

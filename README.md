@@ -37,6 +37,7 @@ Everything runs client-side in your browser. Nothing you paste in is ever sent t
 ## Interface
 
 - **⌘K / Ctrl+K** — command palette to jump to any tool (arrow keys + Enter).
+- **Home page filter** — a filter box under the hero (press `/` to focus it) narrows the 49 cards live with the same ranking as ⌘K; Enter opens the first match, Esc clears. Beside it, a row of category chips that stays stuck under the header and jumps to each group; the chip of the group in view is highlighted.
 - **⌘\ / Ctrl+\** — collapse the sidebar to icons.
 - Light / dark theme toggle (remembers your choice), recently-used tools, toast notifications, and drag-to-resize split panes.
 - **Responsive** — the sidebar becomes a slide-out drawer on phones and tablets, panels stack, tap targets grow.
@@ -58,14 +59,15 @@ Each tool is a real, indexable URL (`/cron/`, `/sql/`, `/json-formatter/`…) ra
 
 `npm run build` runs four steps: the client build, a server build of `src/entry-server.jsx` into `dist-ssr/`, `scripts/prerender.mjs`, and `scripts/check-site.mjs`. The prerender emits:
 
-- **One static HTML file per route** with its own `<title>`, meta description, canonical URL, Open Graph tags and JSON-LD, and a body that is the real page — header, tool UI, guide, FAQ, related tools and footer — rendered by React at build time. The browser loads the route's chunk first and then renders the same tree, so there is no loading flash and the static and live pages (including the single `<h1>`) are identical.
+- **One static HTML file per route** with its own `<title>`, meta description, canonical URL, Open Graph tags and JSON-LD, and a body that is the real page — header, tool UI, guide, FAQ, related tools and footer — rendered by React at build time. The browser paints that HTML first, then loads the route's chunk and **hydrates** the same tree in place (`hydrateRoot` in `src/main.jsx`), so the markup on screen is never rebuilt and the static and live pages (including the single `<h1>`) are identical. Anything only the browser knows — theme, ⌘ vs Ctrl, favourites, recently used, split-pane widths — renders its build-time value first and reads the real one after mount (`src/lib/hydration.js`), because a mismatch would make React throw the server markup away for that part of the page. The prerender also moves the stylesheet to the top of `<head>` and starts the entry script one frame after the first paint, so the page shows before any JavaScript runs.
+- **An inline theme script** in `index.html` that applies the saved or OS theme to `<html>` before the first paint, so dark-mode visitors never see a light flash.
 - **`sitemap.xml`** listing every page (redirect stubs excluded).
 - **`robots.txt`** pointing at the sitemap.
 - **`404.html`** so deep links resolve on GitHub Pages.
 - **`<link rel="modulepreload">` tags** for each route's own chunks (read from `dist/.vite/manifest.json`), so a tool's code downloads alongside the app shell instead of after it.
 - **`sw.js`**, the service worker: every page's HTML, the shell and each tool's chunks are precached, so the site works offline and is installable. It caches the site's own files only. Its cache name is a hash of the precached files, so each deploy replaces the old cache.
 
-Copy for each route lives in `src/lib/seo.js`, or for newer pages in a module under `src/content/` that `seo.js` spreads in. Its `heading` is the page's `<h1>` (rendered by `PageHeader`), the JSON-LD name and the breadcrumb, so they always agree; `h1` overrides it where the visible header must differ. Titles should stay within 60 characters and descriptions between 140 and 160.
+Copy for each route lives in `src/lib/seo.js`, or for newer pages in a module under `src/content/` that `seo.js` spreads in. Its `heading` is the page's `<h1>` (rendered by `PageHeader`), the JSON-LD name and the breadcrumb, so they always agree; `h1` overrides it where the visible header must differ. Titles must stay within 60 characters (`check-site` warns past that) and descriptions between 140 and 160.
 
 ### Adding a tool
 

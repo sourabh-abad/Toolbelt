@@ -271,11 +271,68 @@ async function render(pathname, seo, { noindex = false, appUrl } = {}) {
 
   html = replaceRoot(html, body)
 
+  // Ahead of the analytics tag, which is deliberately the last thing in <head>.
   const preloads = preloadTags(pathname)
-  if (preloads) html = html.replace('</head>', () => `    ${preloads}
-  </head>`)
+  if (preloads) {
+    const marker = '    <!-- Google tag (gtag.js).'
+    html = html.includes(marker)
+      ? html.replace(marker, () => `    ${preloads}\n${marker}`)
+      : html.replace('</head>', () => `    ${preloads}\n  </head>`)
+  }
 
-  return html
+  return deferEntryScript(hoistStylesheets(html))
+}
+
+// Vite's entry tag runs the app the moment the parser finishes, and because
+// the HTML is small that is before the browser has painted anything — so the
+// first paint waited for ~180 KB of JavaScript to be parsed and executed,
+// which is what Lighthouse was charging to First and Largest Contentful Paint.
+// The page is complete in the HTML and only needs the script to become
+// interactive, so the entry is started one frame later, after that first
+// paint. A modulepreload keeps the download itself as early as before.
+function deferEntryScript(html) {
+  const tag = /<script type="module" crossorigin src="(\/assets\/[^"]+\.js)"><\/script>/
+  const m = tag.exec(html)
+  if (!m) throw new Error('prerender: Vite entry <script type="module"> not found')
+  const entry = m[1]
+  const boot = `<link rel="modulepreload" crossorigin href="${entry}">
+    <script type="module">
+      // Let the static page paint, then load the app. Same reload-once rule
+      // as the error handler above if this build's chunk is already gone.
+      var booted = false
+      function boot() {
+        if (booted) return
+        booted = true
+        import(${JSON.stringify(entry)}).catch(function () {
+          try {
+            var last = Number(sessionStorage.getItem('devpocket-chunk-reload') || 0)
+            if (Date.now() - last < 60000) return
+            sessionStorage.setItem('devpocket-chunk-reload', String(Date.now()))
+          } catch (err) {}
+          location.reload()
+        })
+      }
+      requestAnimationFrame(function () { setTimeout(boot, 0) })
+      setTimeout(boot, 400) // hidden tabs get no animation frames
+    </script>`
+  return html.replace(m[0], () => boot)
+}
+
+// Vite appends its tags at the end of <head>, so the stylesheet lands after
+// the entry script, its modulepreloads and the route's own chunk preloads —
+// two dozen requests the browser's preload scanner issues first. The CSS is
+// the one thing the first paint actually waits for (the page is already in
+// the HTML; the script only hydrates it), and on a slow connection it was
+// arriving last. It goes to the top of <head> instead, before anything else
+// that costs a request.
+function hoistStylesheets(html) {
+  const sheets = html.match(/[ \t]*<link rel="stylesheet"[^>]*href="\/assets\/[^"]+"[^>]*>\n?/g) || []
+  if (!sheets.length) return html
+  for (const s of sheets) html = html.replace(s, '')
+  const anchor = html.indexOf('    <link rel="icon"')
+  if (anchor === -1) throw new Error('prerender: no <link rel="icon"> to hoist the stylesheet above')
+  const tags = sheets.map((s) => s.trim()).join('\n    ')
+  return html.slice(0, anchor) + `    ${tags}\n` + html.slice(anchor)
 }
 
 const routes = Object.keys(SEO)

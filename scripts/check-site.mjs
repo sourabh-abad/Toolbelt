@@ -131,7 +131,7 @@ for (const p of pages) {
   if (p.h2EqualsH1) fail(p.path, `an <h2> repeats the H1 "${p.h1s[0]}"`)
   if (!p.title) fail(p.path, 'no <title>')
   if (p.title.length > 72) fail(p.path, `title is ${p.title.length} characters`)
-  else if (p.title.length > 62) warn(p.path, `title is ${p.title.length} characters`)
+  else if (p.title.length > 60) warn(p.path, `title is ${p.title.length} characters`)
   if (!p.description) fail(p.path, 'no meta description')
   else if (p.description.length < 110 || p.description.length > 175) warn(p.path, `description is ${p.description.length} characters`)
   if (p.canonical !== url) fail(p.path, `canonical ${p.canonical || '(none)'} should be ${url}`)
